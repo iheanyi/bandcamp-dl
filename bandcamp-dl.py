@@ -2,12 +2,15 @@ from mutagen.mp3 import MP3
 from mutagen.id3 import ID3, TIT2
 from mutagen.easyid3 import EasyID3
 from shutil import make_archive
+import re
+import json
 from bs4 import BeautifulSoup
 
 import requests
 import os
 import sys
 import urllib
+import jsobj
 
 def parse_file(url):
 
@@ -25,81 +28,61 @@ def parse_file(url):
 	embedBlock = r.text.split("var EmbedData = ")
 
 	embedStringBlock = embedBlock[1]
-	embedStringBlock = embedStringBlock.split("};")[0] + "}"
+
+	embedStringBlock = embedStringBlock.split("};")[0] + "};"
+	embedStringBlock = jsobj.read_js_object("var EmbedData = %s" % str(embedStringBlock))
+
+	print embedStringBlock
+
+	#embedStringBlock = re.sub(r'{\s*(\w)', r'{"\1', embedStringBlock)
+	#embedStringBlock = re.sub(r',\s*(\w)', r',"\1', embedStringBlock)
+	#embedStringBlock = re.sub(r'(\w):', r'\1":', embedStringBlock)
+
+	#embedStringBlock = embedStringBlock.replace(r'http\":', 'http:')
 
 
-	sys.exit()
-	embedStringBlock = embedStringBlock.strip().replace("   ", "")
+	#print embedStringBlock
+	#currData = json.loads(embedStringBlock)
+	#print currData
 
-	tralbum_param = "tralbum_param"
-	name = "name"
-	value = "value"
-	swf_base_url = "swf_base_url"
-	album_title = "album_title"
-	art_url = "art_url"
-	lg_art_url = "lg_art_url"
-	numtracks = "numtracks"
-	title = "title"
-	artist = "artist"
-	linkback = "linkback"
 
-	embedData = eval(embedStringBlock)
+	print embedStringBlock
 
-	artistName = embedData['artist']
+
+	embedData = embedStringBlock
+
+	artistName = embedData['EmbedData']['artist']
 
 	if "name" in embedData:
 		fileType = "track"
-		trackName = embedData['name']
+		trackName = embedData['EmbedData']['name']
 	else:
 		fileType = "album"
 
-	albumTitle = embedData['album_title']
+	albumTitle = embedData['EmbedData']['album_title']
 
 	block = r.text.split("var TralbumData = ")
 	#print block[0]
 
 	stringBlock = block[1]
 
-	stringBlock = stringBlock.split("};")[0] + "}"
+	stringBlock = stringBlock.split("};")[0] + "};"
+	stringBlock = jsobj.read_js_object("var TralbumData = %s" % str(stringBlock))
 	#print stringBlock
 
-	stringArray = stringBlock.split("\n")
-	del stringArray[1:4]
+	#sys.exit()
+
+	#stringArray = stringBlock.split("\n")
+	#del stringArray[1:4]
 	#print stringArray
 
-	stringBlock = "".join(stringArray).strip().replace("    ", "")
+	#stringBlock = "".join(stringArray).strip().replace("    ", "")
 
 
-	null = None
-	current = "current"
-	is_preorder = "is_preorder"
-	album_is_preorder = "album_is_preorder"
-	album_release_date = "album_release_date"
-	album_url = "album_url"
-	preorder_count = "preorder_count"
-	hasAudio = "hasAudio"
-	artThumbURL = "artThumbURL"
-	artFullsizeUrl = "artFullsizeUrl"
-	trackinfo = "trackinfo"
-	playing_from = "playing_from"
-	featured_track_id = "featured_track_id"
-	initial_track_num = "initial_track_num"
-	defaultPrice = "defaultPrice"
-	freeDownloadPage = "freeDownloadPage"
-	packages = "packages"
-	maxPrice = "maxPrice"
-	minPrice = "minPrice"
-	FREE = "FREE"
-	PAID = "PAID"
-	artist = "artist"
-	item_type = "item_type"
-	id = "id"
-	true = True
-	false = False
-	#print unicode(stringBlock.strip())
-	data = eval(stringBlock.strip())
 
-	artistName = data['artist']
+	data = stringBlock
+
+	artistName = data['TralbumData']['artist']
 
 
 	firstLetter = artistName[0]
@@ -125,7 +108,7 @@ def parse_file(url):
 		os.makedirs("files/" + firstLetter + "/" + artistName)
 
 
-	tracks = data['trackinfo']	
+	tracks = data['TralbumData']['trackinfo']	
 
 	albumPath = albumTitle.replace(" ", "").replace("/","").replace(".", "")
 
@@ -195,20 +178,6 @@ def parse_results(text):
 
 		result = Result(itemURL, artistName, albumTitle, itemType)
 		results.append(result)
-		#print itemType, albumTitle, artistName, itemURL
-
-def printTags():
-	for r in results:
-		print r.artist, r.title, r.type, r.url, r.type
-
-
-def getTags(path):
-
-	myfile = mpeg.Mpeg('inthecity.mp3')
-	print myfile.artist
-	print myfile.album
-	print myfile.original
-
 
 
 
