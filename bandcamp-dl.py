@@ -156,11 +156,11 @@ def parse_file(url):
 		
 
 
-	if(len(tracks) > 1):
-		if not os.path.isfile("files/zips/" + albumTitle.replace(" ", "") + ".zip"):
-			make_archive("files/zips/" + albumTitle.replace(" ", ""), 'zip', albumPath)
-		else:
-			print "Already have a zipfile of this junts, serve that up!"
+	# if(len(tracks) > 1):
+	# 	if not os.path.isfile("files/zips/" + albumTitle.replace(" ", "") + ".zip"):
+	# 		make_archive("files/zips/" + albumTitle.replace(" ", ""), 'zip', albumPath)
+	# 	else:
+	# 		print "Already have a zipfile of this junts, serve that up!"
 		#zip = zipfile.ZipFile("files/zips/" + albumTitle.replace(" ", "") + ".zip", 'w')
 		#zipdir(albumPath + "/", zip)
 		#zip.close
