@@ -26,6 +26,9 @@ def parse_file(url):
 
 	embedStringBlock = embedBlock[1]
 	embedStringBlock = embedStringBlock.split("};")[0] + "}"
+
+
+	sys.exit()
 	embedStringBlock = embedStringBlock.strip().replace("   ", "")
 
 	tralbum_param = "tralbum_param"
@@ -44,7 +47,7 @@ def parse_file(url):
 
 	artistName = embedData['artist']
 
-	if "name" in embedData.keys():
+	if "name" in embedData:
 		fileType = "track"
 		trackName = embedData['name']
 	else:
@@ -213,6 +216,6 @@ def getTags(path):
 url = sys.argv[1]
 if(len(sys.argv) != 2):
 	print "usage: bandcamp-dl.py <url to download>"
-	sys.exit
+	sys.exit()
 
 parse_file(url)
