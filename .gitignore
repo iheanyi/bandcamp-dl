@@ -17,7 +17,7 @@ develop-eggs
 .installed.cfg
 lib
 lib64
-files
+files/
 *.mp3
 
 # Installer logs
