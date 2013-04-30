@@ -1,3 +1,13 @@
+""" Coded by Iheanyi Ekechukwu
+
+http://www.twitter.com/kwuchu
+http://www.github.com/iheanyi
+
+Feel free to use this in any way you wish. I made this just for fun.
+
+Shout out to darkf for writing a helper function for parsing the JavaScript! """
+
+
 from mutagen.mp3 import MP3
 from mutagen.id3 import ID3, TIT2
 from mutagen.easyid3 import EasyID3
@@ -32,7 +42,7 @@ def parse_file(url):
 	embedStringBlock = embedStringBlock.split("};")[0] + "};"
 	embedStringBlock = jsobj.read_js_object("var EmbedData = %s" % str(embedStringBlock))
 
-	print embedStringBlock
+	#print embedStringBlock
 
 	#embedStringBlock = re.sub(r'{\s*(\w)', r'{"\1', embedStringBlock)
 	#embedStringBlock = re.sub(r',\s*(\w)', r',"\1', embedStringBlock)
@@ -46,7 +56,7 @@ def parse_file(url):
 	#print currData
 
 
-	print embedStringBlock
+	#print embedStringBlock
 
 
 	embedData = embedStringBlock
