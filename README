@@ -7,3 +7,4 @@ Dependencies:
 BeautifulSoup - Some HTML Parsing (probably won't even need in future iterations)
 Mutagen - ID3 Encoding
 Requests - For retrieving the page, once again . . . possibility of getting rid of this dependency in the future
+Slimit - For parsing JavaScript . . . 
