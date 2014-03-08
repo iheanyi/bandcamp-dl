@@ -9,7 +9,7 @@ Shout out to darkf for writing a helper function for parsing the JavaScript! """
 
 import unicodedata
 import os
-import urllib
+import urllib2
 
 from mutagen.mp3 import MP3
 from mutagen.id3 import TIT2
@@ -89,13 +89,34 @@ def parse_file(url):
         songURL = each['file']['mp3-128']
 
         print "Now Downloading: " + each['title'], each['file']['mp3-128']
-        urllib.urlretrieve(songURL, albumPath + "/" + songTitle + ".mp3")
 
+        req = urllib2.Request(songURL, headers={'User-Agent': "Magic Browser"})
+        u = urllib2.urlopen(req)
+        f = open(albumPath+'/' + each['title']+'.mp3', 'wb')
+        meta = u.info()
+        file_size = int(meta.getheaders("Content-Length")[0])
+        file_size_dl = 0
+        block_sz = 8192
+        while True:
+            buffer = u.read(block_sz)
+            if not buffer:
+                break
+
+            file_size_dl += len(buffer)
+            f.write(buffer)
+            p = float(file_size_dl) / file_size
+            status = r"[{1:.2%}]".format(file_size_dl, p)
+            status = status + chr(8) * (len(status) + 1)
+            sys.stdout.write("Download progress: %s%%   \r" % (status))
+            sys.stdout.flush()
+
+
+        f.close()
         print "Encoding . . . "
-        audio = MP3(albumPath + "/" + songTitle + ".mp3")
+        audio = MP3(albumPath + '/' + each['title'] + '.mp3')
         audio["TIT2"] = TIT2(encoding=3, text=["title"])
         audio.save()
-        audio = EasyID3(albumPath + "/" + songTitle + ".mp3")
+        audio = EasyID3(albumPath + '/' + each['title'] + '.mp3')
         audio["title"] = each['title']
         audio["artist"] = artistName
         audio["album"] = albumTitle
