@@ -1,6 +1,6 @@
-Usage: Run script with the URL you want to parse as the argument . . . 
+Usage: Run the script bandcamp-dl.py from command line
 
-python bandcamp-dl.py <URL>
+paste the url of the album or song you wish to download
 
 Dependencies:
 
