@@ -50,34 +50,47 @@ def sanatize_text(text, space=False, slash=False, period=False):
 
     return result
 
-def download_track(track, url, title, album_path, artist, album):
-    print "Now Downloading: " + track['title'], track['file']['mp3-128'] 
 
-    req = urllib2.Request(url, headers={'User-Agent': "Magic Browser"})
-    u = urllib2.urlopen(req)
-    f = open(album_path + '/' + track['title'] + '.mp3', 'wb')
-    meta = u.info()
+def download(request, destination, show_progress=False):
+    remote_file = urllib2.urlopen(request)
+    meta = remote_file.info()
     file_size = int(meta.getheaders("Content-Length")[0])
     file_size_dl = 0
     block_sz = 8192
 
+    local_file = open(destination, 'wb')
+
     while True:
-        buffer = u.read(block_sz)
+        buffer = remote_file.read(block_sz)
         if not buffer:
             break
 
         file_size_dl += len(buffer)
-        f.write(buffer)
-        p = float(file_size_dl) / file_size
-        status = r"[{1:.2%}]".format(file_size_dl, p)
-        status = status + chr(8) * (len(status) + 1)
-        sys.stdout.write("Download progress: %s%%   \r" % (status))
-        sys.stdout.flush()
+        local_file.write(buffer)
 
-    f.close()
-    print "Done downloading " + title
+        if show_progress:
+            display_progress(file_size_dl, file_size)
 
-    write_id3_tags(track, title, album_path, artist, album)
+    local_file.close()
+    print "Done downloading: " + destination
+
+
+def display_progress(current, total):
+    factor = float(current) / total
+    percent = factor * 100
+    status = str( int(round(percent)) )
+
+    sys.stdout.write("Download progress: %s%%   \r" % (status))
+    sys.stdout.flush()
+
+
+def download_track(track, url, title, album_path, artist, album):
+    print "Now Downloading: " + track['title'], track['file']['mp3-128'] 
+
+    req = urllib2.Request(url, headers={'User-Agent': "Magic Browser"})
+    destination = album_path + '/' + track['title'] + '.mp3'
+
+    download(req, destination, show_progress = True)
 
 
 def write_id3_tags(track, title, album_path, artist, album):
@@ -144,7 +157,7 @@ def parse_file(url):
         url = track['file']['mp3-128']
 
         download_track(track, url, title, album['path'], album['artist'], album['title'])
-
+        write_id3_tags(track, title, album['path'], album['artist'], album['title'])
 
 url = raw_input("Please enter the url of the album or song you wish to download: ")
 parse_file(url)
