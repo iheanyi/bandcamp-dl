@@ -15,7 +15,7 @@ import jsobj
 
 
 class Bandcamp:
-    DOWNLOAD_DIR = expanduser("~/music")
+    DOWNLOAD_DIR = expanduser("~/Music")
 
     # def __init__(self, artist, album):
     #     self.artist = artist
@@ -83,7 +83,7 @@ class Bandcamp:
         print "Now Downloading: " + track['title'], track['file']['mp3-128'] 
 
         req = urllib2.Request(url, headers={'User-Agent': "Magic Browser"})
-        destination = album_path + '/' + self.sanatize_text(track['title']) + '.mp3'
+        destination = album_path + '/' + self.sanatize_text(track['title'], space=True) + '.mp3'
 
         self.download(req, destination, show_progress = True)
 
@@ -147,6 +147,11 @@ class Bandcamp:
         return album
 
 
+    @staticmethod
+    def generate_album_url(artist, album):
+        return "http://{0}.bandcamp.com/album/{1}".format(artist, album)
+
+
     def parse_album_page(self, url):
         print "Starting the parsing for: " + url
 
@@ -162,10 +167,3 @@ class Bandcamp:
 
             self.download_track(track, url, title, album['path'], album['artist'], album['title'])
             self.write_id3_tags(track, title, album['path'], album['artist'], album['title'])
-
-
-if __name__ == '__main__':
-    url = 'http://wmdchiptune.bandcamp.com/album/sophrosyne'
-
-    bc = Bandcamp()
-    bc.parse_album_page(url)
