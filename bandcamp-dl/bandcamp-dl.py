@@ -7,9 +7,8 @@ Usage:
 Options:
   -h --help     Show this screen.
   --version     Show version.
-  --artist=<artist>  Speed in knots
-  --album=<album>  Speed in knots
-
+  --artist=<artist>  The artist's slug (from the URL)
+  --album=<album>  The album's slug (from the URL)
 """
 
 from docopt import docopt
