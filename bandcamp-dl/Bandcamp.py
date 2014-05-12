@@ -102,6 +102,7 @@ class Bandcamp:
 
         print "Done encoding . . . "
 
+
     def create_directories(self, artist, album):
         album_path = self.DOWNLOAD_DIR + "/" + artist + "/" + self.sanatize_text(album)
 
@@ -151,18 +152,24 @@ class Bandcamp:
         return "http://{0}.bandcamp.com/album/{1}".format(artist, album)
 
 
+    def download_album_art(self):
+        url = self.soup.find(id='tralbumArt').find_all('img')[0]['src']
+        filename = self.album['path'] + "/" + "cover.jpg"
+        self.download(destination=filename, url=url)
+
     def parse_album_page(self, url):
         print "Starting the parsing for: " + url
 
         r = requests.get(url)
-        soup = BeautifulSoup(r.text)
+        self.soup = BeautifulSoup(r.text)
 
-        album = self.extract_album_meta_data(r)
-        album['path'] = self.create_directories(album['artist'], album['title'])
+        self.album = self.extract_album_meta_data(r)
+        self.album['path'] = self.create_directories(self.album['artist'], self.album['title'])
+        self.download_album_art()
 
-        for track in album['tracks']:
+        for track in self.album['tracks']:
             title = self.sanatize_text(track['title'], space=True)
             url = track['file']['mp3-128']
 
-            self.download_track(track, url, title, album['path'], album['artist'], album['title'])
-            self.write_id3_tags(track, title, album['path'], album['artist'], album['title'])
+            self.download_track(track, url, title, self.album['path'], self.album['artist'], self.album['title'])
+            self.write_id3_tags(track, title, self.album['path'], self.album['artist'], self.album['title'])
