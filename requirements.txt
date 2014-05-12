@@ -1,0 +1,4 @@
+mutagen
+BeautifulSoup4
+requests
+slimit
