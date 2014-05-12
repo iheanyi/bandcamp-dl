@@ -17,10 +17,6 @@ import jsobj
 class Bandcamp:
     DOWNLOAD_DIR = expanduser("~/Music")
 
-    # def __init__(self, artist, album):
-    #     self.artist = artist
-    #     self.album = album
-
 
     def get_embed_string_block(self, request):
         embedBlock = request.text.split("var EmbedData = ")
