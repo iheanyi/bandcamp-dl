@@ -17,6 +17,7 @@ from mutagen.easyid3 import EasyID3
 from bs4 import BeautifulSoup
 import requests
 import sys
+import Bandcamp
 
 import jsobj
 
@@ -158,6 +159,7 @@ def parse_file(url):
 
         download_track(track, url, title, album['path'], album['artist'], album['title'])
         write_id3_tags(track, title, album['path'], album['artist'], album['title'])
+
 
 url = raw_input("Please enter the url of the album or song you wish to download: ")
 parse_file(url)
