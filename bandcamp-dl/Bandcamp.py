@@ -42,7 +42,10 @@ class Bandcamp:
         return result
 
 
-    def download(self, request, destination, show_progress=False):
+    def download(self, request=None, destination=None, show_progress=False, url=None):
+        if not request:
+            request = urllib2.Request(url)
+
         remote_file = urllib2.urlopen(request)
         meta = remote_file.info()
         file_size = int(meta.getheaders("Content-Length")[0])
