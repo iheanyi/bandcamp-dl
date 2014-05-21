@@ -1,21 +1,13 @@
 badcamp-dl - download audio from BandCamp.com
 
 # Details
-
     Usage:
-      bandcamp-dl (<url> | --artist=<artist> --album=<album>)
-                     [--template=<template>] [--base-dir=<dir>]
-      bandcamp-dl (-h | --help)
-      bandcamp-dl (-v | --version)
-
-    Options:
-      -h --help              Show this screen.
-      -v --version           Show version.
-      --artist=<artist>      The artist's slug (from the URL)
-      --album=<album>        The album's slug (from the URL)
-      --template=<template>  Output filename template.
-                             [default: %{artist}/%{album}/%{track} - %{title}]
-      --base-dir=<dir>       Base location of which all files are downloaded
+      bandcamp-dl.py <url>
+      bandcamp-dl.py [--template=<template>] [--base-dir=<dir>]
+                     [--full-album]
+                     (<url> | --artist=<artist> --album=<album>)
+      bandcamp-dl.py (-h | --help)
+      bandcamp-dl.py (--version)
 
 # Synopsis
 
@@ -29,12 +21,6 @@ It is released to the public domain, which means you can modify it, redistribute
 it or use it how ever you like.
 
 # Options
-
-    Usage:
-      bandcamp-dl.py (<url> | --artist=<artist> --album=<album>)
-                     [--template=<template>] [--base-dir=<dir>]
-      bandcamp-dl.py (-h | --help)
-      bandcamp-dl.py (-v | --version)
 
     Options:
       -h --help              Show this screen.
@@ -130,4 +116,4 @@ It may sound strange, but some bug reports we receive are completely unrelated t
 
 bandcamp-d is released into the public domain by the copytright holders
 
-This README file was inspired by the [youtube-dl](https://github.com/rg3/youtube-dl/blob/master/README.md) and is likewise released into the public domain.
+This README file was inspired by the [youtube-dl](https://github.com/rg3/youtube-dl/blob/master/README.md) docs and is likewise released into the public domain.
