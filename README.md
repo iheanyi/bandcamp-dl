@@ -1,14 +1,5 @@
 badcamp-dl - download audio from BandCamp.com
 
-# Details
-    Usage:
-      bandcamp-dl.py <url>
-      bandcamp-dl.py [--template=<template>] [--base-dir=<dir>]
-                     [--full-album]
-                     (<url> | --artist=<artist> --album=<album>)
-      bandcamp-dl.py (-h | --help)
-      bandcamp-dl.py (--version)
-
 # Synopsis
 
 bandcamp-dl URL
@@ -19,6 +10,16 @@ bandcamp.dl is a small command-line app to download audio from BandCamp.com.
 It requires the Python interpreter, version 2.7+ and is not platform specific.
 It is released to the public domain, which means you can modify it, redistribute
 it or use it how ever you like.
+
+# Details
+    Usage:
+      bandcamp-dl.py <url>
+      bandcamp-dl.py [--template=<template>] [--base-dir=<dir>]
+                     [--full-album]
+                     (<url> | --artist=<artist> --album=<album>)
+      bandcamp-dl.py (-h | --help)
+      bandcamp-dl.py (--version)
+
 
 # Options
 
