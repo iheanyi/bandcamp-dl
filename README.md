@@ -47,7 +47,7 @@ The default template is: `%{artist}/%{album}/%{track} - %{title}`.
 
 # Bugs
 
-Bus should be reported at [https://github.com/simonwjackson/bandcamp-dl/issues]().
+Bus should be reported at [https://github.com/iheanyi/bandcamp-dl/issues]().
 Please include the full output of the command when run with `--verbose`.
 The output (including the first lines) contain important debugging
 information. Issues without the full output are often not reproducible and
@@ -79,7 +79,7 @@ This should report that you're up-to-date. About 20% of the reports we receive a
 
 ###  Is the issue already documented?
 
-Make sure that someone has not already opened the issue you're trying to open. Search at the top of the window or at [https://github.com/simonwjackson/bandcamp-dl/search?type=Issues](Issues) . If there is an issue, feel free to write something along the lines of "This affects me as well, with version 2015.01.01. Here is some more information on the issue: ...". While some issues may be old, a new post into them often spurs rapid activity.
+Make sure that someone has not already opened the issue you're trying to open. Search at the top of the window or at [https://github.com/iheanyi/bandcamp-dl/search?type=Issues](Issues) . If there is an issue, feel free to write something along the lines of "This affects me as well, with version 2015.01.01. Here is some more information on the issue: ...". While some issues may be old, a new post into them often spurs rapid activity.
 
 ###  Why are existing options not enough?
 
