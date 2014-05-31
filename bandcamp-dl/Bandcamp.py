@@ -63,18 +63,6 @@ class Bandcamp:
 
         return new_track
 
-
-    def get_embed_string_block(self, request):
-        embedBlock = request.text.split("var EmbedData = ")
-
-        embedStringBlock = embedBlock[1]
-        embedStringBlock = unicodedata.normalize('NFKD', embedStringBlock).encode('ascii', 'ignore')
-        embedStringBlock = embedStringBlock.split("};")[0] + "};"
-        embedStringBlock = jsobj.read_js_object("var EmbedData = %s" % str(embedStringBlock))
-
-        return embedStringBlock
-
-
     def extract_album_meta_data(self, request):
         album = {}
 
@@ -83,14 +71,13 @@ class Bandcamp:
         block = request.text.split("var TralbumData = ")
 
         stringBlock = block[1]
-        stringBlock = unicodedata.normalize('NFKD', stringBlock).encode('ascii', 'ignore')
+        
         stringBlock = stringBlock.split("};")[0] + "};"
-        stringBlock = jsobj.read_js_object("var TralbumData = %s" % str(stringBlock))
+        stringBlock = jsobj.read_js_object("var TralbumData = %s" % stringBlock)
 
         album['title'] = embedData['EmbedData']['album_title']
         album['artist'] = stringBlock['TralbumData']['artist']
         album['tracks'] = stringBlock['TralbumData']['trackinfo']
-
         return album
 
 
@@ -108,8 +95,7 @@ class Bandcamp:
         embedBlock = request.text.split("var EmbedData = ")
 
         embedStringBlock = embedBlock[1]
-        embedStringBlock = unicodedata.normalize('NFKD', embedStringBlock).encode('ascii', 'ignore')
         embedStringBlock = embedStringBlock.split("};")[0] + "};"
-        embedStringBlock = jsobj.read_js_object("var EmbedData = %s" % str(embedStringBlock))
+        embedStringBlock = jsobj.read_js_object("var EmbedData = %s" % embedStringBlock)
 
         return embedStringBlock

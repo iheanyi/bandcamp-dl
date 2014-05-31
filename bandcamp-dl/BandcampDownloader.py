@@ -39,7 +39,7 @@ class BandcampDownloader():
         path = path.replace("%{album}", track['album'])
         path = path.replace("%{track}", track['track'])
         path = path.replace("%{title}", track['title'])
-        path = "{0}/{1}.{2}".format(self.directory, path, "mp3")
+        path = u"{0}/{1}.{2}".format(self.directory, path, "mp3")
 
         return path
 
@@ -63,7 +63,7 @@ class BandcampDownloader():
 
             filename = self.template_to_path(track_meta)
             dirname = self.create_directory(filename)
-
+            
             try:
                 tmp_file = wgetter.download(track['url'], outdir=dirname)
                 os.rename(tmp_file, filename)
