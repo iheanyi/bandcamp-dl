@@ -74,6 +74,12 @@ class BandcampDownloader():
                 print e
                 print "Downloading failed.."
                 return False
+        try:
+            tmp_art_file = wgetter.download(album['art'], outdir=dirname)
+            os.rename(tmp_art_file, dirname+"/cover.jpg")
+        except Exception as e:
+            print e
+            print "Couldn't download albumart."
 
         return True
 
