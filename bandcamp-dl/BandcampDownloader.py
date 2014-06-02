@@ -53,12 +53,14 @@ class BandcampDownloader():
 
 
     def download_album(self, album):
+
         for track in album['tracks']:
             track_meta = {
                 "artist": album['artist'],
                 "album": album['title'],
                 "title": track['title'],
-                "track": track['track']
+                "track": track['track'],
+                "date": album['date']
             }
 
             filename = self.template_to_path(track_meta)
@@ -87,6 +89,7 @@ class BandcampDownloader():
         audio["title"] = meta['title']
         audio["artist"] = meta['artist']
         audio["album"] = meta['album']
+        audio["date"] = meta['date']
         audio.save()
 
         print "Done encoding . . . "
