@@ -22,13 +22,15 @@ class Bandcamp:
             "title": "",
             "artist": "",
             "full": False,
-            "art": ""
+            "art": "",
+            "date": ""
         }
 
         album_meta = self.extract_album_meta_data(r)
 
         album['artist'] = album_meta['artist']
         album['title'] = album_meta['title']
+        album['date'] = album_meta['date']
 
         for track in album_meta['tracks']:
             track = self.get_track_meta_data(track)
@@ -78,6 +80,8 @@ class Bandcamp:
         album['title'] = embedData['EmbedData']['album_title']
         album['artist'] = stringBlock['TralbumData']['artist']
         album['tracks'] = stringBlock['TralbumData']['trackinfo']
+        album['date'] = stringBlock['TralbumData']['album_release_date'].split()[2]
+
         return album
 
 
