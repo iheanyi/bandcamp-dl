@@ -1,13 +1,5 @@
-import unicodedata
-import os
-import urllib2
-
-from mutagen.mp3 import MP3
-from mutagen.id3 import TIT2
-from mutagen.easyid3 import EasyID3
 from bs4 import BeautifulSoup
 import requests
-import sys
 
 import jsobj
 
@@ -41,7 +33,6 @@ class Bandcamp:
 
         return album
 
-
     def all_tracks_available(self, album):
         for track in album['tracks']:
             if track['url'] is None:
@@ -49,12 +40,10 @@ class Bandcamp:
 
         return True
 
-
     def get_track_meta_data(self, track):
         new_track = {}
-
-        if type(track['file']) is not str:
-            if track['file'].has_key('mp3-128'):
+        if not (isinstance(track['file'], unicode) or isinstance(track['file'], unicode)):
+            if 'mp3-128' in track['file']:
                 new_track['url'] = track['file']['mp3-128']
         else:
             new_track['url'] = None
@@ -73,7 +62,7 @@ class Bandcamp:
         block = request.text.split("var TralbumData = ")
 
         stringBlock = block[1]
-        
+
         stringBlock = stringBlock.split("};")[0] + "};"
         stringBlock = jsobj.read_js_object("var TralbumData = %s" % stringBlock)
 
@@ -84,16 +73,13 @@ class Bandcamp:
 
         return album
 
-
     @staticmethod
     def generate_album_url(artist, album):
         return "http://{0}.bandcamp.com/album/{1}".format(artist, album)
 
-
     def get_album_art(self):
         url = self.soup.find(id='tralbumArt').find_all('img')[0]['src']
         return url
-
 
     def get_embed_string_block(self, request):
         embedBlock = request.text.split("var EmbedData = ")

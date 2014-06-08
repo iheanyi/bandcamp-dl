@@ -1,17 +1,10 @@
 import wgetter
 
-import unicodedata
-import os
-import urllib2
-
 from mutagen.mp3 import MP3
 from mutagen.id3 import TIT2
 from mutagen.easyid3 import EasyID3
-from bs4 import BeautifulSoup
-import requests
-import sys
 import os
-import jsobj
+
 
 class BandcampDownloader():
 
@@ -28,10 +21,8 @@ class BandcampDownloader():
         self.urls = urls
         self.template = template
 
-
     def start(self, album):
         self.download_album(album)
-
 
     def template_to_path(self, track):
         path = self.template
@@ -43,14 +34,12 @@ class BandcampDownloader():
 
         return path
 
-
     def create_directory(self, filename):
         directory = os.path.dirname(filename)
         if not os.path.exists(directory):
             os.makedirs(directory)
 
         return directory
-
 
     def download_album(self, album):
 
@@ -76,13 +65,12 @@ class BandcampDownloader():
                 return False
         try:
             tmp_art_file = wgetter.download(album['art'], outdir=dirname)
-            os.rename(tmp_art_file, dirname+"/cover.jpg")
+            os.rename(tmp_art_file, dirname + "/cover.jpg")
         except Exception as e:
             print e
             print "Couldn't download albumart."
 
         return True
-
 
     def write_id3_tags(self, filename, meta):
         print "Encoding . . . "
