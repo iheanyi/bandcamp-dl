@@ -7,7 +7,14 @@ import jsobj
 class Bandcamp:
 
     def parse(self, url):
-        r = requests.get(url)
+        try:
+            r = requests.get(url)
+        except requests.exceptions.MissingSchema:
+            return None
+
+        if r.status_code is not 200:
+            return None
+
         self.soup = BeautifulSoup(r.text)
         album = {
             "tracks": [],

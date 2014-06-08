@@ -17,6 +17,7 @@ it or use it how ever you like.
       bandcamp-dl.py [--template=<template>] [--base-dir=<dir>]
                      [--full-album]
                      (<url> | --artist=<artist> --album=<album>)
+                     [--overwrite]
       bandcamp-dl.py (-h | --help)
       bandcamp-dl.py (--version)
 

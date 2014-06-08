@@ -8,7 +8,7 @@ import os
 
 class BandcampDownloader():
 
-    def __init__(self, urls=None, template=None, directory=None):
+    def __init__(self, urls=None, template=None, directory=None, overwrite=False):
         if type(urls) is str:
             self.urls = [urls]
 
@@ -20,6 +20,7 @@ class BandcampDownloader():
 
         self.urls = urls
         self.template = template
+        self.overwrite = overwrite
 
     def start(self, album):
         self.download_album(album)
@@ -54,7 +55,15 @@ class BandcampDownloader():
 
             filename = self.template_to_path(track_meta)
             dirname = self.create_directory(filename)
-            
+
+            if not self.overwrite and os.path.isfile(filename):
+                print "Skiping track {} - {} as it's already downloaded, use --overwrite to overwrite existing files".format(track['track'], track['title'])
+                continue
+
+            if not track.get('url'):
+                print "Skiping track {} - {} as it is not available".format(track['track'], track['title'])
+                continue
+
             try:
                 tmp_file = wgetter.download(track['url'], outdir=dirname)
                 os.rename(tmp_file, filename)
@@ -80,6 +89,7 @@ class BandcampDownloader():
         audio.save()
 
         audio = EasyID3(filename)
+        audio["tracknumber"] = meta['track']
         audio["title"] = meta['title']
         audio["artist"] = meta['artist']
         audio["album"] = meta['album']
