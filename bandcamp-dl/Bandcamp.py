@@ -42,7 +42,7 @@ class Bandcamp:
 
     def get_track_meta_data(self, track):
         new_track = {}
-        if not (isinstance(track['file'], unicode) or isinstance(track['file'], unicode)):
+        if not (isinstance(track['file'], unicode) or isinstance(track['file'], str)):
             if 'mp3-128' in track['file']:
                 new_track['url'] = track['file']['mp3-128']
         else:
