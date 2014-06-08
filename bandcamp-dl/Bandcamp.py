@@ -1,98 +1,87 @@
-from bs4 import BeautifulSoup
+from datetime import datetime
 import requests
-
-import jsobj
 
 
 class Bandcamp:
 
-    def parse(self, url):
-        try:
-            r = requests.get(url)
-        except requests.exceptions.MissingSchema:
-            return None
+    def __init__(self, discography=False, artist="", album=""):
+        self.get_discography = discography
+        self.artist_query = artist or ""
+        self.album_query = album or ""
 
-        if r.status_code is not 200:
-            return None
+    def get_artist_information(self):
+        artist_request = requests.get("http://api.bandcamp.com/api/band/3/search?key=vatnajokull&name={}".format(self.artist_query.replace(" ", "%20")))
+        return artist_request.json().get('results')[0]
 
-        self.soup = BeautifulSoup(r.text)
-        album = {
-            "tracks": [],
-            "title": "",
-            "artist": "",
-            "full": False,
-            "art": "",
-            "date": ""
-        }
+    def get_artist_discography(self, band_id):
+        discography_request = requests.get("http://api.bandcamp.com/api/band/3/discography?key=vatnajokull&band_id={}".format(band_id))
+        # Createa a dictionary out of the results dictionary where each album's dictionary is the value and the album name is the key
+        albums = dict((d['title'].lower(), dict(d, index=index)) for (index, d) in enumerate(discography_request.json().get('discography')))
+        # The cool thing we can do here is to download all available albums since we know all the IDs
+        return albums
 
-        album_meta = self.extract_album_meta_data(r)
-
-        album['artist'] = album_meta['artist']
-        album['title'] = album_meta['title']
-        album['date'] = album_meta['date']
-
-        for track in album_meta['tracks']:
-            track = self.get_track_meta_data(track)
-            album['tracks'].append(track)
-
-        album['full'] = self.all_tracks_available(album)
-        album['art'] = self.get_album_art()
-
-        return album
-
-    def all_tracks_available(self, album):
-        for track in album['tracks']:
-            if track['url'] is None:
-                return False
-
-        return True
-
-    def get_track_meta_data(self, track):
-        new_track = {}
-        if not (isinstance(track['file'], unicode) or isinstance(track['file'], str)):
-            if 'mp3-128' in track['file']:
-                new_track['url'] = track['file']['mp3-128']
+    def get_album(self, full_discography):
+        if self.get_discography:
+            albums_to_download = full_discography.values()
         else:
-            new_track['url'] = None
+            albums_to_download = [full_discography.get(self.album_query.lower())]
 
-        new_track['duration'] = track['duration']
-        new_track['track'] = track['track_num']
-        new_track['title'] = track['title']
+        albums_info = []
 
-        return new_track
+        for album in albums_to_download:
+            # import ipdb; ipdb.set_trace();
+            if not album:
+                print "The album does not exist"
+                continue
+            if not album.get('downloadable'):
+                print "The {} album is not downloadable".format(album.get('title'))
+                continue
+            album_request = requests.get("http://api.bandcamp.com/api/album/2/info?key=vatnajokull&album_id={}".format(album.get('album_id')))
+                # keys: [u'small_art_url', u'about', u'album_id', u'url', u'band_id', u'release_date', u'title', u'credits', u'tracks', u'downloadable', u'large_art_url']
+                # example:
+                # {
+                #   "url": "http://music.biggiantcircles.com/album/the-glory-days?pk=564",
+                #   "about": "Shoutouts to my Kickstarter backers, my many many Twitch and Youtube friends (including but not limited to Sevadus, MANvsGAME, Bacon Donut, wolv21, IAMSp00n, Coestar, ZombiUnicorn, WelshPixie, iHasCupquake, and many many many more), to OverClocked ReMix, to my followers on Twitter and Facebook, and the thousands of people out there working hard to create memorable game experiences for all of us.  This album is for you!",
+                #   "large_art_url": "http://f0.bcbits.com/img/a2358396975_2.jpg",
+                #   "downloadable": 2,
+                #   "credits": "All songs written and produced by Jimmy Hinson\r\nhttp://twitter.com/biggiantcircles\r\nhttp://facebook.com/biggiantcircles\r\nhttp://youtube.com/biggiantcircles\r\n\r\nMastering by Dave Shumway and Jimmy Hinson\r\nhttp://twitter.com/mediaeaters\r\n\r\nAlbum Cover by Ian Wilding\r\nhttp://twitter.com/iwilding\r\n\r\nAdditional album artwork by Ian Wilding, Jessie Lam, Paul Hubans, Ian Wexler, and Junkboy\r\nhttp://twitter.com/axl99\r\nhttp://twitter.com/phubans\r\nhttp://twitter.com/ianwexl0rz\r\nhttp://twitter.com/jnkboy\r\n\r\nKickstarter consultation by zircon\r\nhttp://twitter.com/zirconst",
+                #   "album_id": 2667222639,
+                #   "band_id": 1018396519,
+                #   "tracks": [...],
+                #   "small_art_url": "http://f0.bcbits.com/img/a2358396975_3.jpg",
+                #   "title": "The Glory Days",
+                #   "release_date": 1392336000
+                #   }
 
-    def extract_album_meta_data(self, request):
-        album = {}
+                # example track
+                # {
+                #   "about": "Shoutouts to all my friends at Mojang, who somehow manage to keep getting me into all the amazing parties that Notch throws!",
+                #   "url": "/track/no-party-like-a-mojang-party?pk=564",
+                #   "streaming_url": "http://popplers5.bandcamp.com/download/track?enc=mp3-128&fsig=a81c2770273a26d30cda1d7427197ceb&id=595907577&stream=1&ts=1402202096.0",
+                #   "album_id": 2667222639,
+                #   "downloadable": 2,
+                #   "band_id": 1018396519,
+                #   "number": 3,
+                #   "track_id": 595907577,
+                #   "title": "No Party Like a Mojang Party",
+                #   "duration": 349.44
+                # },
+            album_info = album_request.json()
+            if album_info.get('error'):
+                print "The {} album is could not be downloaded at this time".format(album.get('title'))
+                continue
 
-        embedData = self.get_embed_string_block(request)
+            album_info['release_date'] = datetime.fromtimestamp(album_info.get('release_date'))
+            album_info['full'] = sum([track.get('downloadable') is not None for track in album_info.get('tracks')]) is len(album_info.get('tracks'))
+            albums_info.append(album_info)
 
-        block = request.text.split("var TralbumData = ")
+        return albums_info
 
-        stringBlock = block[1]
+    def get_album_and_artist_info_from_query(self):
+        # this function needs a lot of work to make it prettier.
+        # Using the key from the api docs right now. I don't have an api key.
+        artist_info = self.get_artist_information()
+        albums = self.get_artist_discography(artist_info.get('band_id'))
+        albums_info = self.get_album(albums)
 
-        stringBlock = stringBlock.split("};")[0] + "};"
-        stringBlock = jsobj.read_js_object("var TralbumData = %s" % stringBlock)
-
-        album['title'] = embedData['EmbedData']['album_title']
-        album['artist'] = stringBlock['TralbumData']['artist']
-        album['tracks'] = stringBlock['TralbumData']['trackinfo']
-        album['date'] = stringBlock['TralbumData']['album_release_date'].split()[2]
-
-        return album
-
-    @staticmethod
-    def generate_album_url(artist, album):
-        return "http://{0}.bandcamp.com/album/{1}".format(artist, album)
-
-    def get_album_art(self):
-        url = self.soup.find(id='tralbumArt').find_all('img')[0]['src']
-        return url
-
-    def get_embed_string_block(self, request):
-        embedBlock = request.text.split("var EmbedData = ")
-
-        embedStringBlock = embedBlock[1]
-        embedStringBlock = embedStringBlock.split("};")[0] + "};"
-        embedStringBlock = jsobj.read_js_object("var EmbedData = %s" % embedStringBlock)
-
-        return embedStringBlock
+        return albums_info, artist_info

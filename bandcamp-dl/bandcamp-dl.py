@@ -2,7 +2,10 @@
 
 """bandcamp-dl
 Usage:
-  bandcamp-dl.py <url>
+  bandcamp-dl.py [--template=<template>] [--base-dir=<dir>]
+                 [--full-album]
+                 (<url> | --artist=<artist> --discography)
+                 [--overwrite]
   bandcamp-dl.py [--template=<template>] [--base-dir=<dir>]
                  [--full-album]
                  (<url> | --artist=<artist> --album=<album>)
@@ -20,6 +23,7 @@ Options:
   -d --base-dir=<dir>       Base location of which all files are downloaded.
   -f --full-album           Download only if all tracks are availiable.
   -o --overwrite           Overwrite tracks that already exist. Default is False.
+  -d  --discography           Download the available songs from the artists discography.
 """
 
 """ Coded by:
@@ -46,20 +50,16 @@ import os
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='bandcamp-dl 1.0')
-    bandcamp = Bandcamp()
-
-    if (arguments['--artist'] and arguments['--album']):
-        url = Bandcamp.generate_album_url(arguments['--artist'], arguments['--album'])
-    else:
-        url = arguments['<url>']
-
-    album = bandcamp.parse(url)
+    bandcamp = Bandcamp(discography=arguments.get('--discography'), artist=arguments['--artist'], album=arguments['--album'])
+    albums_info, artist_info = bandcamp.get_album_and_artist_info_from_query()
     basedir = arguments['--base-dir'] or os.path.dirname(os.path.realpath(__file__))
-
-    if not album:
-        print "The url {} is not a valid bandcamp page.".format(url)
-    elif arguments['--full-album'] and not album['full']:
-        print "Full album not availiable. Skipping.."
+    if not albums_info:
+        print "No album by that name could be found by that artist"
     else:
-        bandcamp_downloader = BandcampDownloader(url, arguments['--template'], basedir, arguments['--overwrite'])
-        bandcamp_downloader.start(album)
+        bandcamp_downloader = BandcampDownloader(arguments['--template'], basedir, arguments['--overwrite'])
+        for album in albums_info:
+            if arguments['--full-album'] and not albums_info['full']:
+                print "Full {} album not availiable. Skipping..".format(album.get('title'))
+            else:
+                print "Downloading album {}".format(album.get('title'))
+                bandcamp_downloader.start(album, artist_info)
