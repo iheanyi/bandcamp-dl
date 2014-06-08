@@ -37,9 +37,13 @@ Simon W. Jackson
     http://twitter.com/miniarray
     http://github.com/miniarray
 
+Joseph Kahn
+    http://twitter.com/JosephBKahn
+    http://github.com/JBKahn
+    http://jbkahn.github.io/
+
 Iheanyi:
-    Feel free to use this in any way you wish. I made this just for fun.
-    Shout out to darkf for writing a helper function for parsing the JavaScript! """
+    Feel free to use this in any way you wish. I made this just for fun. """
 
 
 from docopt import docopt

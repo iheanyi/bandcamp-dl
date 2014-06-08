@@ -13,7 +13,10 @@ it or use it how ever you like.
 
 # Details
     Usage:
-      bandcamp-dl.py <url>
+      bandcamp-dl.py [--template=<template>] [--base-dir=<dir>]
+                 [--full-album]
+                 (<url> | --artist=<artist> --discography)
+                 [--overwrite]
       bandcamp-dl.py [--template=<template>] [--base-dir=<dir>]
                      [--full-album]
                      (<url> | --artist=<artist> --album=<album>)
@@ -32,6 +35,7 @@ it or use it how ever you like.
       --template=<template>  Output filename template.
                              [default: %{artist}/%{album}/%{track} - %{title}]
       --base-dir=<dir>       Base location of which all files are downloaded
+      --discography           Download the available songs from the artists discography.
 
 # Fiename Template
 
@@ -109,10 +113,8 @@ It may sound strange, but some bug reports we receive are completely unrelated t
 
 # Dependencies
 
-* [BeautifulSoup](https://pypi.python.org/pypi/beautifulsoup4) - HTML Parsing
 * [Mutagen](https://pypi.python.org/pypi/mutagen) - ID3 Encoding
 * [Requests](https://pypi.python.org/pypi/requests) - for retriving the HTML
-* [Slimit](https://pypi.python.org/pypi/slimit) - Javascript parsing
 
 # Copyright
 

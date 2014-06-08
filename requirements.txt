@@ -1,6 +1,4 @@
 mutagen
-BeautifulSoup4
 requests
-slimit
 docopt
 wgetter
