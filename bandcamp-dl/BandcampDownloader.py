@@ -42,7 +42,7 @@ class BandcampDownloader():
     def download_album(self, album, artist):
         for track in album['tracks']:
             track_meta = {
-                "artist": artist.get('name'),
+                "artist": album.get('artist') or artist.get('name'),
                 "album": album.get('title'),
                 "title": track.get('title'),
                 "track": str(track.get('number')),

@@ -50,6 +50,13 @@ format of `%{artist}`. Here is a list of allowed tokens:
 
 The default template is: `%{artist}/%{album}/%{track} - %{title}`.
 
+# Example calls
+```python
+python bandcamp-dl.py --artist="Big Giant Circles" --discography
+python bandcamp-dl.py --artist="Alcopop! records" --album="Endless Fantasy"
+```
+
+
 # Bugs
 
 Bus should be reported at [https://github.com/iheanyi/bandcamp-dl/issues]().
