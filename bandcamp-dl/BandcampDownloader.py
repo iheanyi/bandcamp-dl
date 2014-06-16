@@ -56,7 +56,7 @@ class BandcampDownloader():
                 print "Skiping track {} - {} as it's already downloaded, use --overwrite to overwrite existing files".format(track_meta['track'], track_meta['title'])
                 continue
 
-            if not track.get('downloadable'):
+            if not track.get('downloadable') and not track.get('streaming_url'):
                 print "Skiping track {} - {} as it is not available".format(track_meta['track'], track_meta['title'])
                 continue
 
