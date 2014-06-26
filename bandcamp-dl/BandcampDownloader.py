@@ -1,21 +1,14 @@
 import wgetter
 
-import unicodedata
-import os
-import urllib2
-
 from mutagen.mp3 import MP3
 from mutagen.id3 import TIT2
 from mutagen.easyid3 import EasyID3
-from bs4 import BeautifulSoup
-import requests
-import sys
 import os
-import jsobj
+
 
 class BandcampDownloader():
 
-    def __init__(self, urls=None, template=None, directory=None):
+    def __init__(self, urls=None, template=None, directory=None, overwrite=False):
         if type(urls) is str:
             self.urls = [urls]
 
@@ -27,11 +20,10 @@ class BandcampDownloader():
 
         self.urls = urls
         self.template = template
-
+        self.overwrite = overwrite
 
     def start(self, album):
         self.download_album(album)
-
 
     def template_to_path(self, track):
         path = self.template
@@ -43,14 +35,12 @@ class BandcampDownloader():
 
         return path
 
-
     def create_directory(self, filename):
         directory = os.path.dirname(filename)
         if not os.path.exists(directory):
             os.makedirs(directory)
 
         return directory
-
 
     def download_album(self, album):
 
@@ -65,7 +55,15 @@ class BandcampDownloader():
 
             filename = self.template_to_path(track_meta)
             dirname = self.create_directory(filename)
-            
+
+            if not self.overwrite and os.path.isfile(filename):
+                print "Skiping track {} - {} as it's already downloaded, use --overwrite to overwrite existing files".format(track['track'], track['title'])
+                continue
+
+            if not track.get('url'):
+                print "Skiping track {} - {} as it is not available".format(track['track'], track['title'])
+                continue
+
             try:
                 tmp_file = wgetter.download(track['url'], outdir=dirname)
                 os.rename(tmp_file, filename)
@@ -76,13 +74,12 @@ class BandcampDownloader():
                 return False
         try:
             tmp_art_file = wgetter.download(album['art'], outdir=dirname)
-            os.rename(tmp_art_file, dirname+"/cover.jpg")
+            os.rename(tmp_art_file, dirname + "/cover.jpg")
         except Exception as e:
             print e
             print "Couldn't download albumart."
 
         return True
-
 
     def write_id3_tags(self, filename, meta):
         print "Encoding . . . "
@@ -92,6 +89,7 @@ class BandcampDownloader():
         audio.save()
 
         audio = EasyID3(filename)
+        audio["tracknumber"] = meta['track']
         audio["title"] = meta['title']
         audio["artist"] = meta['artist']
         audio["album"] = meta['album']

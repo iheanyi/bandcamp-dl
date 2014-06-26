@@ -6,6 +6,7 @@ Usage:
   bandcamp-dl.py [--template=<template>] [--base-dir=<dir>]
                  [--full-album]
                  (<url> | --artist=<artist> --album=<album>)
+                 [--overwrite]
   bandcamp-dl.py (-h | --help)
   bandcamp-dl.py (--version)
 
@@ -16,8 +17,9 @@ Options:
   -b --album=<album>        The album's slug (from the URL)
   -t --template=<template>  Output filename template.
                             [default: %{artist}/%{album}/%{track} - %{title}]
-  -d --base-dir=<dir>       Base location of which all files are downloaded
-  -f --full-album           Download only if all tracks are availiable
+  -d --base-dir=<dir>       Base location of which all files are downloaded.
+  -f --full-album           Download only if all tracks are availiable.
+  -o --overwrite           Overwrite tracks that already exist. Default is False.
 """
 
 """ Coded by:
@@ -46,29 +48,18 @@ if __name__ == '__main__':
     arguments = docopt(__doc__, version='bandcamp-dl 1.0')
     bandcamp = Bandcamp()
 
-    if (arguments):
-        if (arguments['--artist'] and arguments['--album']):
-            url = Bandcamp.generate_album_url(arguments['--artist'], arguments['--album'])
-
-        elif arguments['<url>']:
-            url = arguments['<url>']
-
-        if url:
-            album = bandcamp.parse(url)
-
-            if arguments['--base-dir']:
-                basedir = arguments['--base-dir']
-            else:
-                basedir = os.path.dirname(os.path.realpath(__file__))
-
-            if arguments['--template']:
-                template = arguments['--template']
-
-            if arguments['--full-album'] and not album['full']:
-                print "Full album not availiable. Skipping.."
-            else:
-                bandcamp_downloader = BandcampDownloader(url, template, basedir)
-                bandcamp_downloader.start(album)
-
+    if (arguments['--artist'] and arguments['--album']):
+        url = Bandcamp.generate_album_url(arguments['--artist'], arguments['--album'])
     else:
-        print __doc__
+        url = arguments['<url>']
+
+    album = bandcamp.parse(url)
+    basedir = arguments['--base-dir'] or os.path.dirname(os.path.realpath(__file__))
+
+    if not album:
+        print "The url {} is not a valid bandcamp page.".format(url)
+    elif arguments['--full-album'] and not album['full']:
+        print "Full album not availiable. Skipping.."
+    else:
+        bandcamp_downloader = BandcampDownloader(url, arguments['--template'], basedir, arguments['--overwrite'])
+        bandcamp_downloader.start(album)
