@@ -8,9 +8,7 @@ import os
 
 class BandcampDownloader():
 
-    def __init__(self, urls=None, template=None, directory=None, overwrite=False):
-        if type(urls) is str:
-            self.urls = [urls]
+    def __init__(self, template=None, directory=None, overwrite=False):
 
         if directory:
             directory = os.path.expanduser(directory)
@@ -18,12 +16,11 @@ class BandcampDownloader():
             if os.path.isdir(directory):
                 self.directory = directory
 
-        self.urls = urls
         self.template = template
         self.overwrite = overwrite
 
-    def start(self, album):
-        self.download_album(album)
+    def start(self, album_info, artist_info):
+        self.download_album(album_info, artist_info)
 
     def template_to_path(self, track):
         path = self.template
@@ -42,30 +39,29 @@ class BandcampDownloader():
 
         return directory
 
-    def download_album(self, album):
-
+    def download_album(self, album, artist):
         for track in album['tracks']:
             track_meta = {
-                "artist": album['artist'],
-                "album": album['title'],
-                "title": track['title'],
-                "track": track['track'],
-                "date": album['date']
+                "artist": album.get('artist') or artist.get('name'),
+                "album": album.get('title'),
+                "title": track.get('title'),
+                "track": str(track.get('number')),
+                "date": str(album.get('release_date').year)
             }
 
             filename = self.template_to_path(track_meta)
             dirname = self.create_directory(filename)
 
             if not self.overwrite and os.path.isfile(filename):
-                print "Skiping track {} - {} as it's already downloaded, use --overwrite to overwrite existing files".format(track['track'], track['title'])
+                print "Skiping track {} - {} as it's already downloaded, use --overwrite to overwrite existing files".format(track_meta['track'], track_meta['title'])
                 continue
 
-            if not track.get('url'):
-                print "Skiping track {} - {} as it is not available".format(track['track'], track['title'])
+            if not track.get('downloadable') and not track.get('streaming_url'):
+                print "Skiping track {} - {} as it is not available".format(track_meta['track'], track_meta['title'])
                 continue
 
             try:
-                tmp_file = wgetter.download(track['url'], outdir=dirname)
+                tmp_file = wgetter.download(track.get('streaming_url'), outdir=dirname)
                 os.rename(tmp_file, filename)
                 self.write_id3_tags(filename, track_meta)
             except Exception as e:
@@ -73,7 +69,7 @@ class BandcampDownloader():
                 print "Downloading failed.."
                 return False
         try:
-            tmp_art_file = wgetter.download(album['art'], outdir=dirname)
+            tmp_art_file = wgetter.download(album['large_art_url'], outdir=dirname)
             os.rename(tmp_art_file, dirname + "/cover.jpg")
         except Exception as e:
             print e
