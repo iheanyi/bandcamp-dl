@@ -85,8 +85,12 @@ class Bandcamp:
         return "http://{0}.bandcamp.com/album/{1}".format(artist, album)
 
     def get_album_art(self):
-        url = self.soup.find(id='tralbumArt').find_all('img')[0]['src']
-        return url
+        try:
+            url = self.soup.find(id='tralbumArt').find_all('img')[0]['src']
+            return url
+        except:
+            pass
+
 
     def get_embed_string_block(self, request):
         embedBlock = request.text.split("var EmbedData = ")
