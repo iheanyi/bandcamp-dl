@@ -59,7 +59,7 @@ if __name__ == '__main__':
     if not album:
         print "The url {} is not a valid bandcamp page.".format(url)
     elif arguments['--full-album'] and not album['full']:
-        print "Full album not availiable. Skipping.."
+        print "Full album not available. Skipping..."
     else:
         bandcamp_downloader = BandcampDownloader(url, arguments['--template'], basedir, arguments['--overwrite'])
         bandcamp_downloader.start(album)
