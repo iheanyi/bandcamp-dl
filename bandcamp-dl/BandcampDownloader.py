@@ -57,11 +57,11 @@ class BandcampDownloader():
             dirname = self.create_directory(filename)
 
             if not self.overwrite and os.path.isfile(filename):
-                print "Skiping track {} - {} as it's already downloaded, use --overwrite to overwrite existing files".format(track['track'], track['title'])
+                print "Skipping track {} - {} as it's already downloaded, use --overwrite to overwrite existing files".format(track['track'], track['title'])
                 continue
 
             if not track.get('url'):
-                print "Skiping track {} - {} as it is not available".format(track['track'], track['title'])
+                print "Skipping track {} - {} as it is not available".format(track['track'], track['title'])
                 continue
 
             try:
@@ -77,7 +77,7 @@ class BandcampDownloader():
             os.rename(tmp_art_file, dirname + "/cover.jpg")
         except Exception as e:
             print e
-            print "Couldn't download albumart."
+            print "Couldn't download album art."
 
         return True
 
