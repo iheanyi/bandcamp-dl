@@ -77,7 +77,7 @@ class BandcampDownloader():
             os.rename(tmp_art_file, dirname + "/cover.jpg")
         except Exception as e:
             print e
-            print "Couldn't download albumart."
+            print "Couldn't download album art."
 
         return True
 
