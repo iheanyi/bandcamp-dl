@@ -4,7 +4,7 @@ from mutagen.mp3 import MP3
 from mutagen.id3 import TIT2
 from mutagen.easyid3 import EasyID3
 import os
-
+from slugify import slugify
 
 class BandcampDownloader():
 
@@ -27,10 +27,10 @@ class BandcampDownloader():
 
     def template_to_path(self, track):
         path = self.template
-        path = path.replace("%{artist}", track['artist'])
-        path = path.replace("%{album}", track['album'])
+        path = path.replace("%{artist}", slugify(track['artist']))
+        path = path.replace("%{album}", slugify(track['album']))
         path = path.replace("%{track}", track['track'])
-        path = path.replace("%{title}", track['title'])
+        path = path.replace("%{title}", slugify(track['title']))
         path = u"{0}/{1}.{2}".format(self.directory, path, "mp3")
 
         return path
