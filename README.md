@@ -113,6 +113,7 @@ It may sound strange, but some bug reports we receive are completely unrelated t
 * [Mutagen](https://pypi.python.org/pypi/mutagen) - ID3 Encoding
 * [Requests](https://pypi.python.org/pypi/requests) - for retriving the HTML
 * [Slimit](https://pypi.python.org/pypi/slimit) - Javascript parsing
+* [Slugify](https://pypi.python.org/pypi/slugify) - A generic slugifier
 
 # Copyright
 
