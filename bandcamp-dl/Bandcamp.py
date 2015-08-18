@@ -15,7 +15,7 @@ class Bandcamp:
         if r.status_code is not 200:
             return None
 
-        self.soup = BeautifulSoup(r.text)
+        self.soup = BeautifulSoup(r.text, "html.parser")
         album = {
             "tracks": [],
             "title": "",
