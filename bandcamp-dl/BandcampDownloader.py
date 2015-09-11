@@ -29,7 +29,7 @@ class BandcampDownloader():
         path = self.template
         path = path.replace("%{artist}", slugify(track['artist']))
         path = path.replace("%{album}", slugify(track['album']))
-        path = path.replace("%{track}", track['track'])
+        path = path.replace("%{track}", str(track['track']).zfill(2))
         path = path.replace("%{title}", slugify(track['title']))
         path = u"{0}/{1}.{2}".format(self.directory, path, "mp3")
 
