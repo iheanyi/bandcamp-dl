@@ -54,7 +54,7 @@ if __name__ == '__main__':
         url = arguments['<url>']
 
     album = bandcamp.parse(url)
-    basedir = arguments['--base-dir'] or os.path.dirname(os.path.realpath(__file__))
+    basedir = arguments['--base-dir'] or os.getcwd()
 
     if not album:
         print "The url {} is not a valid bandcamp page.".format(url)
