@@ -40,7 +40,7 @@ it or use it how ever you like.
                              [default: %{artist}/%{album}/%{track} - %{title}]
       --base-dir=<dir>       Base location of which all files are downloaded
 
-# Fiename Template
+# Filename Template
 
 The `--template` option allows users to indicate a template for the output file
 names and directories. Templates can be built using special tokens with the
