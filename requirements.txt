@@ -4,3 +4,4 @@ requests
 slimit
 docopt
 wgetter
+slugify
