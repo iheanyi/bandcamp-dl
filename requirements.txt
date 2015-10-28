@@ -5,3 +5,4 @@ slimit
 docopt
 wgetter
 slugify
+ply==3.4

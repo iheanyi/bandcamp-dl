@@ -65,7 +65,7 @@ class BandcampDownloader():
                 continue
 
             try:
-                tmp_file = wgetter.download(track['url'], outdir=dirname)
+                tmp_file = wgetter.download(('http:')+(track['url']), outdir=dirname)
                 os.rename(tmp_file, filename)
                 self.write_id3_tags(filename, track_meta)
             except Exception as e:
