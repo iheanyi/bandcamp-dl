@@ -6,3 +6,4 @@ docopt
 wgetter
 slugify
 lxml
+ply==3.4
