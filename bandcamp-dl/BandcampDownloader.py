@@ -23,6 +23,7 @@ class BandcampDownloader():
         self.overwrite = overwrite
 
     def start(self, album):
+        print "Starting download process."
         self.download_album(album)
 
     def template_to_path(self, track):
@@ -65,7 +66,11 @@ class BandcampDownloader():
                 continue
 
             try:
-                tmp_file = wgetter.download(track['url'], outdir=dirname)
+                track_url = track['url']
+                # Check and see if HTTP is in the track_url 
+                if 'http' not in track_url:
+                    track_url = 'http:%s' % track_url
+                tmp_file = wgetter.download(track_url, outdir=dirname)
                 os.rename(tmp_file, filename)
                 self.write_id3_tags(filename, track_meta)
             except Exception as e:

@@ -19,6 +19,7 @@ lib
 lib64
 files/
 *.mp3
+**/*.mp3
 
 # Installer logs
 pip-log.txt
