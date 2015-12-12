@@ -43,8 +43,7 @@ from Bandcamp import Bandcamp
 from BandcampDownloader import BandcampDownloader
 import os
 
-
-if __name__ == '__main__':
+def main():
     arguments = docopt(__doc__, version='bandcamp-dl 1.0')
     bandcamp = Bandcamp()
 
@@ -63,3 +62,6 @@ if __name__ == '__main__':
     else:
         bandcamp_downloader = BandcampDownloader(url, arguments['--template'], basedir, arguments['--overwrite'])
         bandcamp_downloader.start(album)
+
+if __name__ == '__main__':
+    main()
