@@ -5,7 +5,11 @@ badcamp-dl - download audio from BandCamp.com
 bandcamp-dl URL
 
 # Installation
+## Through Pip
+1. Run `pip install bandcamp-downloader`
+2. Use the command `bandcamp-dl` in order to download songs.
 
+## From Source
 1. Clone the project or [download the zip](https://github.com/iheanyi/bandcamp-dl/archive/master.zip)
 2. Make sure you have [pip](https://pip.pypa.io/en/latest/installing.html) installed
 3. `cd` to the directory with the `requirements.txt` file in it
