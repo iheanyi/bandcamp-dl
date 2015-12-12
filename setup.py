@@ -2,10 +2,10 @@
 
 from setuptools import setup, find_packages
 
-version = '0.0.1'
+version = '0.0.2'
 
 setup(
-    name='bandcamp-dl',
+    name='bandcamp-downloader',
     version=version,
     description='bandcamp-dl downloads albums and tracks from Bandcamp for you',
     long_description=open('README.md').read(),
@@ -24,6 +24,7 @@ setup(
         'lxml>=3.5.0',
         'docopt>=0.6.2',
         'beautifulsoup4>=4.4.1',
+        'slugify==0.0.1',
     ],
     entry_points={
         'console_scripts': [
