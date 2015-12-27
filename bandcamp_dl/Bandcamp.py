@@ -73,10 +73,12 @@ class Bandcamp:
         stringBlock = stringBlock.split("};")[0] + "};"
         stringBlock = jsobj.read_js_object("var TralbumData = %s" % stringBlock)
 
-        album['title'] = embedData['EmbedData']['album_title']
+        album['title'] = "Unknown Album" if not \
+        'album_title' in embedData['EmbedData'] else embedData['EmbedData']['album_title']
         album['artist'] = stringBlock['TralbumData']['artist']
         album['tracks'] = stringBlock['TralbumData']['trackinfo']
-        album['date'] = stringBlock['TralbumData']['album_release_date'].split()[2]
+        album['date'] = "" if stringBlock['TralbumData']['album_release_date'] \
+        == "null" else stringBlock['TralbumData']['album_release_date'].split()[2]
 
         return album
 
