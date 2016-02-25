@@ -59,11 +59,13 @@ class BandcampDownloader():
             dirname = self.create_directory(filename)
 
             if not self.overwrite and os.path.isfile(filename):
-                print "Skipping track {} - {} as it's already downloaded, use --overwrite to overwrite existing files".format(track['track'], track['title'])
+                re_encoded_track_title = track['title'].encode('utf-8')
+                print "Skipping track {} - {} as it's already downloaded, use --overwrite to overwrite existing files".format(track['track'], re_encoded_track_title)
                 continue
 
             if not track.get('url'):
-                print "Skipping track {} - {} as it is not available".format(track['track'], track['title'])
+                re_encoded_track_title = track['title'].encode('utf-8')
+                print "Skipping track {} - {} as it is not available".format(track['track'], re_encoded_track_title)
                 continue
 
             try:
