@@ -45,7 +45,7 @@ class BandcampDownloader():
 
     def download_album(self, album):
 
-        for track in album['tracks']:
+        for track_index,track in enumerate(album['tracks']):
             track_meta = {
                 "artist": album['artist'],
                 "album": album['title'],
@@ -53,6 +53,7 @@ class BandcampDownloader():
                 "track": track['track'],
                 "date": album['date']
             }
+            print("Fetching track " + str(track_index+1) + "of " + str(len(album['tracks']))
 
             filename = self.template_to_path(track_meta)
             dirname = self.create_directory(filename)
