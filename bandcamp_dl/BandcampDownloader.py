@@ -45,7 +45,7 @@ class BandcampDownloader():
 
     def download_album(self, album):
 
-        for track in album['tracks']:
+        for track_index,track in enumerate(album['tracks']):
             track_meta = {
                 "artist": album['artist'],
                 "album": album['title'],
@@ -53,16 +53,19 @@ class BandcampDownloader():
                 "track": track['track'],
                 "date": album['date']
             }
+            print("Accessing track " + str(track_index+1) + " of " + str(len(album['tracks'])))
 
             filename = self.template_to_path(track_meta)
             dirname = self.create_directory(filename)
 
             if not self.overwrite and os.path.isfile(filename):
-                print "Skipping track {} - {} as it's already downloaded, use --overwrite to overwrite existing files".format(track['track'], track['title'])
+                re_encoded_track_title = track['title'].encode('utf-8')
+                print "Skipping track {} - {} as it's already downloaded, use --overwrite to overwrite existing files".format(track['track'], re_encoded_track_title)
                 continue
 
             if not track.get('url'):
-                print "Skipping track {} - {} as it is not available".format(track['track'], track['title'])
+                re_encoded_track_title = track['title'].encode('utf-8')
+                print "Skipping track {} - {} as it is not available".format(track['track'], re_encoded_track_title)
                 continue
 
             try:
