@@ -1,7 +1,7 @@
 import wgetter
 
 from mutagen.mp3 import MP3
-from mutagen.id3 import TIT2
+from mutagen.id3 import TIT2, ID3, USLT
 from mutagen.easyid3 import EasyID3
 import os
 from slugify import slugify
@@ -51,6 +51,7 @@ class BandcampDownloader():
                 "album": album['title'],
                 "title": track['title'],
                 "track": track['track'],
+                "lyrics": track['lyrics'],
                 "date": album['date']
             }
             print("Accessing track " + str(track_index+1) + " of " + str(len(album['tracks'])))
@@ -103,5 +104,9 @@ class BandcampDownloader():
         audio["album"] = meta['album']
         audio["date"] = meta['date']
         audio.save()
+
+        audio = ID3(filename)
+        audio[u"USLT::'eng'"] = (USLT(encoding=3, lang=u'eng', desc=u'', text=meta['lyrics']))
+        audio.save(filename)
 
         print "Done encoding . . . "

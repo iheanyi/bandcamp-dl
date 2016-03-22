@@ -58,6 +58,9 @@ class Bandcamp:
         new_track['duration'] = track['duration']
         new_track['track'] = track['track_num']
         new_track['title'] = track['title']
+        if track['lyrics']:
+            track['lyrics'] = track['lyrics'].encode(encoding='UTF-8',errors='ignore')
+            new_track['lyrics'] = track['lyrics'].replace('\\r\\n', '\n')
 
         return new_track
 
