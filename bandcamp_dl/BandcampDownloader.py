@@ -55,7 +55,7 @@ class BandcampDownloader():
             }
             print("Accessing track " + str(track_index+1) + " of " + str(len(album['tracks'])))
 
-            filename = self.template_to_path(track_meta)
+            filename = self.template_to_path(track_meta).encode('utf-8')
             dirname = self.create_directory(filename)
 
             if not self.overwrite and os.path.isfile(filename):
