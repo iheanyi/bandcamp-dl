@@ -94,7 +94,7 @@ class BandcampDownloader():
 
         audio = MP3(filename)
         audio["TIT2"] = TIT2(encoding=3, text=["title"])
-        audio.save()
+        audio.save(filename=None,v1=2)
 
         audio = EasyID3(filename)
         audio["tracknumber"] = meta['track']
