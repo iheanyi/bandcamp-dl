@@ -1,4 +1,4 @@
-badcamp-dl - download audio from BandCamp.com
+bandcamp-dl - download audio from BandCamp.com
 
 # Synopsis
 
