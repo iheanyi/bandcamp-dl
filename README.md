@@ -18,7 +18,7 @@ bandcamp-dl URL
 # Description
 
 bandcamp.dl is a small command-line app to download audio from BandCamp.com.
-It requires the Python interpreter, version 2.7+ and is not platform specific.
+It requires the Python interpreter, version 2.7.x and is not platform specific.
 It is released to the public domain, which means you can modify it, redistribute
 it or use it how ever you like.
 
@@ -111,7 +111,7 @@ In particular, every site support request issue should only pertain to services 
 
 ###  Is anyone going to need the feature?
 
-Only post features that you (or an incapicated friend you can personally talk to) require. Do not post features because they seem like a good idea. If they are really useful, they will be requested by someone who requires them.
+Only post features that you (or an incapacitated friend you can personally talk to) require. Do not post features because they seem like a good idea. If they are really useful, they will be requested by someone who requires them.
 
 ###  Is your question about bandcamp-dl?
 
@@ -128,6 +128,6 @@ It may sound strange, but some bug reports we receive are completely unrelated t
 
 # Copyright
 
-bandcamp-dl is released into the public domain by the copytright holders
+bandcamp-dl is released into the public domain by the copyright holders
 
 This README file was inspired by the [youtube-dl](https://github.com/rg3/youtube-dl/blob/master/README.md) docs and is likewise released into the public domain.
