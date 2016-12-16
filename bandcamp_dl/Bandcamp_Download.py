@@ -49,7 +49,7 @@ class BandcampDownloader:
                 "track": track['track'],
                 "date": album['date']
             }
-            print("Accessing track " + str(track_index+1) + " of " + str(len(album['tracks'])))
+            print("Accessing track " + str(track_index + 1) + " of " + str(len(album['tracks'])))
 
             filename = self.template_to_path(track_meta)
             dirname = self.create_directory(filename)

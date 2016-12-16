@@ -22,6 +22,7 @@ setup(
         'Topic :: Multimedia :: Sound/Audio',
         'License :: Public Domain',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.5',
     ],
     keywords=['bandcamp', 'downloader', 'music', 'cli', 'albums', 'dl'],
     packages=find_packages(),
