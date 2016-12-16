@@ -2,6 +2,7 @@ Credits
 =========
 
 ``bandcamp-dl`` is written and maintained by:
+
 - `Iheanyi Ekechukwu <https://github.com/iheanyi>`_
 - `Anthony Forsberg <https://github.com/Evolution0>`_
 - `John Titor <https://github.com/forsenonlhaimaisentito>`_
@@ -11,7 +12,7 @@ Credits
 - `Gabor Szabo <https://github.com/szabgab>`_
 - `Vladde Nordholm <https://github.com/vladdeSV>`_
 - `Simon W. Jackson <https://github.com/simonwjackson>`_
-- `Yo'av Moshe<https://github.com/bjesus>`_
+- `Yo'av Moshe <https://github.com/bjesus>`_
 - `Mitchell Barron <https://github.com/mtchllbrrn>`_
 - `Seppi <https://github.com/josefnpat>`_
 - `Andrew Sampson <https://github.com/Codeusa>`_
