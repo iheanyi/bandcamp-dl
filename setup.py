@@ -15,7 +15,7 @@ setup(
     url='https://github.com/iheanyi/bandcamp-dl',
     author='Iheanyi Ekechukwu',
     author_email='iekechukwu@gmail.com',
-    license='Public Domain',
+    license='Unlicense',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: End Users/Desktop',
