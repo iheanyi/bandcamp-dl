@@ -3,7 +3,8 @@ include *.rst
 
 exclude *.mp3
 exclude .gitignore
+exclude yacctab.py
+exclude lextab.py
 
 global-exclude *.pyc
 global-exclude *.DS_STORE
-

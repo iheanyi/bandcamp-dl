@@ -1,6 +1,5 @@
-#!/usr/bin/env python2
-
-"""bandcamp-dl
+"""
+bandcamp-dl
 Usage:
   bandcamp-dl.py <url>
   bandcamp-dl.py [--template=<template>] [--base-dir=<dir>]
@@ -20,9 +19,8 @@ Options:
   -d --base-dir=<dir>       Base location of which all files are downloaded.
   -f --full-album           Download only if all tracks are availiable.
   -o --overwrite           Overwrite tracks that already exist. Default is False.
-"""
 
-""" Coded by:
+Coded by:
 
 Iheanyi Ekechukwu
     http://twitter.com/kwuchu
@@ -33,21 +31,26 @@ Simon W. Jackson
     http://twitter.com/miniarray
     http://github.com/miniarray
 
+Anthony Forsberg:
+    http://evolution0.github.io
+    http://github.com/evolution0
+
 Iheanyi:
     Feel free to use this in any way you wish. I made this just for fun.
-    Shout out to darkf for writing a helper function for parsing the JavaScript! """
+    Shout out to darkf for writing a helper function for parsing the JavaScript!
+"""
 
-
-from docopt import docopt
-from Bandcamp import Bandcamp
-from BandcampDownloader import BandcampDownloader
 import os
+from docopt import docopt
+from Bandcamp_Parse import Bandcamp
+from Bandcamp_Download import BandcampDownloader
+
 
 def main():
-    arguments = docopt(__doc__, version='bandcamp-dl 1.0')
+    arguments = docopt(__doc__, version='bandcamp-dl 0.0.5')
     bandcamp = Bandcamp()
 
-    if (arguments['--artist'] and arguments['--album']):
+    if arguments['--artist'] and arguments['--album']:
         url = Bandcamp.generate_album_url(arguments['--artist'], arguments['--album'])
     else:
         url = arguments['<url>']
@@ -56,9 +59,9 @@ def main():
     basedir = arguments['--base-dir'] or os.getcwd()
 
     if not album:
-        print "The url {} is not a valid bandcamp page.".format(url)
+        print("The url {} is not a valid bandcamp page.".format(url))
     elif arguments['--full-album'] and not album['full']:
-        print "Full album not available. Skipping..."
+        print("Full album not available. Skipping...")
     else:
         bandcamp_downloader = BandcampDownloader(url, arguments['--template'], basedir, arguments['--overwrite'])
         bandcamp_downloader.start(album)

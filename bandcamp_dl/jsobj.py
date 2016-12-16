@@ -1,4 +1,5 @@
-""" Simple JavaScript/ECMAScript object literal reader
+"""
+Simple JavaScript/ECMAScript object literal reader
     Only supports object literals wrapped in `var x = ...;` statements, so you
       might want to do read_js_object('var x = %s;' % literal) if it's in another format.
 
@@ -12,14 +13,14 @@
 
         DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
                         Version 2, December 2004
-    
+
         Everyone is permitted to copy and distribute verbatim or modified
         copies of this license document, and changing it is allowed as long
         as the name is changed.
-    
+
                    DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
           TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
-    
+
           0. You just DO WHAT THE FUCK YOU WANT TO.
 """
 
@@ -28,6 +29,8 @@ import slimit.ast as ast
 
 
 def read_js_object(code):
+    parser = Parser()
+
     def visit(node):
         if isinstance(node, ast.Program):
             d = {}
@@ -40,7 +43,7 @@ def read_js_object(code):
         elif isinstance(node, ast.VarStatement):
             return visit(node.children()[0])
         elif isinstance(node, ast.VarDecl):
-            return (visit(node.identifier), visit(node.initializer))
+            return visit(node.identifier), visit(node.initializer)
         elif isinstance(node, ast.Object):
             d = {}
             for property in node:
@@ -58,19 +61,21 @@ def read_js_object(code):
                 else:
                     raise ValueError("Cannot + on anything other than two literals")
             else:
-                raise ValueError("Cannot do operator '%s'" % node.op)
+                raise ValueError("Cannot do operator '{}'".format(node.op))
 
         elif isinstance(node, ast.String):
             return node.value.strip('"').strip("'")
         elif isinstance(node, ast.Array):
             return [visit(x) for x in node]
-        elif isinstance(node, ast.Number) or isinstance(node, ast.Identifier) or isinstance(node, ast.Boolean) or isinstance(node, ast.Null):
+        elif isinstance(node, ast.Number) or isinstance(node, ast.Identifier)\
+                or isinstance(node, ast.Boolean) or isinstance(node, ast.Null):
             return node.value
         else:
-            raise Exception("Unhandled node: %r" % node)
-    return visit(Parser().parse(code))
+            raise Exception("Unhandled node: {}".format(node))
+
+    return visit(parser.parse(code))
+
 
 if __name__ == "__main__":
-    # test
-    print read_js_object("""var foo = {x: 10, y: "hi " + "there!"};
-                            var bar = {derp: ["herp", "it", "up", "forever"]};""")
+    print(read_js_object("""var foo = {x: 10, y: "hi " + "there!"};
+                            var bar = {derp: ["herp", "it", "up", "forever"]};"""))
