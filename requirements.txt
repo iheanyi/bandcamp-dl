@@ -1,3 +1,5 @@
+--index-url https://pypi.python.org/simple/
+
 beautifulsoup4==4.5.1
 docopt==0.6.2
 mutagen==1.35.1

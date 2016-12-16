@@ -27,13 +27,13 @@ setup(
     keywords=['bandcamp', 'downloader', 'music', 'cli', 'albums', 'dl'],
     packages=find_packages(),
     install_requires=[
-        'beautifulsoup4==4.5.1',
-        'docopt==0.6.2',
-        'mutagen==1.35.1',
-        'ply==3.9',
-        'requests==2.12.4',
-        'slimit==0.8.1',
-        'unicode-slugify==0.1.3'
+        'beautifulsoup4',
+        'docopt',
+        'mutagen',
+        'ply',
+        'requests',
+        'slimit',
+        'unicode-slugify',
     ],
     entry_points={
         'console_scripts': [
