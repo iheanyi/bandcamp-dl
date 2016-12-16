@@ -22,7 +22,7 @@ Code
 
 - Try to adhere to PEP8 as best you can (Yes some lines will simply be too long, its ok.)
 
-***
+*****
 
 Again, this list is mainly to help you to get started by codifying tribal knowledge and expectations.
 If something is unclear, feel free to ask for help!
