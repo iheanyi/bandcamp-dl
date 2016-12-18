@@ -42,8 +42,8 @@ Iheanyi:
 
 import os
 from docopt import docopt
-from Bandcamp_Parse import Bandcamp
-from Bandcamp_Download import BandcampDownloader
+from bandcamp import Bandcamp
+from bandcampdownloader import BandcampDownloader
 
 
 def main():
