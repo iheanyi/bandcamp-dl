@@ -4,14 +4,11 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
-    long_description = f.read()
-
 setup(
     name='bandcamp-downloader',
     version='0.0.5',
     description='bandcamp-dl downloads albums and tracks from Bandcamp for you',
-    long_description=long_description,
+    long_description=open('README.rst').read(),
     url='https://github.com/iheanyi/bandcamp-dl',
     author='Iheanyi Ekechukwu',
     author_email='iekechukwu@gmail.com',

@@ -1,10 +1,5 @@
-include *.md
-include *.rst
-
-exclude *.mp3
-exclude .gitignore
-exclude yacctab.py
-exclude lextab.py
+include README.rst AUTHORS.rst CHANGELOG.rst CONTRIBUTING.rst LICENSE *.txt
+exclude *.mp3 .gitignore yacctab.py lextab.py
 
 global-exclude *.pyc
 global-exclude *.DS_STORE

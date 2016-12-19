@@ -11,7 +11,7 @@ Installation
 From PyPI
 ---------
 
-Coming Soon
+pip install bandcamp-downloader
 
 From Source
 -----------
