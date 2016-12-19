@@ -1,9 +1,9 @@
-beautifulsoup4==4.4.1
+--index-url https://pypi.python.org/simple/
+
+beautifulsoup4==4.5.1
 docopt==0.6.2
-lxml==3.5.0
-mutagen==1.31
-ply==3.4
-requests==2.8.1
+mutagen==1.35.1
+ply==3.9
+requests==2.12.4
 slimit==0.8.1
-slugify==0.0.1
-wgetter==0.6
+unicode-slugify==0.1.3
