@@ -1,9 +1,10 @@
-
 import os
 import sys
 import requests
 from mutagen.mp3 import MP3
 from mutagen.id3._id3v1 import TIT2
+from mutagen.id3 import ID3
+from mutagen.id3._frames import USLT
 from mutagen.easyid3 import EasyID3
 from slugify import slugify
 
@@ -49,6 +50,9 @@ class BandcampDownloader:
                 "track": track['track'],
                 "date": album['date']
             }
+            if 'lyrics' in track.keys():
+                track_meta['lyrics'] = track['lyrics']
+
             print("Accessing track " + str(track_index + 1) + " of " + str(len(album['tracks'])))
 
             filename = self.template_to_path(track_meta)
@@ -120,5 +124,10 @@ class BandcampDownloader:
         audio["album"] = meta['album']
         audio["date"] = meta['date']
         audio.save()
+
+        if 'lyrics' in meta.keys():
+            audio = ID3(filename)
+            audio[u"USLT::'eng'"] = (USLT(encoding=3, lang=u'eng', desc=u'', text=meta['lyrics']))
+            audio.save(filename)
 
         print("Done encoding . . .")

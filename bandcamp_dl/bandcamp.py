@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
-import jsobj
+from .jsobj import read_js_object
 
 
 class Bandcamp:
@@ -65,6 +65,9 @@ class Bandcamp:
         new_track['duration'] = track['duration']
         new_track['track'] = track['track_num']
         new_track['title'] = track['title']
+        if track['lyrics'] != 'null':
+            track['lyrics'] = track['lyrics'].encode(encoding='UTF-8', errors='ignore')
+            new_track['lyrics'] = track['lyrics'].replace('\\r\\n', '\n')
 
         return new_track
 
@@ -78,7 +81,7 @@ class Bandcamp:
         stringBlock = block[1]
 
         stringBlock = stringBlock.split("};")[0] + "};"
-        stringBlock = jsobj.read_js_object("var TralbumData = {}".format(stringBlock))
+        stringBlock = read_js_object("var TralbumData = {}".format(stringBlock))
 
         if 'album_title' not in embedData['EmbedData']:
             album['title'] = "Unknown Album"
@@ -111,6 +114,6 @@ class Bandcamp:
 
         embedStringBlock = embedBlock[1]
         embedStringBlock = embedStringBlock.split("};")[0] + "};"
-        embedStringBlock = jsobj.read_js_object("var EmbedData = {}".format(embedStringBlock))
+        embedStringBlock = read_js_object("var EmbedData = {}".format(embedStringBlock))
 
         return embedStringBlock

@@ -42,12 +42,11 @@ Iheanyi:
 
 import os
 from docopt import docopt
-from bandcamp import Bandcamp
-from bandcampdownloader import BandcampDownloader
+from .bandcamp import Bandcamp
+from .bandcampdownloader import BandcampDownloader
 
 
 def main():
-    arguments = docopt(__doc__, version='bandcamp-dl 0.0.5')
     bandcamp = Bandcamp()
 
     if arguments['--artist'] and arguments['--album']:
