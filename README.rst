@@ -16,10 +16,9 @@ pip install bandcamp-downloader
 From Source
 -----------
 
-1. Clone the project or `download the zip <https://github.com/iheanyi/bandcamp-dl/archive/bandcamp-dl-py2.zip>`_
-2. Make sure you have `pip <https://pip.pypa.io/en/latest/installing.html>`_ installed
-3. ``cd`` to the directory with the ``requirements.txt`` file in it
-4. ``pip install -r requirements.txt``
+1. Clone the project or `download and extract the zip <https://github.com/iheanyi/bandcamp-dl/archive/master.zip>`_
+2. ``cd`` to the project directory containing the ``setup.py``
+3. ``python setup.py install``
 
 Description
 ===========
@@ -40,6 +39,7 @@ Details
                      [--full-album]
                      (<url> | --artist=<artist> --album=<album>)
                      [--overwrite]
+                     [--no-art]
       bandcamp-dl.py (-h | --help)
       bandcamp-dl.py (--version)
 
@@ -56,6 +56,8 @@ Options
       --template=<template>  Output filename template.
                              [default: %{artist}/%{album}/%{track} - %{title}]
       --base-dir=<dir>       Base location of which all files are downloaded
+      -o --overwrite         Overwrite tracks that already exist. Default is False.
+      -n --no-art            Skip grabbing album art
 
 Filename Template
 =================
