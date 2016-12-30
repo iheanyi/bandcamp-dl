@@ -114,6 +114,6 @@ class Bandcamp:
 
         embedStringBlock = embedBlock[1]
         embedStringBlock = embedStringBlock.split("};")[0] + "};"
-        embedStringBlock = read_js_object("var EmbedData = {}".format(embedStringBlock))
+        embedStringBlock = read_js_object(u"var EmbedData = {}".format(embedStringBlock))
 
         return embedStringBlock
