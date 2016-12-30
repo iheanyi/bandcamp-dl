@@ -10,3 +10,9 @@ Version 0.0.5
 - [Bugfix] Fixed `#62 <https://github.com/iheanyi/bandcamp-dl/issues/62>`_.
 - [Dependency] Wgetter is no longer required.
 - [Dependency] Latest versions of dependencies now used.
+
+Version 0.0.6
+-------------
+- [Enhancement] Added the option to skip the downloading of album art.
+- [Enhancement] Individual track downloads work now.
+- [Bugfix] Fixed imports, now working when installed via pip.
