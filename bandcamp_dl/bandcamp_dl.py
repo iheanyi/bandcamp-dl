@@ -1,11 +1,12 @@
-"""
-bandcamp-dl
+"""bandcamp-dl
+
 Usage:
   bandcamp-dl.py <url>
   bandcamp-dl.py [--template=<template>] [--base-dir=<dir>]
                  [--full-album]
                  (<url> | --artist=<artist> --album=<album>)
                  [--overwrite]
+                 [--no-art]
   bandcamp-dl.py (-h | --help)
   bandcamp-dl.py (--version)
 
@@ -17,8 +18,9 @@ Options:
   -t --template=<template>  Output filename template.
                             [default: %{artist}/%{album}/%{track} - %{title}]
   -d --base-dir=<dir>       Base location of which all files are downloaded.
-  -f --full-album           Download only if all tracks are availiable.
-  -o --overwrite           Overwrite tracks that already exist. Default is False.
+  -f --full-album           Download only if all tracks are available.
+  -o --overwrite            Overwrite tracks that already exist. Default is False.
+  -n --no-art               Skip grabbing album art
 
 Coded by:
 
@@ -42,12 +44,12 @@ Iheanyi:
 
 import os
 from docopt import docopt
-from bandcamp import Bandcamp
-from bandcampdownloader import BandcampDownloader
+from .bandcamp import Bandcamp
+from .bandcampdownloader import BandcampDownloader
 
 
 def main():
-    arguments = docopt(__doc__, version='bandcamp-dl 0.0.5')
+    arguments = docopt(__doc__, version='bandcamp-dl 0.0.6')
     bandcamp = Bandcamp()
 
     if arguments['--artist'] and arguments['--album']:
@@ -55,7 +57,10 @@ def main():
     else:
         url = arguments['<url>']
 
-    album = bandcamp.parse(url)
+    if arguments['--no-art']:
+        album = bandcamp.parse(url, False)
+    else:
+        album = bandcamp.parse(url)
     basedir = arguments['--base-dir'] or os.getcwd()
 
     if not album:

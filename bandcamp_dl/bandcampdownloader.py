@@ -1,9 +1,8 @@
-
 import os
 import sys
 import requests
 from mutagen.mp3 import MP3
-from mutagen.id3._id3v1 import TIT2
+from mutagen.id3._frames import TIT2
 from mutagen.easyid3 import EasyID3
 from slugify import slugify
 
@@ -40,7 +39,6 @@ class BandcampDownloader:
         return directory
 
     def download_album(self, album):
-
         for track_index, track in enumerate(album['tracks']):
             track_meta = {
                 "artist": album['artist'],
@@ -49,6 +47,7 @@ class BandcampDownloader:
                 "track": track['track'],
                 "date": album['date']
             }
+
             print("Accessing track " + str(track_index + 1) + " of " + str(len(album['tracks'])))
 
             filename = self.template_to_path(track_meta)
@@ -96,13 +95,14 @@ class BandcampDownloader:
                 print(e)
                 print("Downloading failed..")
                 return False
-        try:
-            with open(dirname + "/cover.jpg", "wb") as f:
-                r = requests.get(album['art'], stream=True)
-                f.write(r.content)
-        except Exception as e:
-            print(e)
-            print("Couldn't download album art.")
+        if album['art']:
+            try:
+                with open(dirname + "/cover.jpg", "wb") as f:
+                    r = requests.get(album['art'], stream=True)
+                    f.write(r.content)
+            except Exception as e:
+                print(e)
+                print("Couldn't download album art.")
 
         return True
 
@@ -121,4 +121,5 @@ class BandcampDownloader:
         audio["date"] = meta['date']
         audio.save()
 
+        audio.save(filename)
         print("Done encoding . . .")
