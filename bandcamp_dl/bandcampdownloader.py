@@ -2,9 +2,7 @@ import os
 import sys
 import requests
 from mutagen.mp3 import MP3
-from mutagen.id3._id3v1 import TIT2
-from mutagen.id3 import ID3
-from mutagen.id3._frames import USLT
+from mutagen.id3._frames import TIT2
 from mutagen.easyid3 import EasyID3
 from slugify import slugify
 
@@ -41,7 +39,6 @@ class BandcampDownloader:
         return directory
 
     def download_album(self, album):
-
         for track_index, track in enumerate(album['tracks']):
             track_meta = {
                 "artist": album['artist'],
@@ -50,8 +47,6 @@ class BandcampDownloader:
                 "track": track['track'],
                 "date": album['date']
             }
-            if 'lyrics' in track.keys():
-                track_meta['lyrics'] = track['lyrics']
 
             print("Accessing track " + str(track_index + 1) + " of " + str(len(album['tracks'])))
 
@@ -100,13 +95,14 @@ class BandcampDownloader:
                 print(e)
                 print("Downloading failed..")
                 return False
-        try:
-            with open(dirname + "/cover.jpg", "wb") as f:
-                r = requests.get(album['art'], stream=True)
-                f.write(r.content)
-        except Exception as e:
-            print(e)
-            print("Couldn't download album art.")
+        if album['art']:
+            try:
+                with open(dirname + "/cover.jpg", "wb") as f:
+                    r = requests.get(album['art'], stream=True)
+                    f.write(r.content)
+            except Exception as e:
+                print(e)
+                print("Couldn't download album art.")
 
         return True
 
@@ -125,9 +121,5 @@ class BandcampDownloader:
         audio["date"] = meta['date']
         audio.save()
 
-        if 'lyrics' in meta.keys():
-            audio = ID3(filename)
-            audio[u"USLT::'eng'"] = (USLT(encoding=3, lang=u'eng', desc=u'', text=meta['lyrics']))
-            audio.save(filename)
-
+        audio.save(filename)
         print("Done encoding . . .")

@@ -4,11 +4,13 @@ from .jsobj import read_js_object
 
 
 class Bandcamp:
-    def parse(self, url):
+    def parse(self, url, no_art=True):
         try:
             r = requests.get(url)
         except requests.exceptions.MissingSchema:
             return None
+
+        self.no_art = no_art
 
         if r.status_code is not 200:
             return None
@@ -38,7 +40,8 @@ class Bandcamp:
             album['tracks'].append(track)
 
         album['full'] = self.all_tracks_available(album)
-        album['art'] = self.get_album_art()
+        if self.no_art:
+            album['art'] = self.get_album_art()
 
         return album
 
@@ -65,9 +68,6 @@ class Bandcamp:
         new_track['duration'] = track['duration']
         new_track['track'] = track['track_num']
         new_track['title'] = track['title']
-        if track['lyrics'] != 'null':
-            track['lyrics'] = track['lyrics'].encode(encoding='UTF-8', errors='ignore')
-            new_track['lyrics'] = track['lyrics'].replace('\\r\\n', '\n')
 
         return new_track
 
