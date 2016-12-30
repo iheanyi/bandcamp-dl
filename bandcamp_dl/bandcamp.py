@@ -81,7 +81,7 @@ class Bandcamp:
         stringBlock = block[1]
 
         stringBlock = stringBlock.split("};")[0] + "};"
-        stringBlock = read_js_object("var TralbumData = {}".format(stringBlock))
+        stringBlock = read_js_object(u"var TralbumData = {}".format(stringBlock))
 
         if 'album_title' not in embedData['EmbedData']:
             album['title'] = "Unknown Album"
