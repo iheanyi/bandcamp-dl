@@ -16,3 +16,4 @@ Version 0.0.6
 - [Enhancement] Added the option to skip the downloading of album art.
 - [Enhancement] Individual track downloads work now.
 - [Bugfix] Fixed imports, now working when installed via pip.
+- [Note] Last version to officially support Python 2.7.x
