@@ -17,3 +17,9 @@ Version 0.0.6
 - [Enhancement] Individual track downloads work now.
 - [Bugfix] Fixed imports, now working when installed via pip.
 - [Note] Last version to officially support Python 2.7.x
+
+Version 0.0.7
+-------------
+- [Dependency] Slimit is no longer required
+- [Dependency] Ply is no longer required
+- [Dependency] demjson is now required
