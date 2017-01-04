@@ -38,4 +38,3 @@ nosetests.xml
 .pydevproject
 *.iml
 *.xml
-bandcamp_dl/asyncdownloader.py

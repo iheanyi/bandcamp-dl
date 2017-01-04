@@ -9,14 +9,6 @@ from slugify import slugify
 
 class BandcampDownloader:
     def __init__(self, urls=None, template=None, directory=None, overwrite=False):
-        """
-        Initialization function
-
-        :param urls: list of urls
-        :param template: filename template
-        :param directory: download location
-        :param overwrite: if True overwrite existing files
-        """
         if type(urls) is str:
             self.urls = [urls]
 
@@ -25,22 +17,11 @@ class BandcampDownloader:
         self.directory = directory
         self.overwrite = overwrite
 
-    def start(self, album: dict):
-        """
-        Start album download process
-
-        :param album: album dict
-        """
+    def start(self, album):
         print("Starting download process.")
         self.download_album(album)
 
-    def template_to_path(self, track: dict) -> str:
-        """
-        Create valid filepath based on track metadata
-
-        :param track: track metadata
-        :return: filepath
-        """
+    def template_to_path(self, track):
         path = self.template
         path = path.replace("%{artist}", slugify(track['artist']))
         path = path.replace("%{album}", slugify(track['album']))
@@ -50,27 +31,14 @@ class BandcampDownloader:
 
         return path
 
-    @staticmethod
-    def create_directory(filename: str) -> str:
-        """
-        Create directory based on filename if it doesn't exist
-
-        :param filename: full filename
-        :return: directory path
-        """
+    def create_directory(self, filename):
         directory = os.path.dirname(filename)
         if not os.path.exists(directory):
             os.makedirs(directory)
 
         return directory
 
-    def download_album(self, album: dict) -> bool:
-        """
-        Download all MP3 files in the album
-
-        :param album: album dict
-        :return: True if successful
-        """
+    def download_album(self, album):
         for track_index, track in enumerate(album['tracks']):
             track_meta = {
                 "artist": album['artist'],
@@ -85,16 +53,29 @@ class BandcampDownloader:
             filename = self.template_to_path(track_meta)
             dirname = self.create_directory(filename)
 
-            if not track['url']:
+            if not track.get('url'):
                 print("Skipping track {0} - {1} as it is not available"
                       .format(track['track'], track['title']))
                 continue
 
             try:
                 track_url = track['url']
+                # Check and see if HTTP is in the track_url
+                if 'http' not in track_url:
+                    track_url = 'http:{}'.format(track_url)
 
                 r = requests.get(track_url, stream=True)
                 file_length = r.headers.get('content-length')
+
+                if not self.overwrite and os.path.isfile(filename):
+                    file_size = os.path.getsize(filename) - 128
+                    if int(file_size) != int(file_length):
+                        print(filename + " is incomplete, redownloading.")
+                        os.remove(filename)
+                    else:
+                        print("Skipping track {0} - {1} as it's already downloaded, use --overwrite to overwrite existing files"
+                            .format(track['track'], track['title']))
+                        continue
 
                 with open(filename, "wb") as f:
                     print("Downloading: " + filename[:-4])
@@ -125,14 +106,7 @@ class BandcampDownloader:
 
         return True
 
-    @staticmethod
-    def write_id3_tags(filename: str, meta: dict):
-        """
-        Write metadata to the MP3 file
-
-        :param filename: name of mp3 file
-        :param meta: dict of track metadata
-        """
+    def write_id3_tags(self, filename, meta):
         print("\nEncoding . . .")
 
         audio = MP3(filename)

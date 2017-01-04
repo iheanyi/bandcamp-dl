@@ -1,120 +1,119 @@
-from .bandcampjson import BandcampJSON
 from bs4 import BeautifulSoup
-from bs4 import FeatureNotFound
 import requests
-import json
+from .jsobj import read_js_object
 
 
 class Bandcamp:
-    def parse(self, url: str, art: bool=True) -> dict or None:
-        """
-        Requests the page, cherry picks album info
-
-        :param url: album/track url
-        :param art: if True download album art
-        :return: album metadata
-        """
+    def parse(self, url, no_art=True):
         try:
             r = requests.get(url)
         except requests.exceptions.MissingSchema:
             return None
 
+        self.no_art = no_art
+
+        if r.status_code is not 200:
+            return None
+
         try:
             self.soup = BeautifulSoup(r.text, "lxml")
-        except FeatureNotFound:
+        except:
             self.soup = BeautifulSoup(r.text, "html.parser")
-
-        self.generate_album_json()
-        self.tracks = self.tralbum_data_json['trackinfo']
 
         album = {
             "tracks": [],
-            "title": self.embed_data_json['album_title'],
-            "artist": self.embed_data_json['artist'],
+            "title": "",
+            "artist": "",
             "full": False,
             "art": "",
-            "date": self.tralbum_data_json['album_release_date']
+            "date": ""
         }
 
-        for track in self.tracks:
-            track = self.get_track_metadata(track)
+        album_meta = self.extract_album_meta_data(r)
+
+        album['artist'] = album_meta['artist']
+        album['title'] = album_meta['title']
+        album['date'] = album_meta['date']
+
+        for track in album_meta['tracks']:
+            track = self.get_track_meta_data(track)
             album['tracks'].append(track)
 
-        album['full'] = self.all_tracks_available()
-        if art:
+        album['full'] = self.all_tracks_available(album)
+        if self.no_art:
             album['art'] = self.get_album_art()
 
         return album
 
-    def all_tracks_available(self) -> bool:
-        """
-        Verify that all tracks have a url
-
-        :return: True if all urls accounted for
-        """
-        for track in self.tracks:
-            if track['file']['mp3-128'] is None:
+    def all_tracks_available(self, album):
+        for track in album['tracks']:
+            if track['url'] is None:
                 return False
+
         return True
 
+    def is_basestring(self, obj):
+        if isinstance(obj, str) or isinstance(obj, bytes) or isinstance(obj, bytearray):
+            return True
+        return False
+
+    def get_track_meta_data(self, track):
+        new_track = {}
+        if not self.is_basestring(track['file']):
+            if 'mp3-128' in track['file']:
+                new_track['url'] = track['file']['mp3-128']
+        else:
+            new_track['url'] = None
+
+        new_track['duration'] = track['duration']
+        new_track['track'] = track['track_num']
+        new_track['title'] = track['title']
+
+        return new_track
+
+    def extract_album_meta_data(self, request):
+        album = {}
+
+        embedData = self.get_embed_string_block(request)
+
+        block = request.text.split("var TralbumData = ")
+
+        stringBlock = block[1]
+
+        stringBlock = stringBlock.split("};")[0] + "};"
+        stringBlock = read_js_object(u"var TralbumData = {}".format(stringBlock))
+
+        if 'album_title' not in embedData['EmbedData']:
+            album['title'] = "Unknown Album"
+        else:
+            album['title'] = embedData['EmbedData']['album_title']
+
+        album['artist'] = stringBlock['TralbumData']['artist']
+        album['tracks'] = stringBlock['TralbumData']['trackinfo']
+
+        if stringBlock['TralbumData']['album_release_date'] == "null":
+            album['date'] = ""
+        else:
+            album['date'] = stringBlock['TralbumData']['album_release_date'].split()[2]
+
+        return album
+
     @staticmethod
-    def get_track_metadata(track: dict) -> dict:
-        """
-        Extract individual track metadata
-
-        :param track: track dict
-        :return: track metadata dict
-        """
-        track_metadata = {
-            "duration": track['duration'],
-            "track": str(track['track_num']),
-            "title": track['title'],
-            "url": None
-        }
-
-        if 'mp3-128' in track['file']:
-            track_metadata['url'] = "http:" + track['file']['mp3-128']
-        return track_metadata
-
-    def generate_album_json(self):
-        """
-        Retrieve JavaScript dictionaries from page and generate JSON
-
-        :return: True if successful
-        """
-        try:
-            embed = BandcampJSON(self.soup, "EmbedData")
-            tralbum = BandcampJSON(self.soup, "TralbumData")
-
-            embed_data = embed.js_to_json()
-            tralbum_data = tralbum.js_to_json()
-
-            self.embed_data_json = json.loads(embed_data)
-            self.tralbum_data_json = json.loads(tralbum_data)
-        except Exception as e:
-            print(e)
-            return None
-        return True
-
-    @staticmethod
-    def generate_album_url(artist: str, album: str) -> str:
-        """
-        Generate an album url based on the artist and album name
-
-        :param artist: artist name
-        :param album: album name
-        :return: album url as str
-        """
+    def generate_album_url(artist, album):
         return "http://{0}.bandcamp.com/album/{1}".format(artist, album)
 
-    def get_album_art(self) -> str:
-        """
-        Find and retrieve album art url from page
-
-        :return: url as str
-        """
+    def get_album_art(self):
         try:
             url = self.soup.find(id='tralbumArt').find_all('img')[0]['src']
             return url
-        except None:
+        except:
             pass
+
+    def get_embed_string_block(self, request):
+        embedBlock = request.text.split("var EmbedData = ")
+
+        embedStringBlock = embedBlock[1]
+        embedStringBlock = embedStringBlock.split("};")[0] + "};"
+        embedStringBlock = read_js_object(u"var EmbedData = {}".format(embedStringBlock))
+
+        return embedStringBlock

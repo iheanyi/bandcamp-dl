@@ -1,6 +1,7 @@
 beautifulsoup4==4.5.1
-demjson==2.2.4
 docopt==0.6.2
 mutagen==1.35.1
+ply==3.9
 requests==2.12.4
+slimit==0.8.1
 unicode-slugify==0.1.3

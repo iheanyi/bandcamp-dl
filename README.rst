@@ -24,7 +24,7 @@ Description
 ===========
 
 bandcamp-dl is a small command-line app to download audio from
-BandCamp.com. It requires the Python interpreter, version 3.5.x and is
+BandCamp.com. It requires the Python interpreter, version 2.7.x - 3.5.x and is
 not platform specific. It is released to the public domain, which means
 you can modify it, redistribute it or use it how ever you like.
 
@@ -209,11 +209,14 @@ related to bandcamp-dl, by all means, go ahead and report the bug.
 Dependencies
 ============
 
--  `BeautifulSoup <https://pypi.python.org/pypi/beautifulsoup4>`_ - HTML Parsing
--  `Demjson <https://pypi.python.org/pypi/demjson>`_- JavaScript dict to JSON conversion
+-  `BeautifulSoup <https://pypi.python.org/pypi/beautifulsoup4>`_ -
+   HTML Parsing
 -  `Mutagen <https://pypi.python.org/pypi/mutagen>`_ - ID3 Encoding
--  `Requests <https://pypi.python.org/pypi/requests>`_ - for retriving the HTML
--  `Unicode-Slugify <https://pypi.python.org/pypi/unicode-slugify>`_ - A slug generator that turns strings into unicode slugs.
+-  `Requests <https://pypi.python.org/pypi/requests>`_ - for retriving
+   the HTML
+-  `Slimit <https://pypi.python.org/pypi/slimit>`_ - Javascript parsing
+-  `Unicode-Slugify <https://pypi.python.org/pypi/unicode-slugify>`_ -
+   A slug generator that turns strings into unicode slugs.
 
 Copyright
 =========
