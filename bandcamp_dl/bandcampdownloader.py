@@ -31,8 +31,16 @@ class BandcampDownloader:
 
         :param album: album dict
         """
-        print("Starting download process.")
-        self.download_album(album)
+        if album['full'] is not True:
+            choice = input("Track list incomplete, some tracks may be private, download anyway?: ").lower()
+            if choice == "yes" or choice == "y":
+                print("Starting download process.")
+                self.download_album(album)
+            else:
+                print("Cancelling download process.")
+                return None
+        else:
+            self.download_album(album)
 
     def template_to_path(self, track: dict) -> str:
         """
@@ -82,38 +90,58 @@ class BandcampDownloader:
 
             print("Accessing track " + str(track_index + 1) + " of " + str(len(album['tracks'])))
 
-            filename = self.template_to_path(track_meta)
-            dirname = self.create_directory(filename)
+            filepath = self.template_to_path(track_meta) + ".tmp"
+            filename = filepath.rsplit('/', 1)[1]
+            dirname = self.create_directory(filepath)
 
-            if not track['url']:
-                print("Skipping track {0} - {1} as it is not available"
-                      .format(track['track'], track['title']))
-                continue
+            attempts = 0
+            skip = False
 
-            try:
-                track_url = track['url']
-
-                r = requests.get(track_url, stream=True)
-                file_length = r.headers.get('content-length')
-
-                with open(filename, "wb") as f:
-                    print("Downloading: " + filename[:-4])
-                    if file_length is None:
-                        f.write(r.content)
-                    else:
+            while True:
+                try:
+                    r = requests.get(track['url'], stream=True)
+                    file_length = int(r.headers['content-length'])
+                    total = int(file_length/100)
+                    # If file exists and is still a tmp file skip downloading and encode
+                    if os.path.exists(filepath):
+                        self.write_id3_tags(filepath, track_meta)
+                        # Set skip to True so that we don't try encoding again
+                        skip = True
+                        # break out of the try/except and move on to the next file
+                        break
+                    elif os.path.exists(filepath[:-4]) and self.overwrite is not True:
+                        print("File: {} already exists and is complete, skipping..".format(filename))
+                        skip = True
+                        break
+                    with open(filepath, "wb") as f:
+                        print("Downloading: " + filename[:-8])
                         dl = 0
-                        total_length = int(file_length)
-                        for data in r.iter_content(chunk_size=int(total_length/100)):
+                        for data in r.iter_content(chunk_size=total):
                             dl += len(data)
                             f.write(data)
-                            done = int(50 * dl / total_length)
-                            sys.stdout.write("\r[%s%s]" % ('=' * done, ' ' * (50 - done)))
+                            done = int(50 * dl / file_length)
+                            sys.stdout.write("\r[{}{}]".format('=' * done, ' ' * (50 - done)))
                             sys.stdout.flush()
-                self.write_id3_tags(filename, track_meta)
-            except Exception as e:
-                print(e)
-                print("Downloading failed..")
-                return False
+                    local_size = os.path.getsize(filepath)
+                    # if the local filesize before encoding doesn't match the remote filesize redownload
+                    if local_size != file_length and attempts != 3:
+                        print("{} is incomplete, retrying..".format(filename))
+                        continue
+                    # if the maximum number of retry attempts is reached give up and move on
+                    elif attempts == 3:
+                        print("Maximum retries reached.. skipping.")
+                        # Clean up incomplete file
+                        os.remove(filepath)
+                        break
+                    # if all is well continue the download process for the rest of the tracks
+                    else:
+                        break
+                except Exception as e:
+                    print(e)
+                    print("Downloading failed..")
+                    return False
+            if skip is not True:
+                self.write_id3_tags(filepath, track_meta)
         if album['art']:
             try:
                 with open(dirname + "/cover.jpg", "wb") as f:
@@ -123,6 +151,8 @@ class BandcampDownloader:
                 print(e)
                 print("Couldn't download album art.")
 
+        if os.path.isfile("not.finished"):
+            os.remove("not.finished")
         return True
 
     @staticmethod
@@ -147,5 +177,6 @@ class BandcampDownloader:
         audio["date"] = meta['date']
         audio.save()
 
-        audio.save(filename)
+        audio.save(filename[:-4])
+        os.remove(filename)
         print("Done encoding . . .")
