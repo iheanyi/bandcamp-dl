@@ -14,13 +14,15 @@ Workflow
   Please submit as many fixes for typos and grammar bloopers as you can!
 - Try to limit each pull request to *one* change only.
 - Once you've addressed review feedback, make sure to bump the pull request with a short note.
-  Maintainers don’t receive notifications when you push new commits.
 
 
 Code
 ----
 
-- Try to adhere to PEP8 as best you can (Yes some lines will simply be too long, its ok.)
+- Try to adhere to PEP8 as best you can.
+- Annotate functions
+- Specify return types
+- Add docstrings
 
 *****
 
