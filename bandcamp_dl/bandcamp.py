@@ -37,8 +37,9 @@ class Bandcamp:
         }
 
         for track in self.tracks:
-            track = self.get_track_metadata(track)
-            album['tracks'].append(track)
+            if track['file'] is not None:
+                track = self.get_track_metadata(track)
+                album['tracks'].append(track)
 
         album['full'] = self.all_tracks_available()
         if art:
@@ -53,12 +54,12 @@ class Bandcamp:
         :return: True if all urls accounted for
         """
         for track in self.tracks:
-            if track['file']['mp3-128'] is None:
+            if track['file'] is None:
                 return False
         return True
 
     @staticmethod
-    def get_track_metadata(track: dict) -> dict:
+    def get_track_metadata(track: dict or None) -> dict:
         """
         Extract individual track metadata
 
@@ -74,6 +75,8 @@ class Bandcamp:
 
         if 'mp3-128' in track['file']:
             track_metadata['url'] = "http:" + track['file']['mp3-128']
+        else:
+            track_metadata['url'] = None
         return track_metadata
 
     def generate_album_json(self):
