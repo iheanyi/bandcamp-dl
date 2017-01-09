@@ -88,7 +88,8 @@ class BandcampDownloader:
                 "date": album['date']
             }
 
-            print("Accessing track " + str(track_index + 1) + " of " + str(len(album['tracks'])))
+            self.num_tracks = len(album['tracks'])
+            self.track_num = track_index + 1
 
             filepath = self.template_to_path(track_meta) + ".tmp"
             filename = filepath.rsplit('/', 1)[1]
@@ -110,17 +111,16 @@ class BandcampDownloader:
                         # break out of the try/except and move on to the next file
                         break
                     elif os.path.exists(filepath[:-4]) and self.overwrite is not True:
-                        print("File: {} already exists and is complete, skipping..".format(filename))
+                        print("File: {} already exists and is complete, skipping..".format(filename[:-4]))
                         skip = True
                         break
                     with open(filepath, "wb") as f:
-                        print("Downloading: " + filename[:-8])
                         dl = 0
                         for data in r.iter_content(chunk_size=total):
                             dl += len(data)
                             f.write(data)
                             done = int(50 * dl / file_length)
-                            sys.stdout.write("\r[{}{}]".format('=' * done, ' ' * (50 - done)))
+                            sys.stdout.write("\r({}/{}) [{}{}] :: Downloading: {}".format(self.track_num, self.num_tracks, "=" * done, " " * (50 - done), filename[:-8]))
                             sys.stdout.flush()
                     local_size = os.path.getsize(filepath)
                     # if the local filesize before encoding doesn't match the remote filesize redownload
@@ -155,21 +155,23 @@ class BandcampDownloader:
             os.remove("not.finished")
         return True
 
-    @staticmethod
-    def write_id3_tags(filename: str, meta: dict):
+    def write_id3_tags(self, filepath: str, meta: dict):
         """
         Write metadata to the MP3 file
 
-        :param filename: name of mp3 file
+        :param filepath: name of mp3 file
         :param meta: dict of track metadata
         """
-        print("\nEncoding . . .")
+        filename = filepath.rsplit('/', 1)[1][:-8]
 
-        audio = MP3(filename)
+        sys.stdout.flush()
+        sys.stdout.write("\r({}/{}) [{}] :: Encoding: {}".format(self.track_num, self.num_tracks, "=" * 50, filename))
+
+        audio = MP3(filepath)
         audio["TIT2"] = TIT2(encoding=3, text=["title"])
         audio.save(filename=None, v1=2)
 
-        audio = EasyID3(filename)
+        audio = EasyID3(filepath)
         audio["tracknumber"] = meta['track']
         audio["title"] = meta['title']
         audio["artist"] = meta['artist']
@@ -177,6 +179,7 @@ class BandcampDownloader:
         audio["date"] = meta['date']
         audio.save()
 
-        audio.save(filename[:-4])
-        os.remove(filename)
-        print("Done encoding . . .")
+        audio.save(filepath[:-4])
+        os.remove(filepath)
+
+        sys.stdout.write("\r({}/{}) [{}] :: Finished: {}".format(self.track_num, self.num_tracks, "=" * 50, filename))
