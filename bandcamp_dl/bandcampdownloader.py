@@ -53,7 +53,7 @@ class BandcampDownloader:
         path = path.replace("%{title}", slugify(track['title']))
         path = u"{0}/{1}.{2}".format(self.directory, path, "mp3")
 
-        return path
+        return path.encode('utf-8')
 
     @staticmethod
     def create_directory(filename: str) -> str:
