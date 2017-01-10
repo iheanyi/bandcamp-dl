@@ -46,8 +46,8 @@ Iheanyi:
 import os
 import ast
 from docopt import docopt
-from bandcamp import Bandcamp
-from bandcampdownloader import BandcampDownloader
+from .bandcamp import Bandcamp
+from .bandcampdownloader import BandcampDownloader
 
 
 def main():
@@ -86,4 +86,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

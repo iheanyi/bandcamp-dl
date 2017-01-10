@@ -20,6 +20,11 @@ Version 0.0.6
 
 Version 0.0.7
 -------------
-- [Dependency] Slimit is no longer required
-- [Dependency] Ply is no longer required
-- [Dependency] demjson is now required
+- [Enhancement] Will now resume if it finds a valid ``not.finished`` file.
+- [Enhancement] Interrupting downloads is safe, they will resume on next run.
+- [Enhancement] Interrupting encoding is safe, it will finish on next run.
+- [Enhancement] CLI output is now much neater.
+- [Bugfix] Partial albums (some previews disabled) will now download properly.
+- [Dependency] Slimit is no longer required.
+- [Dependency] Ply is no longer required.
+- [Dependency] demjson is now required.

@@ -1,4 +1,4 @@
-from bandcampjson import BandcampJSON
+from .bandcampjson import BandcampJSON
 from bs4 import BeautifulSoup
 from bs4 import FeatureNotFound
 import requests
@@ -7,8 +7,7 @@ import json
 
 class Bandcamp:
     def parse(self, url: str, art: bool=True) -> dict or None:
-        """
-        Requests the page, cherry picks album info
+        """Requests the page, cherry picks album info
 
         :param url: album/track url
         :param art: if True download album art
@@ -47,9 +46,9 @@ class Bandcamp:
 
         return album
 
+    # Possibly redundant now, we skip unavailable tracks.
     def all_tracks_available(self) -> bool:
-        """
-        Verify that all tracks have a url
+        """Verify that all tracks have a url
 
         :return: True if all urls accounted for
         """
@@ -60,8 +59,7 @@ class Bandcamp:
 
     @staticmethod
     def get_track_metadata(track: dict or None) -> dict:
-        """
-        Extract individual track metadata
+        """Extract individual track metadata
 
         :param track: track dict
         :return: track metadata dict
@@ -80,8 +78,7 @@ class Bandcamp:
         return track_metadata
 
     def generate_album_json(self):
-        """
-        Retrieve JavaScript dictionaries from page and generate JSON
+        """Retrieve JavaScript dictionaries from page and generate JSON
 
         :return: True if successful
         """
@@ -101,8 +98,7 @@ class Bandcamp:
 
     @staticmethod
     def generate_album_url(artist: str, album: str) -> str:
-        """
-        Generate an album url based on the artist and album name
+        """Generate an album url based on the artist and album name
 
         :param artist: artist name
         :param album: album name
@@ -111,8 +107,7 @@ class Bandcamp:
         return "http://{0}.bandcamp.com/album/{1}".format(artist, album)
 
     def get_album_art(self) -> str:
-        """
-        Find and retrieve album art url from page
+        """Find and retrieve album art url from page
 
         :return: url as str
         """

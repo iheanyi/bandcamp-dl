@@ -1,5 +1,5 @@
-include README.rst AUTHORS.rst CHANGELOG.rst CONTRIBUTING.rst LICENSE *.txt
-exclude *.mp3 .gitignore yacctab.py lextab.py
+include README.rst AUTHORS.rst CHANGELOG.rst LICENSE
+exclude *.mp3 .gitignore .travis.yml setup.cfg
 
 global-exclude *.pyc
 global-exclude *.DS_STORE

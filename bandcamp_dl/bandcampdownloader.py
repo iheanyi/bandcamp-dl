@@ -9,8 +9,7 @@ from slugify import slugify
 
 class BandcampDownloader:
     def __init__(self, urls=None, template=None, directory=None, overwrite=False):
-        """
-        Initialization function
+        """Initialize variables we will need throughout the Class
 
         :param urls: list of urls
         :param template: filename template
@@ -26,13 +25,12 @@ class BandcampDownloader:
         self.overwrite = overwrite
 
     def start(self, album: dict):
-        """
-        Start album download process
+        """Start album download process
 
         :param album: album dict
         """
         if album['full'] is not True:
-            choice = input("Track list incomplete, some tracks may be private, download anyway?: ").lower()
+            choice = input("Track list incomplete, some tracks may be private, download anyway? (yes/no): ").lower()
             if choice == "yes" or choice == "y":
                 print("Starting download process.")
                 self.download_album(album)
@@ -43,8 +41,7 @@ class BandcampDownloader:
             self.download_album(album)
 
     def template_to_path(self, track: dict) -> str:
-        """
-        Create valid filepath based on track metadata
+        """Create valid filepath based on template
 
         :param track: track metadata
         :return: filepath
@@ -60,8 +57,7 @@ class BandcampDownloader:
 
     @staticmethod
     def create_directory(filename: str) -> str:
-        """
-        Create directory based on filename if it doesn't exist
+        """Create directory based on filename if it doesn't exist
 
         :param filename: full filename
         :return: directory path
@@ -73,8 +69,7 @@ class BandcampDownloader:
         return directory
 
     def download_album(self, album: dict) -> bool:
-        """
-        Download all MP3 files in the album
+        """Download all MP3 files in the album
 
         :param album: album dict
         :return: True if successful
@@ -156,8 +151,7 @@ class BandcampDownloader:
         return True
 
     def write_id3_tags(self, filepath: str, meta: dict):
-        """
-        Write metadata to the MP3 file
+        """Write metadata to the MP3 file
 
         :param filepath: name of mp3 file
         :param meta: dict of track metadata

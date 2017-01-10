@@ -9,8 +9,7 @@ class BandcampJSON:
         self.js_data = js_data
 
     def get_js(self) -> str:
-        """
-        Get <script> element containing the data we need and return the raw JS
+        """Get <script> element containing the data we need and return the raw JS
 
         :return js_data: Raw JS as str
         """
@@ -18,8 +17,7 @@ class BandcampJSON:
         return self.js_data
 
     def extract_data(self, js: str) -> str:
-        """
-        Extract values from JS dictionary
+        """Extract values from JS dictionary
 
         :param js: Raw JS
         :return: Contents of dictionary as str
@@ -28,8 +26,7 @@ class BandcampJSON:
         return self.js_data
 
     def js_to_json(self) -> str:
-        """
-        Convert JavaScript dictionary to JSON
+        """Convert JavaScript dictionary to JSON
 
         :return: JSON as str
         """
