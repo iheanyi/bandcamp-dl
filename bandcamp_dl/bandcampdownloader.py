@@ -139,7 +139,7 @@ class BandcampDownloader:
                 self.write_id3_tags(filepath, track_meta)
         if album['art']:
             try:
-                with open(dirname + "/cover.jpg", "wb") as f:
+                with open("{}/cover.jpg".format(dirname), "wb") as f:
                     r = requests.get(album['art'], stream=True)
                     f.write(r.content)
             except Exception as e:
