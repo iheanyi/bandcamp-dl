@@ -16,6 +16,9 @@ class BandcampDownloader:
         :param directory: download location
         :param overwrite: if True overwrite existing files
         """
+        self.headers = {'user_agent': 'bandcamp-dl/0.0.7-02 (https://github.com/iheanyi/bandcamp-dl)'}
+        self.session = requests.Session()
+
         if type(urls) is str:
             self.urls = [urls]
 
@@ -95,7 +98,7 @@ class BandcampDownloader:
 
             while True:
                 try:
-                    r = requests.get(track['url'], stream=True)
+                    r = self.session.get(track['url'], headers=self.headers, stream=True)
                     file_length = int(r.headers['content-length'])
                     total = int(file_length/100)
                     # If file exists and is still a tmp file skip downloading and encode
@@ -110,13 +113,16 @@ class BandcampDownloader:
                         skip = True
                         break
                     with open(filepath, "wb") as f:
-                        dl = 0
-                        for data in r.iter_content(chunk_size=total):
-                            dl += len(data)
-                            f.write(data)
-                            done = int(50 * dl / file_length)
-                            sys.stdout.write("\r({}/{}) [{}{}] :: Downloading: {}".format(self.track_num, self.num_tracks, "=" * done, " " * (50 - done), filename[:-8]))
-                            sys.stdout.flush()
+                        if file_length is None:
+                            f.write(r.content)
+                        else:
+                            dl = 0
+                            for data in r.iter_content(chunk_size=total):
+                                dl += len(data)
+                                f.write(data)
+                                done = int(50 * dl / file_length)
+                                sys.stdout.write("\r({}/{}) [{}{}] :: Downloading: {}".format(self.track_num, self.num_tracks, "=" * done, " " * (50 - done), filename[:-8]))
+                                sys.stdout.flush()
                     local_size = os.path.getsize(filepath)
                     # if the local filesize before encoding doesn't match the remote filesize redownload
                     if local_size != file_length and attempts != 3:
@@ -140,7 +146,7 @@ class BandcampDownloader:
         if album['art']:
             try:
                 with open(dirname + "/cover.jpg", "wb") as f:
-                    r = requests.get(album['art'], stream=True)
+                    r = self.session.get(album['art'])
                     f.write(r.content)
             except Exception as e:
                 print(e)
@@ -173,7 +179,6 @@ class BandcampDownloader:
         audio["date"] = meta['date']
         audio.save()
 
-        audio.save(filepath[:-4])
-        os.remove(filepath)
+        os.rename(filepath, filepath[:-4])
 
         sys.stdout.write("\r({}/{}) [{}] :: Finished: {}".format(self.track_num, self.num_tracks, "=" * 50, filename))
