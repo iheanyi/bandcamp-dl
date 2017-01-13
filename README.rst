@@ -11,7 +11,14 @@ Installation
 From PyPI
 ---------
 
-pip install bandcamp-downloader
+``pip install bandcamp-downloader``
+
+From Wheel
+----------
+
+1. Download the wheel (``.whl``) from PyPI or the Releases page
+2. ``cd`` to the directory containing the ``.whl`` file
+2. ``pip install <filename>.whl``
 
 From Source
 -----------
@@ -24,7 +31,7 @@ Description
 ===========
 
 bandcamp-dl is a small command-line app to download audio from
-BandCamp.com. It requires the Python interpreter, version 2.7.12+ - 3.5.2+ and is
+BandCamp.com. It requires the Python interpreter, version 3.5+ and is
 not platform specific. It is released to the public domain, which means
 you can modify it, redistribute it or use it how ever you like.
 
@@ -77,9 +84,9 @@ The default template is: ``%{artist}/%{album}/%{track} - %{title}``.
 Bugs
 ====
 
-Bugs should be reported `here <https://github.com/iheanyi/bandcamp-dl/issues>`_. Please include
-the full output of the command when run with ``--verbose``. The output
-(including the first lines) contain important debugging information.
+Bugs should be reported `here <https://github.com/iheanyi/bandcamp-dl/issues>`_.
+Please include the full output of the command when run with ``--verbose``.
+The output (including the first lines) contain important debugging information.
 Issues without the full output are often not reproducible and therefore
 do not get solved in short order, if ever.
 
@@ -87,38 +94,6 @@ For discussions, join us in `Discord <https://discord.gg/nwdT4MP>`_.
 
 When you submit a request, please re-read it once to avoid a couple of
 mistakes (you can and should use this as a checklist):
-
-Is the description of the issue itself sufficient?
-==================================================
-
-We often get issue reports that we cannot really decipher. While in most
-cases we eventually get the required information after asking back
-multiple times, this poses an unnecessary drain on our resources. Many
-contributors, including myself, are also not native speakers, so we may
-misread some parts.
-
-So please elaborate on what feature you are requesting, or what bug you
-want to be fixed. Make sure that it's obvious
-
--  What the problem is
--  How it could be fixed
--  How your proposed solution would look like
-
-If your report is shorter than two lines, it is almost certainly missing
-some of these, which makes it hard for us to respond to it. We're often
-too polite to close the issue outright, but the missing info makes
-misinterpretation likely. As a commiter myself, I often get frustrated
-by these issues, since the only possible way for me to move forward on
-them is to ask for clarification over and over.
-
-For bug reports, this means that your report should contain the
-*complete* output of bandcamp-dl when called with the ``-v`` flag. The
-error message you get for (most) bugs even says so, but you would not
-believe how many of our bug reports do not contain this information.
-
-Site support requests **must contain an example URL**. An example URL is
-a URL you might want to download, like
-``lifeformed.bandcamp.com/album/fastfall``.
 
 Are you using the latest version?
 =================================
@@ -209,14 +184,11 @@ related to bandcamp-dl, by all means, go ahead and report the bug.
 Dependencies
 ============
 
--  `BeautifulSoup <https://pypi.python.org/pypi/beautifulsoup4>`_ -
-   HTML Parsing
+-  `BeautifulSoup <https://pypi.python.org/pypi/beautifulsoup4>`_ - HTML Parsing
+-  `Demjson <https://pypi.python.org/pypi/demjson>`_- JavaScript dict to JSON conversion
 -  `Mutagen <https://pypi.python.org/pypi/mutagen>`_ - ID3 Encoding
--  `Requests <https://pypi.python.org/pypi/requests>`_ - for retriving
-   the HTML
--  `Slimit <https://pypi.python.org/pypi/slimit>`_ - Javascript parsing
--  `Unicode-Slugify <https://pypi.python.org/pypi/unicode-slugify>`_ -
-   A slug generator that turns strings into unicode slugs.
+-  `Requests <https://pypi.python.org/pypi/requests>`_ - for retriving the HTML
+-  `Unicode-Slugify <https://pypi.python.org/pypi/unicode-slugify>`_ - A slug generator that turns strings into unicode slugs.
 
 Copyright
 =========

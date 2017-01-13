@@ -9,6 +9,13 @@ from slugify import slugify
 
 class BandcampDownloader:
     def __init__(self, urls=None, template=None, directory=None, overwrite=False):
+        """Initialize variables we will need throughout the Class
+
+        :param urls: list of urls
+        :param template: filename template
+        :param directory: download location
+        :param overwrite: if True overwrite existing files
+        """
         if type(urls) is str:
             self.urls = [urls]
 
@@ -17,11 +24,28 @@ class BandcampDownloader:
         self.directory = directory
         self.overwrite = overwrite
 
-    def start(self, album):
-        print("Starting download process.")
-        self.download_album(album)
+    def start(self, album: dict):
+        """Start album download process
 
-    def template_to_path(self, track):
+        :param album: album dict
+        """
+        if album['full'] is not True:
+            choice = input("Track list incomplete, some tracks may be private, download anyway? (yes/no): ").lower()
+            if choice == "yes" or choice == "y":
+                print("Starting download process.")
+                self.download_album(album)
+            else:
+                print("Cancelling download process.")
+                return None
+        else:
+            self.download_album(album)
+
+    def template_to_path(self, track: dict) -> str:
+        """Create valid filepath based on template
+
+        :param track: track metadata
+        :return: filepath
+        """
         path = self.template
         path = path.replace("%{artist}", slugify(track['artist']))
         path = path.replace("%{album}", slugify(track['album']))
@@ -32,14 +56,24 @@ class BandcampDownloader:
         return path.encode('utf-8')
 
     @staticmethod
-    def create_directory(filename):
+    def create_directory(filename: str) -> str:
+        """Create directory based on filename if it doesn't exist
+
+        :param filename: full filename
+        :return: directory path
+        """
         directory = os.path.dirname(filename)
         if not os.path.exists(directory):
             os.makedirs(directory)
 
         return directory
 
-    def download_album(self, album):
+    def download_album(self, album: dict) -> bool:
+        """Download all MP3 files in the album
+
+        :param album: album dict
+        :return: True if successful
+        """
         for track_index, track in enumerate(album['tracks']):
             track_meta = {
                 "artist": album['artist'],
@@ -49,53 +83,60 @@ class BandcampDownloader:
                 "date": album['date']
             }
 
-            print("Accessing track " + str(track_index + 1) + " of " + str(len(album['tracks'])))
+            self.num_tracks = len(album['tracks'])
+            self.track_num = track_index + 1
 
-            filename = self.template_to_path(track_meta).decode()
-            dirname = self.create_directory(filename)
+            filepath = self.template_to_path(track_meta) + ".tmp"
+            filename = filepath.rsplit('/', 1)[1]
+            dirname = self.create_directory(filepath)
 
-            if not track.get('url'):
-                print("Skipping track {0} - {1} as it is not available"
-                      .format(track['track'], track['title']))
-                continue
+            attempts = 0
+            skip = False
 
-            try:
-                track_url = track['url']
-                # Check and see if HTTP is in the track_url
-                if 'http' not in track_url:
-                    track_url = 'http:{}'.format(track_url)
-
-                r = requests.get(track_url, stream=True)
-                file_length = r.headers.get('content-length')
-
-                if not self.overwrite and os.path.isfile(filename):
-                    file_size = os.path.getsize(filename) - 128
-                    if int(file_size) != int(file_length):
-                        print("{} is incomplete, redownloading.".format(filename))
-                        os.remove(filename)
-                    else:
-                        print("Skipping track {0} - {1} as it's already downloaded, use --overwrite to overwrite existing files"
-                            .format(track['track'], track['title']))
-                        continue
-
-                with open(filename, "wb") as f:
-                    print("Downloading: {}".format(filename[:-4]))
-                    if file_length is None:
-                        f.write(r.content)
-                    else:
+            while True:
+                try:
+                    r = requests.get(track['url'], stream=True)
+                    file_length = int(r.headers['content-length'])
+                    total = int(file_length/100)
+                    # If file exists and is still a tmp file skip downloading and encode
+                    if os.path.exists(filepath):
+                        self.write_id3_tags(filepath, track_meta)
+                        # Set skip to True so that we don't try encoding again
+                        skip = True
+                        # break out of the try/except and move on to the next file
+                        break
+                    elif os.path.exists(filepath[:-4]) and self.overwrite is not True:
+                        print("File: {} already exists and is complete, skipping..".format(filename[:-4]))
+                        skip = True
+                        break
+                    with open(filepath, "wb") as f:
                         dl = 0
-                        total_length = int(file_length)
-                        for data in r.iter_content(chunk_size=int(total_length/100)):
+                        for data in r.iter_content(chunk_size=total):
                             dl += len(data)
                             f.write(data)
-                            done = int(50 * dl / total_length)
-                            sys.stdout.write("\r[%s%s]" % ('=' * done, ' ' * (50 - done)))
+                            done = int(50 * dl / file_length)
+                            sys.stdout.write("\r({}/{}) [{}{}] :: Downloading: {}".format(self.track_num, self.num_tracks, "=" * done, " " * (50 - done), filename[:-8]))
                             sys.stdout.flush()
-                self.write_id3_tags(filename, track_meta)
-            except Exception as e:
-                print(e)
-                print("Downloading failed..")
-                return False
+                    local_size = os.path.getsize(filepath)
+                    # if the local filesize before encoding doesn't match the remote filesize redownload
+                    if local_size != file_length and attempts != 3:
+                        print("{} is incomplete, retrying..".format(filename))
+                        continue
+                    # if the maximum number of retry attempts is reached give up and move on
+                    elif attempts == 3:
+                        print("Maximum retries reached.. skipping.")
+                        # Clean up incomplete file
+                        os.remove(filepath)
+                        break
+                    # if all is well continue the download process for the rest of the tracks
+                    else:
+                        break
+                except Exception as e:
+                    print(e)
+                    print("Downloading failed..")
+                    return False
+            if skip is not True:
+                self.write_id3_tags(filepath, track_meta)
         if album['art']:
             try:
                 with open("{}/cover.jpg".format(dirname), "wb") as f:
@@ -105,17 +146,26 @@ class BandcampDownloader:
                 print(e)
                 print("Couldn't download album art.")
 
+        if os.path.isfile("not.finished"):
+            os.remove("not.finished")
         return True
 
-    @staticmethod
-    def write_id3_tags(filename, meta):
-        print("\nEncoding . . .")
+    def write_id3_tags(self, filepath: str, meta: dict):
+        """Write metadata to the MP3 file
 
-        audio = MP3(filename)
+        :param filepath: name of mp3 file
+        :param meta: dict of track metadata
+        """
+        filename = filepath.rsplit('/', 1)[1][:-8]
+
+        sys.stdout.flush()
+        sys.stdout.write("\r({}/{}) [{}] :: Encoding: {}".format(self.track_num, self.num_tracks, "=" * 50, filename))
+
+        audio = MP3(filepath)
         audio["TIT2"] = TIT2(encoding=3, text=["title"])
         audio.save(filename=None, v1=2)
 
-        audio = EasyID3(filename)
+        audio = EasyID3(filepath)
         audio["tracknumber"] = meta['track']
         audio["title"] = meta['title']
         audio["artist"] = meta['artist']
@@ -123,5 +173,7 @@ class BandcampDownloader:
         audio["date"] = meta['date']
         audio.save()
 
-        audio.save(filename)
-        print("Done encoding . . .")
+        audio.save(filepath[:-4])
+        os.remove(filepath)
+
+        sys.stdout.write("\r({}/{}) [{}] :: Finished: {}".format(self.track_num, self.num_tracks, "=" * 50, filename))
