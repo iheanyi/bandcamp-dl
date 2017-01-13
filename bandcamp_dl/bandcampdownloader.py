@@ -53,7 +53,7 @@ class BandcampDownloader:
         path = path.replace("%{title}", slugify(track['title']))
         path = u"{0}/{1}.{2}".format(self.directory, path, "mp3")
 
-        return path.encode('utf-8')
+        return path
 
     @staticmethod
     def create_directory(filename: str) -> str:
@@ -139,7 +139,7 @@ class BandcampDownloader:
                 self.write_id3_tags(filepath, track_meta)
         if album['art']:
             try:
-                with open("{}/cover.jpg".format(dirname), "wb") as f:
+                with open(dirname + "/cover.jpg", "wb") as f:
                     r = requests.get(album['art'], stream=True)
                     f.write(r.content)
             except Exception as e:
