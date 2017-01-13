@@ -31,7 +31,8 @@ class BandcampDownloader:
 
         return path.encode('utf-8')
 
-    def create_directory(self, filename):
+    @staticmethod
+    def create_directory(filename):
         directory = os.path.dirname(filename)
         if not os.path.exists(directory):
             os.makedirs(directory)
@@ -50,7 +51,7 @@ class BandcampDownloader:
 
             print("Accessing track " + str(track_index + 1) + " of " + str(len(album['tracks'])))
 
-            filename = self.template_to_path(track_meta)
+            filename = self.template_to_path(track_meta).decode()
             dirname = self.create_directory(filename)
 
             if not track.get('url'):
@@ -70,7 +71,7 @@ class BandcampDownloader:
                 if not self.overwrite and os.path.isfile(filename):
                     file_size = os.path.getsize(filename) - 128
                     if int(file_size) != int(file_length):
-                        print(filename + " is incomplete, redownloading.")
+                        print("{} is incomplete, redownloading.".format(filename))
                         os.remove(filename)
                     else:
                         print("Skipping track {0} - {1} as it's already downloaded, use --overwrite to overwrite existing files"
@@ -78,7 +79,7 @@ class BandcampDownloader:
                         continue
 
                 with open(filename, "wb") as f:
-                    print("Downloading: " + filename[:-4])
+                    print("Downloading: {}".format(filename[:-4]))
                     if file_length is None:
                         f.write(r.content)
                     else:
@@ -97,7 +98,7 @@ class BandcampDownloader:
                 return False
         if album['art']:
             try:
-                with open(dirname + "/cover.jpg", "wb") as f:
+                with open("{}/cover.jpg".format(dirname), "wb") as f:
                     r = requests.get(album['art'], stream=True)
                     f.write(r.content)
             except Exception as e:
@@ -106,7 +107,8 @@ class BandcampDownloader:
 
         return True
 
-    def write_id3_tags(self, filename, meta):
+    @staticmethod
+    def write_id3_tags(filename, meta):
         print("\nEncoding . . .")
 
         audio = MP3(filename)

@@ -49,7 +49,7 @@ from .bandcampdownloader import BandcampDownloader
 
 
 def main():
-    arguments = docopt(__doc__, version='bandcamp-dl 0.0.6-01')
+    arguments = docopt(__doc__, version='bandcamp-dl 0.0.6-03')
     bandcamp = Bandcamp()
 
     if arguments['--artist'] and arguments['--album']:
