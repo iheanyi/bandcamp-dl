@@ -14,7 +14,8 @@ class BandcampJSON:
         :return js_data: Raw JS as str
         """
         self.js_data = self.body.find("script", {"src": False}, text=re.compile(self.var_name)).string
-        return self.js_data
+        # TODO: Refine regex in extract_data to ignore terminators not adjacent to }
+        return self.js_data.replace(";)", "")
 
     def extract_data(self, js: str) -> str:
         """Extract values from JS dictionary
