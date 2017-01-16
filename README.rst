@@ -18,7 +18,7 @@ From Wheel
 
 1. Download the wheel (``.whl``) from PyPI or the Releases page
 2. ``cd`` to the directory containing the ``.whl`` file
-2. ``pip install <filename>.whl``
+3. ``pip install <filename>.whl``
 
 From Source
 -----------
