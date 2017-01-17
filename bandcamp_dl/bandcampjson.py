@@ -7,6 +7,7 @@ class BandcampJSON:
         self.body = body
         self.var_name = var_name
         self.js_data = js_data
+        self.regex = re.compile(r"(?<=var\s" + var_name + "\s=\s).*?(?=};)", re.DOTALL)
 
     def get_js(self) -> str:
         """Get <script> element containing the data we need and return the raw JS
@@ -14,8 +15,7 @@ class BandcampJSON:
         :return js_data: Raw JS as str
         """
         self.js_data = self.body.find("script", {"src": False}, text=re.compile(self.var_name)).string
-        # TODO: Refine regex in extract_data to ignore terminators not adjacent to }
-        return self.js_data.replace(";)", "")
+        return self.js_data
 
     def extract_data(self, js: str) -> str:
         """Extract values from JS dictionary
@@ -23,7 +23,7 @@ class BandcampJSON:
         :param js: Raw JS
         :return: Contents of dictionary as str
         """
-        self.js_data = re.search(r"(?<=var\s" + self.var_name + "\s=\s)[^;]*", js).group().replace('" + "', '')
+        self.js_data = self.regex.search(js).group().replace('" + "', '') + "}"
         return self.js_data
 
     def js_to_json(self) -> str:
