@@ -28,10 +28,17 @@ class Bandcamp:
         self.tracks = self.tralbum_data_json['trackinfo']
 
         album_release = self.tralbum_data_json['album_release_date']
+        if album_release is None:
+            album_release = self.tralbum_data_json['current']['release_date']
+
+        try:
+            album_title = self.embed_data_json['album_title']
+        except KeyError:
+            album_title = self.tralbum_data_json['trackinfo'][0]['title']
 
         album = {
             "tracks": [],
-            "title": self.embed_data_json['album_title'],
+            "title": album_title,
             "artist": self.embed_data_json['artist'],
             "full": False,
             "art": "",
