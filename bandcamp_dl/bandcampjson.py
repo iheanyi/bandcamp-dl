@@ -1,6 +1,10 @@
 import demjson
 import re
 
+"""TODO
+
+    More in-depth error messages
+"""
 
 class BandcampJSON:
     def __init__(self, body, var_name: str, js_data=None):

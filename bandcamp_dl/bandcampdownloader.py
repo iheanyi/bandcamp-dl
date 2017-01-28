@@ -6,6 +6,14 @@ from mutagen.id3._frames import TIT2
 from mutagen.easyid3 import EasyID3
 from slugify import slugify
 
+if not sys.version_info[:2] == (3, 6):
+    import mock
+    from .utils import requests_patch
+
+# DEBUG
+# import logging
+# logging.basicConfig(filename='bandcamp-dl.log', level=logging.INFO)
+
 
 class BandcampDownloader:
     def __init__(self, urls=None, template=None, directory=None, overwrite=False):
@@ -16,7 +24,7 @@ class BandcampDownloader:
         :param directory: download location
         :param overwrite: if True overwrite existing files
         """
-        self.headers = {'user_agent': 'bandcamp-dl/0.0.7-02 (https://github.com/iheanyi/bandcamp-dl)'}
+        self.headers = {'user_agent': 'bandcamp-dl/0.0.7-05 (https://github.com/iheanyi/bandcamp-dl)'}
         self.session = requests.Session()
 
         if type(urls) is str:
@@ -98,9 +106,13 @@ class BandcampDownloader:
 
             while True:
                 try:
-                    r = self.session.get(track['url'], headers=self.headers, stream=True)
-                    file_length = int(r.headers['content-length'])
-                    total = int(file_length/100)
+                    if not sys.version_info[:2] == (3, 6):
+                        with mock.patch('http.client.parse_headers', requests_patch.parse_headers):
+                            r = self.session.get(track['url'], headers=self.headers, stream=True)
+                    else:
+                        r = self.session.get(track['url'], headers=self.headers, stream=True)
+                    file_length = int(r.headers.get('content-length', 0))
+                    total = int(file_length / 100)
                     # If file exists and is still a tmp file skip downloading and encode
                     if os.path.exists(filepath):
                         self.write_id3_tags(filepath, track_meta)
@@ -121,7 +133,10 @@ class BandcampDownloader:
                                 dl += len(data)
                                 f.write(data)
                                 done = int(50 * dl / file_length)
-                                sys.stdout.write("\r({}/{}) [{}{}] :: Downloading: {}".format(self.track_num, self.num_tracks, "=" * done, " " * (50 - done), filename[:-8]))
+                                sys.stdout.write(
+                                    "\r({}/{}) [{}{}] :: Downloading: {}".format(self.track_num, self.num_tracks,
+                                                                                 "=" * done, " " * (50 - done),
+                                                                                 filename[:-8]))
                                 sys.stdout.flush()
                     local_size = os.path.getsize(filepath)
                     # if the local filesize before encoding doesn't match the remote filesize redownload
@@ -168,6 +183,7 @@ class BandcampDownloader:
         sys.stdout.write("\r({}/{}) [{}] :: Encoding: {}".format(self.track_num, self.num_tracks, "=" * 50, filename))
 
         audio = MP3(filepath)
+        audio.delete()
         audio["TIT2"] = TIT2(encoding=3, text=["title"])
         audio.save(filename=None, v1=2)
 

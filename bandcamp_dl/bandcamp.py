@@ -1,6 +1,7 @@
 from .bandcampjson import BandcampJSON
 from bs4 import BeautifulSoup
 from bs4 import FeatureNotFound
+from datetime import datetime
 import requests
 import json
 
@@ -26,13 +27,15 @@ class Bandcamp:
         self.generate_album_json()
         self.tracks = self.tralbum_data_json['trackinfo']
 
+        album_release = self.tralbum_data_json['album_release_date']
+
         album = {
             "tracks": [],
             "title": self.embed_data_json['album_title'],
             "artist": self.embed_data_json['artist'],
             "full": False,
             "art": "",
-            "date": self.tralbum_data_json['album_release_date']
+            "date": datetime.strptime(album_release, "%d %b %Y %X %Z").strftime("%m%d%Y")
         }
 
         for track in self.tracks:

@@ -51,7 +51,7 @@ from .bandcampdownloader import BandcampDownloader
 
 
 def main():
-    arguments = docopt(__doc__, version='bandcamp-dl 0.0.7-03')
+    arguments = docopt(__doc__, version='bandcamp-dl 0.0.7-05')
     bandcamp = Bandcamp()
 
     basedir = arguments['--base-dir'] or os.getcwd()
