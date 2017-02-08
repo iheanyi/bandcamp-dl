@@ -1,12 +1,16 @@
 from setuptools import setup, find_packages
 from codecs import open
 from os import path
+import sys
+
+if sys.version_info[0] == 2:
+    sys.exit('Python 2 is unsupported.')
 
 here = path.abspath(path.dirname(__file__))
 
 setup(
     name='bandcamp-downloader',
-    version='0.0.7-06',
+    version='0.0.7-08',
     description='bandcamp-dl downloads albums and tracks from Bandcamp for you',
     long_description=open('README.rst').read(),
     url='https://github.com/iheanyi/bandcamp-dl',
@@ -18,7 +22,10 @@ setup(
         'Intended Audience :: End Users/Desktop',
         'Topic :: Multimedia :: Sound/Audio',
         'License :: Public Domain',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
     keywords=['bandcamp', 'downloader', 'music', 'cli', 'albums', 'dl'],
     packages=find_packages(),
@@ -30,6 +37,7 @@ setup(
         'requests',
         'unicode-slugify',
         'mock',
+        'chardet==2.3.0',
     ],
     entry_points={
         'console_scripts': [
