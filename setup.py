@@ -37,7 +37,7 @@ setup(
         'requests',
         'unicode-slugify',
         'mock',
-        'chardet==2.3.0',
+        'chardet',
     ],
     entry_points={
         'console_scripts': [
