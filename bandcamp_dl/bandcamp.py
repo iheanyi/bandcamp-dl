@@ -1,9 +1,11 @@
-from .bandcampjson import BandcampJSON
+from datetime import datetime as dt
+import json
+
+import requests
 from bs4 import BeautifulSoup
 from bs4 import FeatureNotFound
-from datetime import datetime
-import requests
-import json
+
+from bandcamp_dl.bandcampjson import BandcampJSON
 
 
 class Bandcamp:
@@ -15,34 +17,44 @@ class Bandcamp:
         :return: album metadata
         """
         try:
-            r = requests.get(url)
+            response = requests.get(url)
         except requests.exceptions.MissingSchema:
             return None
 
         try:
-            self.soup = BeautifulSoup(r.text, "lxml")
+            self.soup = BeautifulSoup(response.text, "lxml")
         except FeatureNotFound:
-            self.soup = BeautifulSoup(r.text, "html.parser")
+            self.soup = BeautifulSoup(response.text, "html.parser")
 
-        self.generate_album_json()
-        self.tracks = self.tralbum_data_json['trackinfo']
+        bandcamp_json = BandcampJSON(self.soup).generate()
+        album_json = json.loads(bandcamp_json[0])
+        embed_json = json.loads(bandcamp_json[1])
+        page_json = json.loads(bandcamp_json[2])
 
-        album_release = self.tralbum_data_json['album_release_date']
+        self.tracks = album_json['trackinfo']
+
+        album_release = album_json['album_release_date']
         if album_release is None:
-            album_release = self.tralbum_data_json['current']['release_date']
+            album_release = album_json['current']['release_date']
 
         try:
-            album_title = self.embed_data_json['album_title']
+            album_title = embed_json['album_title']
         except KeyError:
-            album_title = self.tralbum_data_json['trackinfo'][0]['title']
+            album_title = album_json['trackinfo'][0]['title']
+
+        try:
+            label = page_json['item_sellers']['{}'.format(album_json['current']['selling_band_id'])]['name']
+        except KeyError:
+            label = None
 
         album = {
             "tracks": [],
             "title": album_title,
-            "artist": self.embed_data_json['artist'],
+            "artist": embed_json['artist'],
+            "label": label,
             "full": False,
             "art": "",
-            "date": datetime.strptime(album_release, "%d %b %Y %X %Z").strftime("%m%d%Y")
+            "date": str(dt.strptime(album_release, "%d %b %Y %H:%M:%S GMT").year)
         }
 
         for track in self.tracks:
@@ -56,7 +68,6 @@ class Bandcamp:
 
         return album
 
-    # Possibly redundant now, we skip unavailable tracks.
     def all_tracks_available(self) -> bool:
         """Verify that all tracks have a url
 
@@ -85,26 +96,13 @@ class Bandcamp:
             track_metadata['url'] = "http:" + track['file']['mp3-128']
         else:
             track_metadata['url'] = None
+
+        if track['has_lyrics'] is not False:
+            if track['lyrics'] is None:
+                track['lyrics'] = "lyrics unavailable"
+            track_metadata['lyrics'] = track['lyrics'].replace('\\r\\n', '\n')
+
         return track_metadata
-
-    def generate_album_json(self):
-        """Retrieve JavaScript dictionaries from page and generate JSON
-
-        :return: True if successful
-        """
-        try:
-            embed = BandcampJSON(self.soup, "EmbedData")
-            tralbum = BandcampJSON(self.soup, "TralbumData")
-
-            embed_data = embed.js_to_json()
-            tralbum_data = tralbum.js_to_json()
-
-            self.embed_data_json = json.loads(embed_data)
-            self.tralbum_data_json = json.loads(tralbum_data)
-        except Exception as e:
-            print(e)
-            return None
-        return True
 
     @staticmethod
     def generate_album_url(artist: str, album: str) -> str:

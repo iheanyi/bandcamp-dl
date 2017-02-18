@@ -1,22 +1,20 @@
 import os
 import sys
+
 import requests
-from mutagen.mp3 import MP3
+from mutagen.mp3 import MP3, EasyMP3
+from mutagen.id3._frames import TIT1
 from mutagen.id3._frames import TIT2
-from mutagen.easyid3 import EasyID3
+from mutagen.id3._frames import USLT
 from slugify import slugify
 
 if not sys.version_info[:2] == (3, 6):
     import mock
-    from .utils import requests_patch
-
-# DEBUG
-# import logging
-# logging.basicConfig(filename='bandcamp-dl.log', level=logging.INFO)
+    from bandcamp_dl.utils import requests_patch
 
 
 class BandcampDownloader:
-    def __init__(self, urls=None, template=None, directory=None, overwrite=False):
+    def __init__(self, urls=None, template=None, directory=None, overwrite=False, lyrics=None, grouping=None):
         """Initialize variables we will need throughout the Class
 
         :param urls: list of urls
@@ -24,7 +22,7 @@ class BandcampDownloader:
         :param directory: download location
         :param overwrite: if True overwrite existing files
         """
-        self.headers = {'user_agent': 'bandcamp-dl/0.0.7-06 (https://github.com/iheanyi/bandcamp-dl)'}
+        self.headers = {'user_agent': 'bandcamp-dl/0.0.7-09 (https://github.com/iheanyi/bandcamp-dl)'}
         self.session = requests.Session()
 
         if type(urls) is str:
@@ -34,6 +32,8 @@ class BandcampDownloader:
         self.template = template
         self.directory = directory
         self.overwrite = overwrite
+        self.lyrics = lyrics
+        self.grouping = grouping
 
     def start(self, album: dict):
         """Start album download process
@@ -91,11 +91,15 @@ class BandcampDownloader:
         for track_index, track in enumerate(album['tracks']):
             track_meta = {
                 "artist": album['artist'],
+                "label": album['label'],
                 "album": album['title'],
                 "title": track['title'],
                 "track": track['track'],
                 "date": album['date']
             }
+
+            if 'lyrics' in track.keys() and self.lyrics is not False:
+                track_meta['lyrics'] = track['lyrics']
 
             self.num_tracks = len(album['tracks'])
             self.track_num = track_index + 1
@@ -186,16 +190,23 @@ class BandcampDownloader:
         sys.stdout.write("\r({}/{}) [{}] :: Encoding: {}".format(self.track_num, self.num_tracks, "=" * 50, filename))
 
         audio = MP3(filepath)
-        audio.delete()
+        audio.tags = None
         audio["TIT2"] = TIT2(encoding=3, text=["title"])
         audio.save(filename=None, v1=2)
 
-        audio = EasyID3(filepath)
+        audio = MP3(filepath)
+        if self.grouping and meta["label"]:
+            audio["TIT1"] = TIT1(encoding=3, text=meta["label"])
+        if self.lyrics:
+            audio["USLT"] = USLT(encoding=3, lang='eng', desc='', text=meta['lyrics'])
+        audio.save()
+
+        audio = EasyMP3(filepath)
         audio["tracknumber"] = meta['track']
-        audio["title"] = meta['title']
+        audio["title"] = meta["title"]
         audio["artist"] = meta['artist']
         audio["album"] = meta['album']
-        audio["date"] = meta['date']
+        audio["date"] = meta["date"]
         audio.save()
 
         os.rename(filepath, filepath[:-4])

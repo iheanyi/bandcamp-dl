@@ -10,7 +10,7 @@ here = path.abspath(path.dirname(__file__))
 
 setup(
     name='bandcamp-downloader',
-    version='0.0.7-08',
+    version='0.0.7-09',
     description='bandcamp-dl downloads albums and tracks from Bandcamp for you',
     long_description=open('README.rst').read(),
     url='https://github.com/iheanyi/bandcamp-dl',
@@ -28,7 +28,7 @@ setup(
         'Programming Language :: Python :: 3.6',
     ],
     keywords=['bandcamp', 'downloader', 'music', 'cli', 'albums', 'dl'],
-    packages=find_packages(),
+    packages=find_packages(exclude=['tests']),
     install_requires=[
         'beautifulsoup4',
         'demjson',
@@ -41,7 +41,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'bandcamp-dl=bandcamp_dl.bandcamp_dl:main',
+            'bandcamp-dl=bandcamp_dl.__main__:main',
         ],
     },
 )

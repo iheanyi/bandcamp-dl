@@ -7,6 +7,8 @@ Usage:
                 (<url> | --artist=<artist> --album=<album>)
                 [--overwrite]
                 [--no-art]
+                [--embed-lyrics]
+                [--group]
     bandcamp-dl (-h | --help)
     bandcamp-dl (--version)
 
@@ -21,6 +23,8 @@ Options:
     -f --full-album             Download only if all tracks are available.
     -o --overwrite              Overwrite tracks that already exist. Default is False.
     -n --no-art                 Skip grabbing album art
+    -e --embed-lyrics           Embed track lyrics (If available)
+    -g --group                  Use album/track Label as iTunes grouping
 """
 """
 Coded by:
@@ -45,13 +49,15 @@ Iheanyi:
 
 import os
 import ast
+
 from docopt import docopt
-from .bandcamp import Bandcamp
-from .bandcampdownloader import BandcampDownloader
+
+from bandcamp_dl.bandcamp import Bandcamp
+from bandcamp_dl.bandcampdownloader import BandcampDownloader
 
 
 def main():
-    arguments = docopt(__doc__, version='bandcamp-dl 0.0.7-06')
+    arguments = docopt(__doc__, version='bandcamp-dl 0.0.7-09')
     bandcamp = Bandcamp()
 
     basedir = arguments['--base-dir'] or os.getcwd()
@@ -81,7 +87,8 @@ def main():
     elif arguments['--full-album'] and not album['full']:
         print("Full album not available. Skipping...")
     else:
-        bandcamp_downloader = BandcampDownloader(url, arguments['--template'], basedir, arguments['--overwrite'])
+        bandcamp_downloader = BandcampDownloader(url, arguments['--template'], basedir, arguments['--overwrite'],
+                                                 arguments['--embed-lyrics'], arguments['--group'])
         bandcamp_downloader.start(album)
 
 if __name__ == '__main__':
