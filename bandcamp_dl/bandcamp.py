@@ -7,6 +7,20 @@ from bs4 import FeatureNotFound
 
 from bandcamp_dl.bandcampjson import BandcampJSON
 
+# LOGGING #######################
+
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+handler = logging.FileHandler('bandcamp-dl_0.0.7-09-DEBUG.log')
+handler.setLevel(logging.DEBUG)
+
+logger.addHandler(handler)
+
+
+# LOGGING #######################
 
 class Bandcamp:
     def parse(self, url: str, art: bool=True) -> dict or None:
@@ -25,6 +39,8 @@ class Bandcamp:
             self.soup = BeautifulSoup(response.text, "lxml")
         except FeatureNotFound:
             self.soup = BeautifulSoup(response.text, "html.parser")
+
+        logger.debug('\n\tBeautifulSoup: {}\n'.format(self.soup))
 
         bandcamp_json = BandcampJSON(self.soup).generate()
         album_json = json.loads(bandcamp_json[0])

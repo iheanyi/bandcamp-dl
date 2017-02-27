@@ -2,6 +2,20 @@ import re
 
 import demjson
 
+# LOGGING #######################
+
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+handler = logging.FileHandler('bandcamp-dl_0.0.7-09-DEBUG.log')
+handler.setLevel(logging.DEBUG)
+
+logger.addHandler(handler)
+
+
+# LOGGING #######################
 
 class BandcampJSON:
     def __init__(self, body):
@@ -18,6 +32,7 @@ class BandcampJSON:
                 self.regex = re.compile(r"(?<=var\s" + target + "\s=\s).*?(?=};)", re.DOTALL)
                 self.target = target
                 self.js_to_json()
+        logger.debug('\n\tPreliminary JSON data: {}\n'.format(self.json_data))
         return self.json_data
 
     def get_pagedata(self):

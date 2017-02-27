@@ -55,9 +55,26 @@ from docopt import docopt
 from bandcamp_dl.bandcamp import Bandcamp
 from bandcamp_dl.bandcampdownloader import BandcampDownloader
 
+# LOGGING #######################
+
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+handler = logging.FileHandler('bandcamp-dl_0.0.7-09-DEBUG.log')
+handler.setLevel(logging.DEBUG)
+
+logger.addHandler(handler)
+
+
+# LOGGING #######################
 
 def main():
     arguments = docopt(__doc__, version='bandcamp-dl 0.0.7-09')
+
+    logger.debug('\n\tArguments: {}\n'.format(arguments))
+
     bandcamp = Bandcamp()
 
     basedir = arguments['--base-dir'] or os.getcwd()
