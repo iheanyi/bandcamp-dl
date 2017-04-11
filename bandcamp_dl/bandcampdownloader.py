@@ -100,6 +100,8 @@ class BandcampDownloader:
 
             if 'lyrics' in track.keys() and self.lyrics is not False:
                 track_meta['lyrics'] = track['lyrics']
+            else:
+                track_meta['lyrics'] = 'lyrics unavailable'
 
             self.num_tracks = len(album['tracks'])
             self.track_num = track_index + 1
