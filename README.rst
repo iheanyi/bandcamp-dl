@@ -20,6 +20,11 @@ From Wheel
 2. ``cd`` to the directory containing the ``.whl`` file
 3. ``pip install <filename>.whl``
 
+[OSX] From Homebrew
+----------
+
+``brew install bandcamp-dl``
+
 From Source
 -----------
 
