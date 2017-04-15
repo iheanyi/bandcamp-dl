@@ -184,11 +184,17 @@ related to bandcamp-dl, by all means, go ahead and report the bug.
 Dependencies
 ============
 
--  `BeautifulSoup <https://pypi.python.org/pypi/beautifulsoup4>`_ - HTML Parsing
+-  `BeautifulSoup4 <https://pypi.python.org/pypi/beautifulsoup4>`_ - HTML Parsing
 -  `Demjson <https://pypi.python.org/pypi/demjson>`_- JavaScript dict to JSON conversion
 -  `Mutagen <https://pypi.python.org/pypi/mutagen>`_ - ID3 Encoding
 -  `Requests <https://pypi.python.org/pypi/requests>`_ - for retriving the HTML
 -  `Unicode-Slugify <https://pypi.python.org/pypi/unicode-slugify>`_ - A slug generator that turns strings into unicode slugs.
+-  `Chardet <https://pypi.python.org/pypi/chardet>`_ - Charecter encoding detection
+-  `Docopt <https://pypi.python.org/pypi/docopt>`_ - CLI help
+-  `Six <https://pypi.python.org/pypi/six>`_ - Python 2-3 compatibility
+-  `Unidecode <https://pypi.python.org/pypi/unidecode>`_ - ASCII representation of Unicode text
+-  `Mock <https://pypi.python.org/pypi/mock>`_ - Library for Python unit testing
+-  `PBR <https://pypi.python.org/pypi/pbr>`_ - Setuptools injection library required by Mock
 
 Copyright
 =========
