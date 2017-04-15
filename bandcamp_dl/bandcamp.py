@@ -7,22 +7,11 @@ from bs4 import FeatureNotFound
 
 from bandcamp_dl.bandcampjson import BandcampJSON
 
-# LOGGING #######################
-
-import logging
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
-handler = logging.FileHandler('bandcamp-dl_0.0.7-09-DEBUG.log')
-handler.setLevel(logging.DEBUG)
-
-logger.addHandler(handler)
-
-
-# LOGGING #######################
 
 class Bandcamp:
+    def __init__(self, debug=False):
+        self.debug = debug
+
     def parse(self, url: str, art: bool=True) -> dict or None:
         """Requests the page, cherry picks album info
 
@@ -39,8 +28,6 @@ class Bandcamp:
             self.soup = BeautifulSoup(response.text, "lxml")
         except FeatureNotFound:
             self.soup = BeautifulSoup(response.text, "html.parser")
-
-        logger.debug('\n\tBeautifulSoup: {}\n'.format(self.soup))
 
         bandcamp_json = BandcampJSON(self.soup).generate()
         album_json = json.loads(bandcamp_json[0])
@@ -121,14 +108,15 @@ class Bandcamp:
         return track_metadata
 
     @staticmethod
-    def generate_album_url(artist: str, album: str) -> str:
+    def generate_album_url(artist: str, slug: str, page_type: str) -> str:
         """Generate an album url based on the artist and album name
 
         :param artist: artist name
-        :param album: album name
-        :return: album url as str
+        :param slug: Slug of album/track
+        :param page_type: Type of page album/track
+        :return: url as str
         """
-        return "http://{0}.bandcamp.com/album/{1}".format(artist, album)
+        return "http://{0}.bandcamp.com/{1}/{2}".format(artist, page_type, slug)
 
     def get_album_art(self) -> str:
         """Find and retrieve album art url from page

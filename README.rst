@@ -21,7 +21,7 @@ From Wheel
 3. ``pip install <filename>.whl``
 
 [OSX] From Homebrew
-----------
+-------------------
 
 ``brew install bandcamp-dl``
 
@@ -46,14 +46,18 @@ Details
 ::
 
     Usage:
-      bandcamp-dl.py <url>
-      bandcamp-dl.py [--template=<template>] [--base-dir=<dir>]
-                     [--full-album]
-                     (<url> | --artist=<artist> --album=<album>)
-                     [--overwrite]
-                     [--no-art]
-      bandcamp-dl.py (-h | --help)
-      bandcamp-dl.py (--version)
+     bandcamp-dl [url]
+     bandcamp-dl [--template=<template>] [--base-dir=<dir>]
+                 [--full-album]
+                 (<url> | --artist=<artist> --album=<album>)
+                 [--overwrite]
+                 [--no-art]
+                 [--embed-lyrics]
+                 [--group]
+                 [--embed-art]
+                 [--debug]
+     bandcamp-dl (-h | --help)
+     bandcamp-dl (--version)
 
 Options
 =======
@@ -61,15 +65,20 @@ Options
 ::
 
     Options:
-      -h --help              Show this screen.
-      -v --version           Show version.
-      --artist=<artist>      The artist's slug (from the URL)
-      --album=<album>        The album's slug (from the URL)
-      --template=<template>  Output filename template.
-                             [default: %{artist}/%{album}/%{track} - %{title}]
-      --base-dir=<dir>       Base location of which all files are downloaded
-      -o --overwrite         Overwrite tracks that already exist. Default is False.
-      -n --no-art            Skip grabbing album art
+     -h --help                   Show this screen.
+     -v --version                Show version.
+     -a --artist=<artist>        The artist's slug (from the URL)
+     -b --album=<album>          The album's slug (from the URL)
+     -t --template=<template>    Output filename template.
+                                 [default: %{artist}/%{album}/%{track} - %{title}]
+     -d --base-dir=<dir>         Base location of which all files are downloaded.
+     -f --full-album             Download only if all tracks are available.
+     -o --overwrite              Overwrite tracks that already exist. Default is False.
+     -n --no-art                 Skip grabbing album art
+     -e --embed-lyrics           Embed track lyrics (If available)
+     -g --group                  Use album/track Label as iTunes grouping
+     -r --embed-art              Embed album art (If available)
+     -u --debug                  Log debug information to a file
 
 Filename Template
 =================
@@ -90,10 +99,7 @@ Bugs
 ====
 
 Bugs should be reported `here <https://github.com/iheanyi/bandcamp-dl/issues>`_.
-Please include the full output of the command when run with ``--verbose``.
-The output (including the first lines) contain important debugging information.
-Issues without the full output are often not reproducible and therefore
-do not get solved in short order, if ever.
+Please include the URL and/or options used.
 
 For discussions, join us in `Discord <https://discord.gg/nwdT4MP>`_.
 
@@ -128,24 +134,6 @@ Many feature requests are for features that actually exist already!
 Please, absolutely do show off your work in the issue report and detail
 how the existing similar options do *not* solve your problem.
 
-Is there enough context in your bug report?
-===========================================
-
-People want to solve problems, and often think they do us a favor by
-breaking down their larger problems (e.g. wanting to skip already
-downloaded files) to a specific request (e.g. requesting us to look
-whether the file exists before downloading the info page). However, what
-often happens is that they break down the problem into two steps: One
-simple, and one impossible (or extremely complicated one).
-
-We are then presented with a very complicated request when the original
-problem could be solved far easier, e.g. by recording the downloaded
-video IDs in a separate file. To avoid this, you must include the
-greater context where it is non-obvious. In particular, every feature
-request that does not consist of adding support for a new site should
-contain a use case scenario that explains in what situation the missing
-feature would be useful.
-
 Does the issue involve one problem, and one problem only?
 =========================================================
 
@@ -157,20 +145,10 @@ mark the issue as closed. Typically, reporting a bunch of issues leads
 to the ticket lingering since nobody wants to attack that behemoth,
 until someone mercifully splits the issue into multiple ones.
 
-In particular, every site support request issue should only pertain to
-services at one site (generally under a common domain, but always using
-the same backend technology). Do not request support for vimeo user
-videos, Whitehouse podcasts, and Google Plus pages in the same issue.
-Also, make sure that you don't post bug reports alongside feature
-requests. As a rule of thumb, a feature request does not include outputs
-of bandcamp-dl that are not immediately related to the feature at hand.
-Do not post reports of a network error alongside the request for a new
-video service.
-
 Is anyone going to need the feature?
 ====================================
 
-Only post features that you (or an incapacitated friend you can
+Only post features that you (or an incapable friend you can
 personally talk to) require. Do not post features because they seem like
 a good idea. If they are really useful, they will be requested by
 someone who requires them.

@@ -17,6 +17,7 @@ Version 0.0.6
 - [Enhancement] Individual track downloads work now.
 - [Bugfix] Fixed imports, now working when installed via pip.
 - [Note] Last version to officially support Python 2.7.x
+- [Bugfix] Fixed an encoding issue with accented characters in the filepath. (Thanks `oaubert <https://github.com/oaubert>`_)
 
 Version 0.0.7
 -------------
@@ -28,3 +29,11 @@ Version 0.0.7
 - [Dependency] Slimit is no longer required.
 - [Dependency] Ply is no longer required.
 - [Dependency] demjson is now required.
+- [Bugfix] Downloading singles is now fixed.
+- [Bugfix] Monkey-patched Requests to fix compatability with Python versions before 3.6.
+- [Enhancement] Added a --group option to insert a group tag (iTunes)
+
+Version 0.0.8
+-------------
+- [Enhancement] --embed-art option to forcibly embed album art (if available)
+- [Enhancement] --track option for downloading individual tracks and singles.

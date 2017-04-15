@@ -4,11 +4,12 @@ Usage:
     bandcamp-dl [url]
     bandcamp-dl [--template=<template>] [--base-dir=<dir>]
                 [--full-album]
-                (<url> | --artist=<artist> --album=<album>)
+                (<url> | --artist=<artist> --album=<album> | --artist=<artist> --track=<track>)
                 [--overwrite]
                 [--no-art]
                 [--embed-lyrics]
                 [--group]
+                [--embed-art]
     bandcamp-dl (-h | --help)
     bandcamp-dl (--version)
 
@@ -16,6 +17,7 @@ Options:
     -h --help                   Show this screen.
     -v --version                Show version.
     -a --artist=<artist>        The artist's slug (from the URL)
+    -s --track=<track>          The track's slug (from the URL)
     -b --album=<album>          The album's slug (from the URL)
     -t --template=<template>    Output filename template.
                                 [default: %{artist}/%{album}/%{track} - %{title}]
@@ -25,6 +27,7 @@ Options:
     -n --no-art                 Skip grabbing album art
     -e --embed-lyrics           Embed track lyrics (If available)
     -g --group                  Use album/track Label as iTunes grouping
+    -r --embed-art              Embed album art (If available)
 """
 """
 Coded by:
@@ -55,25 +58,9 @@ from docopt import docopt
 from bandcamp_dl.bandcamp import Bandcamp
 from bandcamp_dl.bandcampdownloader import BandcampDownloader
 
-# LOGGING #######################
-
-import logging
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
-handler = logging.FileHandler('bandcamp-dl_0.0.7-09-DEBUG.log')
-handler.setLevel(logging.DEBUG)
-
-logger.addHandler(handler)
-
-
-# LOGGING #######################
 
 def main():
-    arguments = docopt(__doc__, version='bandcamp-dl 0.0.7-09')
-
-    logger.debug('\n\tArguments: {}\n'.format(arguments))
+    arguments = docopt(__doc__, version='bandcamp-dl 0.0.8')
 
     bandcamp = Bandcamp()
 
@@ -83,14 +70,16 @@ def main():
     if os.path.isfile(session_file):
         with open(session_file, "r") as f:
             arguments = ast.literal_eval(f.readline())
-    elif arguments['<url>'] is None:
+    elif arguments['<url>'] is None and arguments['--artist'] is None:
         print(__doc__)
     else:
         with open(session_file, "w") as f:
             f.write("".join(str(arguments).split('\n')))
 
     if arguments['--artist'] and arguments['--album']:
-        url = Bandcamp.generate_album_url(arguments['--artist'], arguments['--album'])
+        url = Bandcamp.generate_album_url(arguments['--artist'], arguments['--album'], "album")
+    elif arguments['--artist'] and arguments['--track']:
+        url = Bandcamp.generate_album_url(arguments['--artist'], arguments['--track'], "track")
     else:
         url = arguments['<url>']
 
@@ -105,8 +94,10 @@ def main():
         print("Full album not available. Skipping...")
     else:
         bandcamp_downloader = BandcampDownloader(url, arguments['--template'], basedir, arguments['--overwrite'],
-                                                 arguments['--embed-lyrics'], arguments['--group'])
+                                                 arguments['--embed-lyrics'], arguments['--group'],
+                                                 arguments['--embed-art'], arguments['--debug'])
         bandcamp_downloader.start(album)
+
 
 if __name__ == '__main__':
     main()

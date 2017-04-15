@@ -6,6 +6,7 @@ from mutagen.mp3 import MP3, EasyMP3
 from mutagen.id3._frames import TIT1
 from mutagen.id3._frames import TIT2
 from mutagen.id3._frames import USLT
+from mutagen.id3._frames import APIC
 from slugify import slugify
 
 if not sys.version_info[:2] == (3, 6):
@@ -14,7 +15,8 @@ if not sys.version_info[:2] == (3, 6):
 
 
 class BandcampDownloader:
-    def __init__(self, urls=None, template=None, directory=None, overwrite=False, lyrics=None, grouping=None):
+    def __init__(self, urls=None, template=None, directory=None, overwrite=False, lyrics=None, grouping=None,
+                 embed_art=None, debug=False):
         """Initialize variables we will need throughout the Class
 
         :param urls: list of urls
@@ -22,7 +24,7 @@ class BandcampDownloader:
         :param directory: download location
         :param overwrite: if True overwrite existing files
         """
-        self.headers = {'user_agent': 'bandcamp-dl/0.0.7-09 (https://github.com/iheanyi/bandcamp-dl)'}
+        self.headers = {'user_agent': 'bandcamp-dl/0.0.8 (https://github.com/iheanyi/bandcamp-dl)'}
         self.session = requests.Session()
 
         if type(urls) is str:
@@ -34,6 +36,8 @@ class BandcampDownloader:
         self.overwrite = overwrite
         self.lyrics = lyrics
         self.grouping = grouping
+        self.embed_art = embed_art
+        self.debug = debug
 
     def start(self, album: dict):
         """Start album download process
@@ -60,10 +64,12 @@ class BandcampDownloader:
         path = self.template
         path = path.replace("%{artist}", slugify(track['artist']))
         path = path.replace("%{album}", slugify(track['album']))
+
         if track['track'] == "None":
             path = path.replace("%{track}", "Single")
         else:
             path = path.replace("%{track}", str(track['track']).zfill(2))
+
         path = path.replace("%{title}", slugify(track['title']))
         path = u"{0}/{1}.{2}".format(self.directory, path, "mp3")
 
@@ -107,6 +113,16 @@ class BandcampDownloader:
             filepath = self.template_to_path(track_meta) + ".tmp"
             filename = filepath.rsplit('/', 1)[1]
             dirname = self.create_directory(filepath)
+
+            if album['art'] and not os.path.exists(dirname + "/cover.jpg"):
+                try:
+                    with open(dirname + "/cover.jpg", "wb") as f:
+                        r = self.session.get(album['art'])
+                        f.write(r.content)
+                    self.album_art = dirname + "/cover.jpg"
+                except Exception as e:
+                    print(e)
+                    print("Couldn't download album art.")
 
             attempts = 0
             skip = False
@@ -165,17 +181,14 @@ class BandcampDownloader:
                     return False
             if skip is not True:
                 self.write_id3_tags(filepath, track_meta)
-        if album['art']:
-            try:
-                with open(dirname + "/cover.jpg", "wb") as f:
-                    r = self.session.get(album['art'])
-                    f.write(r.content)
-            except Exception as e:
-                print(e)
-                print("Couldn't download album art.")
 
         if os.path.isfile("not.finished"):
             os.remove("not.finished")
+
+        # Remove album art image as it is embedded
+        if self.embed_art:
+            os.remove(self.album_art)
+
         return True
 
     def write_id3_tags(self, filepath: str, meta: dict):
@@ -199,6 +212,10 @@ class BandcampDownloader:
             audio["TIT1"] = TIT1(encoding=3, text=meta["label"])
         if self.lyrics:
             audio["USLT"] = USLT(encoding=3, lang='eng', desc='', text=meta['lyrics'])
+        if self.embed_art:
+            with open(self.album_art, 'rb') as cover_img:
+                cover_bytes = cover_img.read()
+                audio["APIC"] = APIC(encoding=3, mime='image/jpeg', type=3, desc='Cover', data=cover_bytes)
         audio.save()
 
         audio = EasyMP3(filepath)
