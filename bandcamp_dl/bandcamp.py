@@ -9,8 +9,8 @@ from bandcamp_dl.bandcampjson import BandcampJSON
 
 
 class Bandcamp:
-    def __init__(self, debug=False):
-        self.debug = debug
+    def __init__(self):
+        self.headers = {'User-Agent': 'bandcamp-dl/0.0.8-1 (https://github.com/iheanyi/bandcamp-dl)'}
 
     def parse(self, url: str, art: bool=True) -> dict or None:
         """Requests the page, cherry picks album info
@@ -20,7 +20,7 @@ class Bandcamp:
         :return: album metadata
         """
         try:
-            response = requests.get(url)
+            response = requests.get(url, headers=self.headers)
         except requests.exceptions.MissingSchema:
             return None
 

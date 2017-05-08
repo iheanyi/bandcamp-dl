@@ -60,7 +60,7 @@ from bandcamp_dl.bandcampdownloader import BandcampDownloader
 
 
 def main():
-    arguments = docopt(__doc__, version='bandcamp-dl 0.0.8')
+    arguments = docopt(__doc__, version='bandcamp-dl 0.0.8-1')
 
     bandcamp = Bandcamp()
 
@@ -95,7 +95,7 @@ def main():
     else:
         bandcamp_downloader = BandcampDownloader(url, arguments['--template'], basedir, arguments['--overwrite'],
                                                  arguments['--embed-lyrics'], arguments['--group'],
-                                                 arguments['--embed-art'], arguments['--debug'])
+                                                 arguments['--embed-art'])
         bandcamp_downloader.start(album)
 
 

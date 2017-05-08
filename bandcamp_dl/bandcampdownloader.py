@@ -24,7 +24,7 @@ class BandcampDownloader:
         :param directory: download location
         :param overwrite: if True overwrite existing files
         """
-        self.headers = {'user_agent': 'bandcamp-dl/0.0.8 (https://github.com/iheanyi/bandcamp-dl)'}
+        self.headers = {'User-Agent': 'bandcamp-dl/0.0.8-1 (https://github.com/iheanyi/bandcamp-dl)'}
         self.session = requests.Session()
 
         if type(urls) is str:
@@ -117,7 +117,7 @@ class BandcampDownloader:
             if album['art'] and not os.path.exists(dirname + "/cover.jpg"):
                 try:
                     with open(dirname + "/cover.jpg", "wb") as f:
-                        r = self.session.get(album['art'])
+                        r = self.session.get(album['art'], headers=self.headers)
                         f.write(r.content)
                     self.album_art = dirname + "/cover.jpg"
                 except Exception as e:
