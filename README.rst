@@ -1,39 +1,42 @@
-bandcamp-dl - download audio from BandCamp.com
+bandcamp-dl
+========
+
+download audio from BandCamp.com
 
 Synopsis
-========
+---------
 
 bandcamp-dl URL
 
 Installation
-============
+---------
 
 From PyPI
----------
+~~~~~~~~~~~
 
 ``pip install bandcamp-downloader``
 
 From Wheel
-----------
+~~~~~~~~~~~
 
 1. Download the wheel (``.whl``) from PyPI or the Releases page
 2. ``cd`` to the directory containing the ``.whl`` file
 3. ``pip install <filename>.whl``
 
 [OSX] From Homebrew
--------------------
+~~~~~~~~~~~
 
 ``brew install bandcamp-dl``
 
 From Source
------------
+~~~~~~~~~~~
 
 1. Clone the project or `download and extract the zip <https://github.com/iheanyi/bandcamp-dl/archive/master.zip>`_
 2. ``cd`` to the project directory containing the ``setup.py``
 3. ``python setup.py install``
 
 Description
-===========
+---------
 
 bandcamp-dl is a small command-line app to download audio from
 BandCamp.com. It requires the Python interpreter, version 3.5+ and is
@@ -41,7 +44,7 @@ not platform specific. It is released to the public domain, which means
 you can modify it, redistribute it or use it how ever you like.
 
 Details
-=======
+---------
 
 ::
 
@@ -60,7 +63,7 @@ Details
      bandcamp-dl (--version)
 
 Options
-=======
+---------
 
 ::
 
@@ -81,7 +84,7 @@ Options
      -u --debug                  Log debug information to a file
 
 Filename Template
-=================
+---------
 
 The ``--template`` option allows users to indicate a template for the
 output file names and directories. Templates can be built using special
@@ -96,7 +99,7 @@ tokens:
 The default template is: ``%{artist}/%{album}/%{track} - %{title}``.
 
 Bugs
-====
+---------
 
 Bugs should be reported `here <https://github.com/iheanyi/bandcamp-dl/issues>`_.
 Please include the URL and/or options used.
@@ -107,14 +110,14 @@ When you submit a request, please re-read it once to avoid a couple of
 mistakes (you can and should use this as a checklist):
 
 Are you using the latest version?
-=================================
+---------
 
 This should report that you're up-to-date. About 20% of the reports we
 receive are already fixed, but people are using outdated versions. This
 goes for feature requests as well.
 
 Is the issue already documented?
-================================
+---------
 
 Make sure that someone has not already opened the issue you're trying to
 open. Search at the top of the window or at
@@ -125,7 +128,7 @@ information on the issue: ...". While some issues may be old, a new post
 into them often spurs rapid activity.
 
 Why are existing options not enough?
-====================================
+---------
 
 Before requesting a new feature, please have a quick peek at `the list
 of supported
@@ -135,7 +138,7 @@ Please, absolutely do show off your work in the issue report and detail
 how the existing similar options do *not* solve your problem.
 
 Does the issue involve one problem, and one problem only?
-=========================================================
+---------
 
 Some of our users seem to think there is a limit of issues they can or
 should open. There is no limit of issues they can or should open. While
@@ -146,7 +149,7 @@ to the ticket lingering since nobody wants to attack that behemoth,
 until someone mercifully splits the issue into multiple ones.
 
 Is anyone going to need the feature?
-====================================
+---------
 
 Only post features that you (or an incapable friend you can
 personally talk to) require. Do not post features because they seem like
@@ -154,7 +157,7 @@ a good idea. If they are really useful, they will be requested by
 someone who requires them.
 
 Is your question about bandcamp-dl?
-===================================
+---------
 
 It may sound strange, but some bug reports we receive are completely
 unrelated to bandcamp-dl and relate to a different or even the
@@ -165,7 +168,7 @@ hand, if your UI for bandcamp-dl fails in some way you believe is
 related to bandcamp-dl, by all means, go ahead and report the bug.
 
 Dependencies
-============
+---------
 
 -  `BeautifulSoup4 <https://pypi.python.org/pypi/beautifulsoup4>`_ - HTML Parsing
 -  `Demjson <https://pypi.python.org/pypi/demjson>`_- JavaScript dict to JSON conversion
@@ -180,7 +183,7 @@ Dependencies
 -  `PBR <https://pypi.python.org/pypi/pbr>`_ - Setuptools injection library required by Mock
 
 Copyright
-=========
+---------
 
 bandcamp-dl is released into the public domain by the copyright holders
 
