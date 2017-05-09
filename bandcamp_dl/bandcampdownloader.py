@@ -16,7 +16,7 @@ if not sys.version_info[:2] == (3, 6):
 
 class BandcampDownloader:
     def __init__(self, urls=None, template=None, directory=None, overwrite=False, lyrics=None, grouping=None,
-                 embed_art=None, debug=False):
+                 embed_art=None, no_slugify=False):
         """Initialize variables we will need throughout the Class
 
         :param urls: list of urls
@@ -24,7 +24,7 @@ class BandcampDownloader:
         :param directory: download location
         :param overwrite: if True overwrite existing files
         """
-        self.headers = {'User-Agent': 'bandcamp-dl/0.0.8-1 (https://github.com/iheanyi/bandcamp-dl)'}
+        self.headers = {'User-Agent': 'bandcamp-dl/0.0.8-02 (https://github.com/iheanyi/bandcamp-dl)'}
         self.session = requests.Session()
 
         if type(urls) is str:
@@ -37,7 +37,7 @@ class BandcampDownloader:
         self.lyrics = lyrics
         self.grouping = grouping
         self.embed_art = embed_art
-        self.debug = debug
+        self.no_slugify = no_slugify
 
     def start(self, album: dict):
         """Start album download process
@@ -62,15 +62,21 @@ class BandcampDownloader:
         :return: filepath
         """
         path = self.template
-        path = path.replace("%{artist}", slugify(track['artist']))
-        path = path.replace("%{album}", slugify(track['album']))
+
+        if self.no_slugify:
+            path = path.replace("%{artist}", track['artist'])
+            path = path.replace("%{album}", track['album'])
+            path = path.replace("%{title}", track['title'])
+        else:
+            path = path.replace("%{artist}", slugify(track['artist']))
+            path = path.replace("%{album}", slugify(track['album']))
+            path = path.replace("%{title}", slugify(track['title']))
 
         if track['track'] == "None":
             path = path.replace("%{track}", "Single")
         else:
             path = path.replace("%{track}", str(track['track']).zfill(2))
 
-        path = path.replace("%{title}", slugify(track['title']))
         path = u"{0}/{1}.{2}".format(self.directory, path, "mp3")
 
         return path

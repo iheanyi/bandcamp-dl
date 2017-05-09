@@ -10,7 +10,7 @@ here = path.abspath(path.dirname(__file__))
 
 setup(
     name='bandcamp-downloader',
-    version='0.0.8-1',
+    version='0.0.8-02',
     description='bandcamp-dl downloads albums and tracks from Bandcamp for you',
     long_description=open('README.rst').read(),
     url='https://github.com/iheanyi/bandcamp-dl',

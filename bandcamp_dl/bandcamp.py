@@ -10,7 +10,7 @@ from bandcamp_dl.bandcampjson import BandcampJSON
 
 class Bandcamp:
     def __init__(self):
-        self.headers = {'User-Agent': 'bandcamp-dl/0.0.8-1 (https://github.com/iheanyi/bandcamp-dl)'}
+        self.headers = {'User-Agent': 'bandcamp-dl/0.0.8-02 (https://github.com/iheanyi/bandcamp-dl)'}
 
     def parse(self, url: str, art: bool=True) -> dict or None:
         """Requests the page, cherry picks album info

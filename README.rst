@@ -58,6 +58,7 @@ Details
                  [--embed-lyrics]
                  [--group]
                  [--embed-art]
+                 [--no-slugify]
      bandcamp-dl (-h | --help)
      bandcamp-dl (--version)
 
@@ -80,6 +81,7 @@ Options
      -e --embed-lyrics           Embed track lyrics (If available)
      -g --group                  Use album/track Label as iTunes grouping
      -r --embed-art              Embed album art (If available)
+     -n --no-slugify             Disable slugification of track, album, and artist names.
 
 Filename Template
 -----------------

@@ -10,6 +10,7 @@ Usage:
                 [--embed-lyrics]
                 [--group]
                 [--embed-art]
+                [--no-slugify]
     bandcamp-dl (-h | --help)
     bandcamp-dl (--version)
 
@@ -28,6 +29,7 @@ Options:
     -e --embed-lyrics           Embed track lyrics (If available)
     -g --group                  Use album/track Label as iTunes grouping
     -r --embed-art              Embed album art (If available)
+    -n --no-slugify             Disable slugification of track, album, and artist names.
 """
 """
 Coded by:
@@ -95,7 +97,7 @@ def main():
     else:
         bandcamp_downloader = BandcampDownloader(url, arguments['--template'], basedir, arguments['--overwrite'],
                                                  arguments['--embed-lyrics'], arguments['--group'],
-                                                 arguments['--embed-art'])
+                                                 arguments['--embed-art'], arguments['--no-slugify'])
         bandcamp_downloader.start(album)
 
 
