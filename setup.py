@@ -3,14 +3,21 @@ from codecs import open
 from os import path
 import sys
 
-if sys.version_info[0] == 2:
-    sys.exit('Python 2 is unsupported.')
+appversion = "0.0.8-03"
+pyversion = int("{}{}".format(sys.version_info[0], sys.version_info[1]))
+
+if not pyversion >= 34:
+    print('Python 3.4+ is required')
+    sys.exit(1)
 
 here = path.abspath(path.dirname(__file__))
 
+with open(here + '/bandcamp_dl/__init__.py', 'w') as initpy:
+    initpy.write('__version__ = "{}"'.format(appversion))
+
 setup(
     name='bandcamp-downloader',
-    version='0.0.8-02',
+    version=appversion,
     description='bandcamp-dl downloads albums and tracks from Bandcamp for you',
     long_description=open('README.rst').read(),
     url='https://github.com/iheanyi/bandcamp-dl',

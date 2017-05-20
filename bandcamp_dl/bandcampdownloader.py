@@ -13,6 +13,8 @@ if not sys.version_info[:2] == (3, 6):
     import mock
     from bandcamp_dl.utils import requests_patch
 
+from bandcamp_dl.__init__ import __version__
+
 
 class BandcampDownloader:
     def __init__(self, urls=None, template=None, directory=None, overwrite=False, lyrics=None, grouping=None,
@@ -24,7 +26,7 @@ class BandcampDownloader:
         :param directory: download location
         :param overwrite: if True overwrite existing files
         """
-        self.headers = {'User-Agent': 'bandcamp-dl/0.0.8-02 (https://github.com/iheanyi/bandcamp-dl)'}
+        self.headers = {'User-Agent': 'bandcamp-dl/{} (https://github.com/iheanyi/bandcamp-dl)'.format(__version__)}
         self.session = requests.Session()
 
         if type(urls) is str:

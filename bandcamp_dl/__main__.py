@@ -59,15 +59,16 @@ from docopt import docopt
 
 from bandcamp_dl.bandcamp import Bandcamp
 from bandcamp_dl.bandcampdownloader import BandcampDownloader
+from bandcamp_dl.__init__ import __version__
 
 
 def main():
-    arguments = docopt(__doc__, version='bandcamp-dl 0.0.8-1')
+    arguments = docopt(__doc__, version='bandcamp-dl {}'.format(__version__))
 
     bandcamp = Bandcamp()
 
     basedir = arguments['--base-dir'] or os.getcwd()
-    session_file = basedir + "/not.finished"
+    session_file = "{}/{}.not.finished".format(basedir, __version__)
 
     if os.path.isfile(session_file):
         with open(session_file, "r") as f:

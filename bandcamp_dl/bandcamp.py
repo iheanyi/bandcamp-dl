@@ -6,11 +6,12 @@ from bs4 import BeautifulSoup
 from bs4 import FeatureNotFound
 
 from bandcamp_dl.bandcampjson import BandcampJSON
+from bandcamp_dl.__init__ import __version__
 
 
 class Bandcamp:
     def __init__(self):
-        self.headers = {'User-Agent': 'bandcamp-dl/0.0.8-02 (https://github.com/iheanyi/bandcamp-dl)'}
+        self.headers = {'User-Agent': 'bandcamp-dl/{} (https://github.com/iheanyi/bandcamp-dl)'.format(__version__)}
 
     def parse(self, url: str, art: bool=True) -> dict or None:
         """Requests the page, cherry picks album info
