@@ -186,7 +186,7 @@ class BandcampDownloader:
                     print(e)
                     print("Downloading failed..")
                     return False
-            if skip is not True:
+            if skip is False:
                 self.write_id3_tags(filepath, track_meta)
 
         if os.path.isfile("{}.not.finished".format(__version__)):
