@@ -234,6 +234,10 @@ class BandcampDownloader:
         audio["date"] = meta["date"]
         audio.save()
 
-        os.rename(filepath, filepath[:-4])
+        try:
+            os.rename(filepath, filepath[:-4])
+        except WindowsError:
+            os.remove(filepath[:-4])
+            os.rename(filepath, filepath[:-4])
 
         sys.stdout.write("\r({}/{}) [{}] :: Finished: {}".format(self.track_num, self.num_tracks, "=" * 50, filename))
