@@ -43,3 +43,5 @@ nosetests.xml
 *.xml
 bandcamp_dl/asyncdownloader.py
 *.log
+
+bandcamp_dl/__init__\.py

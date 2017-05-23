@@ -35,9 +35,9 @@ class BandcampDownloader:
         self.template = template
         self.directory = directory
         self.overwrite = overwrite
-        self.lyrics = lyrics
         self.grouping = grouping
         self.embed_art = embed_art
+        self.embed_lyrics = embed_lyrics
         self.no_slugify = no_slugify
 
     def start(self, album: dict):
@@ -111,7 +111,7 @@ class BandcampDownloader:
                 "date": album['date']
             }
 
-            if 'lyrics' in track.keys() and self.lyrics is not False:
+            if 'lyrics' in track and self.embed_lyrics:
                 track_meta['lyrics'] = track['lyrics']
 
             self.num_tracks = len(album['tracks'])
@@ -210,15 +210,17 @@ class BandcampDownloader:
         sys.stdout.write("\r({}/{}) [{}] :: Encoding: {}".format(self.track_num, self.num_tracks, "=" * 50, filename))
 
         audio = MP3(filepath)
-        audio.tags = None
+        audio.delete()
         audio["TIT2"] = TIT2(encoding=3, text=["title"])
         audio.save(filename=None, v1=2)
 
         audio = MP3(filepath)
-        if self.grouping and meta["label"]:
+        if self.grouping and 'label' in meta:
             audio["TIT1"] = TIT1(encoding=3, text=meta["label"])
-        if self.lyrics:
+
+        if self.embed_lyrics and 'lyrics' in meta:
             audio["USLT"] = USLT(encoding=3, lang='eng', desc='', text=meta['lyrics'])
+
         if self.embed_art:
             with open(self.album_art, 'rb') as cover_img:
                 cover_bytes = cover_img.read()

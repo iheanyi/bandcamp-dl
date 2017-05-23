@@ -9,6 +9,8 @@ class BandcampJSON:
         self.targets = ['TralbumData', 'EmbedData', 'pagedata']
         self.json_data = []
 
+    # Lyrics can be found by appending #lyrics to the /track/ url
+
     def generate(self) -> list:
         """Iterate through targets grabbing needed data"""
         for target in self.targets:
