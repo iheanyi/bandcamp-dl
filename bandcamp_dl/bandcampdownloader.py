@@ -17,8 +17,7 @@ from bandcamp_dl.__init__ import __version__
 
 
 class BandcampDownloader:
-    def __init__(self, urls=None, template=None, directory=None, overwrite=False, lyrics=None, grouping=None,
-                 embed_art=None, no_slugify=False):
+    def __init__(self, template, directory, overwrite, embed_lyrics, grouping, embed_art, no_slugify, urls=None):
         """Initialize variables we will need throughout the Class
 
         :param urls: list of urls
