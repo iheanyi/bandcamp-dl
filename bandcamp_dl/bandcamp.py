@@ -13,11 +13,12 @@ class Bandcamp:
     def __init__(self):
         self.headers = {'User-Agent': 'bandcamp-dl/{} (https://github.com/iheanyi/bandcamp-dl)'.format(__version__)}
 
-    def parse(self, url: str, art: bool=True) -> dict or None:
+    def parse(self, url: str, art: bool=True, lyrics: bool=False) -> dict or None:
         """Requests the page, cherry picks album info
 
         :param url: album/track url
         :param art: if True download album art
+        :param lyrics: if True fetch track lyrics
         :return: album metadata
         """
         try:
@@ -61,7 +62,10 @@ class Bandcamp:
             "date": str(dt.strptime(album_release, "%d %b %Y %H:%M:%S GMT").year)
         }
 
+        artist_url = album_json['url'].rpartition('/album/')[0]
         for track in self.tracks:
+            if lyrics:
+                track['lyrics'] = self.get_track_lyrics("{}{}#lyrics".format(artist_url, track['title_link']))
             if track['file'] is not None:
                 track = self.get_track_metadata(track)
                 album['tracks'].append(track)
@@ -71,6 +75,18 @@ class Bandcamp:
             album['art'] = self.get_album_art()
 
         return album
+
+    def get_track_lyrics(self, track_url):
+        track_page = requests.get(track_url, headers=self.headers)
+        try:
+            track_soup = BeautifulSoup(track_page.text, "lxml")
+        except FeatureNotFound:
+            track_soup = BeautifulSoup(track_page.text, "html.parser")
+        track_lyrics = track_soup.find("div", {"class": "lyricsText"})
+        if track_lyrics:
+            return track_lyrics.text
+        else:
+            return "lyrics unavailable"
 
     def all_tracks_available(self) -> bool:
         """Verify that all tracks have a url

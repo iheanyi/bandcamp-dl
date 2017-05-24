@@ -79,9 +79,9 @@ def main():
         url = arguments['URL']
 
     if arguments['--no-art']:
-        album = bandcamp.parse(url, False)
+        album = bandcamp.parse(url, False, arguments['--embed-lyrics'])
     else:
-        album = bandcamp.parse(url)
+        album = bandcamp.parse(url, True, arguments['--embed-lyrics'])
 
     if arguments['--full-album'] and not album['full']:
         print("Full album not available. Skipping...")

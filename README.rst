@@ -49,18 +49,10 @@ Details
 ::
 
     Usage:
-     bandcamp-dl [url]
-     bandcamp-dl [--template=<template>] [--base-dir=<dir>]
-                 [--full-album]
-                 (<url> | --artist=<artist> --album=<album>)
-                 [--overwrite]
-                 [--no-art]
-                 [--embed-lyrics]
-                 [--group]
-                 [--embed-art]
-                 [--no-slugify]
-     bandcamp-dl (-h | --help)
-     bandcamp-dl (--version)
+        bandcamp-dl [options] [URL]
+
+    Arguments:
+        URL         Bandcamp album/track URL
 
 Options
 -------
@@ -68,20 +60,21 @@ Options
 ::
 
     Options:
-     -h --help                   Show this screen.
-     -v --version                Show version.
-     -a --artist=<artist>        The artist's slug (from the URL)
-     -b --album=<album>          The album's slug (from the URL)
-     -t --template=<template>    Output filename template.
-                                 [default: %{artist}/%{album}/%{track} - %{title}]
-     -d --base-dir=<dir>         Base location of which all files are downloaded.
-     -f --full-album             Download only if all tracks are available.
-     -o --overwrite              Overwrite tracks that already exist. Default is False.
-     -n --no-art                 Skip grabbing album art
-     -e --embed-lyrics           Embed track lyrics (If available)
-     -g --group                  Use album/track Label as iTunes grouping
-     -r --embed-art              Embed album art (If available)
-     -n --no-slugify             Disable slugification of track, album, and artist names.
+        -h --help               Show this screen.
+        -v --version            Show version.
+        --artist=<artist>       The artist's slug (from the URL)
+        --track=<track>         The track's slug (from the URL)
+        --album=<album>         The album's slug (from the URL)
+        --template=<template>   Output filename template.
+                                [default: %{artist}/%{album}/%{track} - %{title}]
+        --base-dir=<dir>        Base location of which all files are downloaded.
+        -f --full-album         Download only if all tracks are available.
+        -o --overwrite          Overwrite tracks that already exist. Default is False.
+        -n --no-art             Skip grabbing album art
+        -e --embed-lyrics       Embed track lyrics (If available)
+        -g --group              Use album/track Label as iTunes grouping
+        -r --embed-art          Embed album art (If available)
+        -y --no-slugify         Disable slugification of track, album, and artist names.
 
 Filename Template
 -----------------

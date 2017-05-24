@@ -108,11 +108,10 @@ class BandcampDownloader:
                 "album": album['title'],
                 "title": track['title'],
                 "track": track['track'],
+                # TODO: Find out why the 'lyrics' key seems to vanish.
+                "lyrics": track.get('lyrics', "lyrics unavailable"),
                 "date": album['date']
             }
-
-            if 'lyrics' in track and self.embed_lyrics:
-                track_meta['lyrics'] = track['lyrics']
 
             self.num_tracks = len(album['tracks'])
             self.track_num = track_index + 1
@@ -218,7 +217,7 @@ class BandcampDownloader:
         if self.grouping and 'label' in meta:
             audio["TIT1"] = TIT1(encoding=3, text=meta["label"])
 
-        if self.embed_lyrics and 'lyrics' in meta:
+        if self.embed_lyrics:
             audio["USLT"] = USLT(encoding=3, lang='eng', desc='', text=meta['lyrics'])
 
         if self.embed_art:
