@@ -3,7 +3,7 @@ from codecs import open
 from os import path
 import sys
 
-appversion = "0.0.8-04"
+appversion = "0.0.8-05"
 pyversion = int("{}{}".format(sys.version_info[0], sys.version_info[1]))
 
 if not pyversion >= 34:
