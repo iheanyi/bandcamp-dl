@@ -62,6 +62,7 @@ Options
     Options:
         -h --help               Show this screen.
         -v --version            Show version.
+        -d --debug              Verbose logging.
         --artist=<artist>       The artist's slug (from the URL)
         --track=<track>         The track's slug (from the URL)
         --album=<album>         The album's slug (from the URL)
@@ -70,9 +71,9 @@ Options
         --base-dir=<dir>        Base location of which all files are downloaded.
         -f --full-album         Download only if all tracks are available.
         -o --overwrite          Overwrite tracks that already exist. Default is False.
-        -n --no-art             Skip grabbing album art
+        -n --no-art             Skip grabbing album art.
         -e --embed-lyrics       Embed track lyrics (If available)
-        -g --group              Use album/track Label as iTunes grouping
+        -g --group              Use album/track Label as iTunes grouping.
         -r --embed-art          Embed album art (If available)
         -y --no-slugify         Disable slugification of track, album, and artist names.
 
@@ -95,7 +96,7 @@ Bugs
 ----
 
 Bugs should be reported `here <https://github.com/iheanyi/bandcamp-dl/issues>`_.
-Please include the URL and/or options used.
+Please include the URL and/or options used as well as the output when using the `--debug` option.
 
 For discussions, join us in `Discord <https://discord.gg/nwdT4MP>`_.
 
