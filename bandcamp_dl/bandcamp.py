@@ -1,5 +1,6 @@
 from datetime import datetime as dt
 import json
+import logging
 
 import requests
 from bs4 import BeautifulSoup
@@ -13,14 +14,18 @@ class Bandcamp:
     def __init__(self):
         self.headers = {'User-Agent': 'bandcamp-dl/{} (https://github.com/iheanyi/bandcamp-dl)'.format(__version__)}
 
-    def parse(self, url: str, art: bool=True, lyrics: bool=False) -> dict or None:
+    def parse(self, url: str, art: bool=True, lyrics: bool=False, debugging: bool=False) -> dict or None:
         """Requests the page, cherry picks album info
 
         :param url: album/track url
         :param art: if True download album art
         :param lyrics: if True fetch track lyrics
+        :param debugging: if True then verbose output
         :return: album metadata
         """
+        if debugging:
+            logging.basicConfig(level=logging.DEBUG)
+
         try:
             response = requests.get(url, headers=self.headers)
         except requests.exceptions.MissingSchema:
@@ -31,11 +36,14 @@ class Bandcamp:
         except FeatureNotFound:
             self.soup = BeautifulSoup(response.text, "html.parser")
 
-        bandcamp_json = BandcampJSON(self.soup).generate()
+        logging.debug(" Generating BandcampJSON..")
+        bandcamp_json = BandcampJSON(self.soup, debugging).generate()
         album_json = json.loads(bandcamp_json[0])
         embed_json = json.loads(bandcamp_json[1])
         page_json = json.loads(bandcamp_json[2])
+        logging.debug(" BandcampJSON generated..")
 
+        logging.debug(" Generating Album..")
         self.tracks = album_json['trackinfo']
 
         album_release = album_json['album_release_date']
@@ -74,9 +82,11 @@ class Bandcamp:
         if art:
             album['art'] = self.get_album_art()
 
+        logging.debug(" Album generated..")
         return album
 
     def get_track_lyrics(self, track_url):
+        logging.debug(" Fetching track lyrics..")
         track_page = requests.get(track_url, headers=self.headers)
         try:
             track_soup = BeautifulSoup(track_page.text, "lxml")
@@ -84,8 +94,10 @@ class Bandcamp:
             track_soup = BeautifulSoup(track_page.text, "html.parser")
         track_lyrics = track_soup.find("div", {"class": "lyricsText"})
         if track_lyrics:
+            logging.debug(" Lyrics retrieved..")
             return track_lyrics.text
         else:
+            logging.debug(" Lyrics not found..")
             return "lyrics unavailable"
 
     def all_tracks_available(self) -> bool:
@@ -105,6 +117,7 @@ class Bandcamp:
         :param track: track dict
         :return: track metadata dict
         """
+        logging.debug(" Generating track metadata..")
         track_metadata = {
             "duration": track['duration'],
             "track": str(track['track_num']),
@@ -122,6 +135,7 @@ class Bandcamp:
                 track['lyrics'] = "lyrics unavailable"
             track_metadata['lyrics'] = track['lyrics'].replace('\\r\\n', '\n')
 
+        logging.debug(" Track metadata generated..")
         return track_metadata
 
     @staticmethod

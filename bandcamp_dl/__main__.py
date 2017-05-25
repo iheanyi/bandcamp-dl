@@ -9,6 +9,7 @@ Arguments:
 Options:
     -h --help               Show this screen.
     -v --version            Show version.
+    -d --debug              Verbose logging.
     --artist=<artist>       The artist's slug (from the URL)
     --track=<track>         The track's slug (from the URL)
     --album=<album>         The album's slug (from the URL)
@@ -17,9 +18,9 @@ Options:
     --base-dir=<dir>        Base location of which all files are downloaded.
     -f --full-album         Download only if all tracks are available.
     -o --overwrite          Overwrite tracks that already exist. Default is False.
-    -n --no-art             Skip grabbing album art
+    -n --no-art             Skip grabbing album art.
     -e --embed-lyrics       Embed track lyrics (If available)
-    -g --group              Use album/track Label as iTunes grouping
+    -g --group              Use album/track Label as iTunes grouping.
     -r --embed-art          Embed album art (If available)
     -y --no-slugify         Disable slugification of track, album, and artist names.
 """
@@ -46,6 +47,7 @@ Iheanyi:
 
 import os
 import ast
+import logging
 
 from docopt import docopt
 
@@ -56,6 +58,9 @@ from bandcamp_dl.__init__ import __version__
 
 def main():
     arguments = docopt(__doc__, version='bandcamp-dl {}'.format(__version__))
+
+    if arguments['--debug']:
+        logging.basicConfig(level=logging.DEBUG)
 
     bandcamp = Bandcamp()
 
@@ -78,18 +83,27 @@ def main():
     else:
         url = arguments['URL']
 
+    logging.debug("\n\tURL: {}".format(url))
+
     if arguments['--no-art']:
-        album = bandcamp.parse(url, False, arguments['--embed-lyrics'])
+        album = bandcamp.parse(url, False, arguments['--embed-lyrics'], arguments['--debug'])
     else:
-        album = bandcamp.parse(url, True, arguments['--embed-lyrics'])
+        album = bandcamp.parse(url, True, arguments['--embed-lyrics'], arguments['--debug'])
+
+    logging.debug(" Album data:\n\t{}".format(album))
 
     if arguments['--full-album'] and not album['full']:
         print("Full album not available. Skipping...")
-    elif arguments['URL']:
+    elif arguments['URL'] or arguments['--artist']:
+        logging.debug("Preparing download process..")
         bandcamp_downloader = BandcampDownloader(arguments['--template'], basedir, arguments['--overwrite'],
                                                  arguments['--embed-lyrics'], arguments['--group'],
-                                                 arguments['--embed-art'], arguments['--no-slugify'], url)
+                                                 arguments['--embed-art'], arguments['--no-slugify'],
+                                                 arguments['--debug'], url)
+        logging.debug("Initiating download process..")
         bandcamp_downloader.start(album)
+    else:
+        logging.debug(" /!\ Something went horribly wrong /!\ ")
 
 if __name__ == '__main__':
     main()

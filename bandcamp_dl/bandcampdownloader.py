@@ -1,5 +1,6 @@
 import os
 import sys
+import logging
 
 import requests
 from mutagen.mp3 import MP3, EasyMP3
@@ -17,7 +18,7 @@ from bandcamp_dl.__init__ import __version__
 
 
 class BandcampDownloader:
-    def __init__(self, template, directory, overwrite, embed_lyrics, grouping, embed_art, no_slugify, urls=None):
+    def __init__(self, template, directory, overwrite, embed_lyrics, grouping, embed_art, no_slugify, debugging, urls=None):
         """Initialize variables we will need throughout the Class
 
         :param urls: list of urls
@@ -39,12 +40,16 @@ class BandcampDownloader:
         self.embed_art = embed_art
         self.embed_lyrics = embed_lyrics
         self.no_slugify = no_slugify
+        self.debugging = debugging
 
     def start(self, album: dict):
         """Start album download process
 
         :param album: album dict
         """
+        if self.debugging:
+            logging.basicConfig(level=logging.DEBUG)
+
         if album['full'] is not True:
             choice = input("Track list incomplete, some tracks may be private, download anyway? (yes/no): ").lower()
             if choice == "yes" or choice == "y":
@@ -62,6 +67,7 @@ class BandcampDownloader:
         :param track: track metadata
         :return: filepath
         """
+        logging.debug(" Generating filepath/trackname..")
         path = self.template
 
         if self.no_slugify:
@@ -80,6 +86,8 @@ class BandcampDownloader:
 
         path = u"{0}/{1}.{2}".format(self.directory, path, "mp3")
 
+        logging.debug(" filepath/trackname generated..")
+        logging.debug("\n\tPath: {}".format(path))
         return path
 
     @staticmethod
@@ -90,6 +98,8 @@ class BandcampDownloader:
         :return: directory path
         """
         directory = os.path.dirname(filename)
+        logging.debug(" Directory:\n\t{}".format(directory))
+        logging.debug(" Directory doesn't exist, creating..")
         if not os.path.exists(directory):
             os.makedirs(directory)
 
@@ -119,6 +129,8 @@ class BandcampDownloader:
             filepath = self.template_to_path(track_meta) + ".tmp"
             filename = filepath.rsplit('/', 1)[1]
             dirname = self.create_directory(filepath)
+
+            logging.debug(" Current file:\n\t{}".format(filepath))
 
             if album['art'] and not os.path.exists(dirname + "/cover.jpg"):
                 try:
@@ -161,11 +173,12 @@ class BandcampDownloader:
                             for data in r.iter_content(chunk_size=total):
                                 dl += len(data)
                                 f.write(data)
-                                done = int(50 * dl / file_length)
-                                sys.stdout.write(
-                                    "\r({}/{}) [{}{}] :: Downloading: {}".format(self.track_num, self.num_tracks,
-                                                                                 "=" * done, " " * (50 - done),
-                                                                                 filename[:-8]))
+                                if not self.debugging:
+                                    done = int(50 * dl / file_length)
+                                    sys.stdout.write(
+                                        "\r({}/{}) [{}{}] :: Downloading: {}".format(self.track_num, self.num_tracks,
+                                                                                     "=" * done, " " * (50 - done),
+                                                                                     filename[:-8]))
                                 sys.stdout.flush()
                     local_size = os.path.getsize(filepath)
                     # if the local filesize before encoding doesn't match the remote filesize redownload
@@ -203,10 +216,13 @@ class BandcampDownloader:
         :param filepath: name of mp3 file
         :param meta: dict of track metadata
         """
+        logging.debug(" Encoding process starting..")
+
         filename = filepath.rsplit('/', 1)[1][:-8]
 
-        sys.stdout.flush()
-        sys.stdout.write("\r({}/{}) [{}] :: Encoding: {}".format(self.track_num, self.num_tracks, "=" * 50, filename))
+        if not self.debugging:
+            sys.stdout.flush()
+            sys.stdout.write("\r({}/{}) [{}] :: Encoding: {}".format(self.track_num, self.num_tracks, "=" * 50, filename))
 
         audio = MP3(filepath)
         audio.delete()
@@ -234,10 +250,14 @@ class BandcampDownloader:
         audio["date"] = meta["date"]
         audio.save()
 
+        logging.debug(" Encoding process finished..")
+        logging.debug(" Renaming:\n\t{} -to-> {}".format(filepath, filepath[:-4]))
+
         try:
             os.rename(filepath, filepath[:-4])
         except WindowsError:
             os.remove(filepath[:-4])
             os.rename(filepath, filepath[:-4])
 
-        sys.stdout.write("\r({}/{}) [{}] :: Finished: {}".format(self.track_num, self.num_tracks, "=" * 50, filename))
+        if not self.debugging:
+            sys.stdout.write("\r({}/{}) [{}] :: Finished: {}".format(self.track_num, self.num_tracks, "=" * 50, filename))
