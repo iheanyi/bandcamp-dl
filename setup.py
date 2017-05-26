@@ -3,12 +3,7 @@ from codecs import open
 from os import path
 import sys
 
-appversion = "0.0.8-06"
-pyversion = int("{}{}".format(sys.version_info[0], sys.version_info[1]))
-
-if not pyversion >= 34:
-    print('Python 3.4+ is required')
-    sys.exit(1)
+appversion = "0.0.8-07"
 
 here = path.abspath(path.dirname(__file__))
 
@@ -36,6 +31,7 @@ setup(
     ],
     keywords=['bandcamp', 'downloader', 'music', 'cli', 'albums', 'dl'],
     packages=find_packages(exclude=['tests']),
+    python_requires='~=3.4',
     install_requires=[
         'beautifulsoup4',
         'demjson',
