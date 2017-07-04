@@ -201,8 +201,8 @@ class BandcampDownloader:
             if skip is False:
                 self.write_id3_tags(filepath, track_meta)
 
-        if os.path.isfile("{}.not.finished".format(__version__)):
-            os.remove("{}.not.finished".format(__version__))
+        if os.path.isfile("{}/{}.not.finished".format(self.directory, __version__)):
+            os.remove("{}/{}.not.finished".format(self.directory, __version__))
 
         # Remove album art image as it is embedded
         if self.embed_art:
