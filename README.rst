@@ -89,6 +89,7 @@ tokens:
 -  ``album``: The album name.
 -  ``track``: The track number.
 -  ``title``: The track title.
+-  ``genres``: The genre tags of the album.
 
 The default template is: ``%{artist}/%{album}/%{track} - %{title}``.
 

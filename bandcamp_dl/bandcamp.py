@@ -13,6 +13,13 @@ from bandcamp_dl.__init__ import __version__
 class Bandcamp:
     def __init__(self):
         self.headers = {'User-Agent': 'bandcamp-dl/{} (https://github.com/iheanyi/bandcamp-dl)'.format(__version__)}
+        """ the list of top level genres on bandcamp """
+        self.genres = ["rock", "alternative", "hip-hop/rap",\
+        "electronic", "pop", "acoustic", "folk", "punk", "metal",\
+        "experimental", "ambient", "r&b/soul", "jazz", "blues",\
+        "country", "funk", "reggae", "devotional", "soundtrack",\
+        "classical", "latin", "world", "kids", "comedy", "audiobooks",\
+        "podcasts", "spoken word"]
 
     def parse(self, url: str, art: bool=True, lyrics: bool=False, debugging: bool=False) -> dict or None:
         """Requests the page, cherry picks album info
@@ -41,6 +48,7 @@ class Bandcamp:
         album_json = json.loads(bandcamp_json[0])
         embed_json = json.loads(bandcamp_json[1])
         page_json = json.loads(bandcamp_json[2])
+        genres_of_album = self.get_genre_tags()
         logging.debug(" BandcampJSON generated..")
 
         logging.debug(" Generating Album..")
@@ -67,7 +75,8 @@ class Bandcamp:
             "label": label,
             "full": False,
             "art": "",
-            "date": str(dt.strptime(album_release, "%d %b %Y %H:%M:%S GMT").year)
+            "date": str(dt.strptime(album_release, "%d %b %Y %H:%M:%S GMT").year),
+            "genres": genres_of_album
         }
 
         artist_url = album_json['url'].rpartition('/album/')[0]
@@ -159,3 +168,20 @@ class Bandcamp:
             return url
         except None:
             pass
+
+    def get_genre_tags(self) -> str:
+        """ comma separated tags that correspond to genres """
+        album_tag_links = self.soup.find_all("a", class_="tag")
+        album_tags = []
+        for link in album_tag_links:
+            candidate = str(link.string)
+            if tag in self.genres and candidate not in album_tags:
+                album_tags.append(candidate)
+        genres_as_csv = ""
+        for genre in album_tags:
+            genres_as_csv += genre +","
+        if len(genres_as_csv) > 1:
+            genres_as_csv = genres_as_csv[:-1]
+        else:
+            genres_as_csv = "none"
+        return genres_as_csv

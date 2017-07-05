@@ -71,10 +71,12 @@ class BandcampDownloader:
         path = self.template
 
         if self.no_slugify:
+            path = path.replace("%{genres}", track['genres'])
             path = path.replace("%{artist}", track['artist'])
             path = path.replace("%{album}", track['album'])
             path = path.replace("%{title}", track['title'])
         else:
+            path = path.replace("%{genres}", slugify(track['genres']))
             path = path.replace("%{artist}", slugify(track['artist']))
             path = path.replace("%{album}", slugify(track['album']))
             path = path.replace("%{title}", slugify(track['title']))
@@ -111,6 +113,7 @@ class BandcampDownloader:
         :param album: album dict
         :return: True if successful
         """
+
         for track_index, track in enumerate(album['tracks']):
             track_meta = {
                 "artist": album['artist'],
@@ -120,7 +123,8 @@ class BandcampDownloader:
                 "track": track['track'],
                 # TODO: Find out why the 'lyrics' key seems to vanish.
                 "lyrics": track.get('lyrics', "lyrics unavailable"),
-                "date": album['date']
+                "date": album['date'],
+                "genres": album['genres']
             }
 
             self.num_tracks = len(album['tracks'])
