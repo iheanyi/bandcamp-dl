@@ -126,7 +126,10 @@ class Bandcamp:
         }
 
         if 'mp3-128' in track['file']:
-            track_metadata['url'] = "http:" + track['file']['mp3-128']
+            if 'https' in track['file']['mp3-128']:
+                track_metadata['url'] = track['file']['mp3-128']
+            else:
+                track_metadata['url'] = "http:" + track['file']['mp3-128']
         else:
             track_metadata['url'] = None
 

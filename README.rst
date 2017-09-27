@@ -63,9 +63,9 @@ Options
         -h --help               Show this screen.
         -v --version            Show version.
         -d --debug              Verbose logging.
-        --artist=<artist>       The artist's slug (from the URL)
-        --track=<track>         The track's slug (from the URL)
-        --album=<album>         The album's slug (from the URL)
+        --artist=<artist>       The artist's slug (from the URL, --track or --album is required)
+        --track=<track>         The track's slug (from the URL, for use with --artist)
+        --album=<album>         The album's slug (from the URL, for use with --artist)
         --template=<template>   Output filename template.
                                 [default: %{artist}/%{album}/%{track} - %{title}]
         --base-dir=<dir>        Base location of which all files are downloaded.
