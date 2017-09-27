@@ -10,9 +10,9 @@ Options:
     -h --help               Show this screen.
     -v --version            Show version.
     -d --debug              Verbose logging.
-    --artist=<artist>       The artist's slug (from the URL)
-    --track=<track>         The track's slug (from the URL)
-    --album=<album>         The album's slug (from the URL)
+    --artist=<artist>       The artist's slug (from the URL, --track or --album is required)
+    --track=<track>         The track's slug (from the URL, for use with --artist)
+    --album=<album>         The album's slug (from the URL, for use with --artist)
     --template=<template>   Output filename template.
                             [default: %{artist}/%{album}/%{track} - %{title}]
     --base-dir=<dir>        Base location of which all files are downloaded.
@@ -67,11 +67,9 @@ def main():
     basedir = arguments['--base-dir'] or os.getcwd()
     session_file = "{}/{}.not.finished".format(basedir, __version__)
 
-    if os.path.isfile(session_file):
+    if os.path.isfile(session_file) and arguments['URL'] is None:
         with open(session_file, "r") as f:
             arguments = ast.literal_eval(f.readline())
-    elif arguments['URL'] is None and arguments['--artist'] is None:
-        print(__doc__)
     else:
         with open(session_file, "w") as f:
             f.write("".join(str(arguments).split('\n')))
@@ -80,6 +78,8 @@ def main():
         url = Bandcamp.generate_album_url(arguments['--artist'], arguments['--album'], "album")
     elif arguments['--artist'] and arguments['--track']:
         url = Bandcamp.generate_album_url(arguments['--artist'], arguments['--track'], "track")
+    elif arguments['--artist']:
+        print(__doc__)
     else:
         url = arguments['URL']
 
@@ -104,6 +104,7 @@ def main():
         bandcamp_downloader.start(album)
     else:
         logging.debug(" /!\ Something went horribly wrong /!\ ")
+
 
 if __name__ == '__main__':
     main()
