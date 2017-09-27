@@ -3,7 +3,7 @@ from codecs import open
 from os import path
 import sys
 
-appversion = "0.0.8-08"
+appversion = "0.0.9-dev"
 
 here = path.abspath(path.dirname(__file__))
 
@@ -42,6 +42,12 @@ setup(
         'mock',
         'chardet',
     ],
+    extras_require={
+        'dev': [
+            'requests-cache',
+            'pytest'
+        ]
+    },
     entry_points={
         'console_scripts': [
             'bandcamp-dl=bandcamp_dl.__main__:main',
