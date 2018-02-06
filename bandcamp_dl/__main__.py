@@ -104,6 +104,8 @@ def main():
                                                  arguments['--debug'], url)
         logging.debug("Initiating download process..")
         bandcamp_downloader.start(album)
+        # Add a newline to stop prompt mangling
+        print("")
     else:
         logging.debug(" /!\ Something went horribly wrong /!\ ")
 

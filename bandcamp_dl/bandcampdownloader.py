@@ -179,7 +179,6 @@ class BandcampDownloader:
                                         "\r({}/{}) [{}{}] :: Downloading: {}".format(self.track_num, self.num_tracks,
                                                                                      "=" * done, " " * (50 - done),
                                                                                      filename[:-8]))
-                                sys.stdout.flush()
                     local_size = os.path.getsize(filepath)
                     # if the local filesize before encoding doesn't match the remote filesize redownload
                     if local_size != file_length and attempts != 3:
@@ -221,7 +220,6 @@ class BandcampDownloader:
         filename = filepath.rsplit('/', 1)[1][:-8]
 
         if not self.debugging:
-            sys.stdout.flush()
             sys.stdout.write("\r({}/{}) [{}] :: Encoding: {}".format(self.track_num, self.num_tracks, "=" * 50, filename))
 
         audio = MP3(filepath)
