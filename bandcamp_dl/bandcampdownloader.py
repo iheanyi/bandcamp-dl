@@ -16,6 +16,8 @@ if not sys.version_info[:2] == (3, 6):
 
 from bandcamp_dl.__init__ import __version__
 
+from bandcamp_dl.utils.clean_print import print_clean
+
 
 class BandcampDownloader:
     def __init__(self, template, directory, overwrite, embed_lyrics, grouping, embed_art, no_slugify, debugging, urls=None):
@@ -175,7 +177,7 @@ class BandcampDownloader:
                                 f.write(data)
                                 if not self.debugging:
                                     done = int(50 * dl / file_length)
-                                    sys.stdout.write(
+                                    print_clean(
                                         "\r({}/{}) [{}{}] :: Downloading: {}".format(self.track_num, self.num_tracks,
                                                                                      "=" * done, " " * (50 - done),
                                                                                      filename[:-8]))
@@ -220,7 +222,7 @@ class BandcampDownloader:
         filename = filepath.rsplit('/', 1)[1][:-8]
 
         if not self.debugging:
-            sys.stdout.write("\r({}/{}) [{}] :: Encoding: {}".format(self.track_num, self.num_tracks, "=" * 50, filename))
+            print_clean("\r({}/{}) [{}] :: Encoding: {}".format(self.track_num, self.num_tracks, "=" * 50, filename))
 
         audio = MP3(filepath)
         audio.delete()
@@ -258,4 +260,4 @@ class BandcampDownloader:
             os.rename(filepath, filepath[:-4])
 
         if not self.debugging:
-            sys.stdout.write("\r({}/{}) [{}] :: Finished: {}".format(self.track_num, self.num_tracks, "=" * 50, filename))
+            print_clean("\r({}/{}) [{}] :: Finished: {}".format(self.track_num, self.num_tracks, "=" * 50, filename))
