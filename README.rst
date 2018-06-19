@@ -163,6 +163,7 @@ related to bandcamp-dl, by all means, go ahead and report the bug.
 
 Dependencies
 ------------
+- Python 3 - Versions 3.4 and above are required to run bandcamp-dl
 
 -  `BeautifulSoup4 <https://pypi.python.org/pypi/beautifulsoup4>`_ - HTML Parsing
 -  `Demjson <https://pypi.python.org/pypi/demjson>`_- JavaScript dict to JSON conversion
