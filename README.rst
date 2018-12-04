@@ -14,7 +14,10 @@ Installation
 From PyPI
 ~~~~~~~~~
 
-``pip install bandcamp-downloader``
+``pip3 install bandcamp-downloader``
+
+
+Some linux distros may require that python3-pip is installed first.
 
 From Wheel
 ~~~~~~~~~~
@@ -39,7 +42,7 @@ Description
 -----------
 
 bandcamp-dl is a small command-line app to download audio from
-BandCamp.com. It requires the Python interpreter, version 3.4+ and is
+BandCamp.com. It requires the Python interpreter, version 3.4 (or higher) and is
 not platform specific. It is released to the public domain, which means
 you can modify it, redistribute it or use it how ever you like.
 
