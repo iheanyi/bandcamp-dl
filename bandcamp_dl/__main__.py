@@ -51,12 +51,10 @@ import logging
 import importlib
 from docopt import docopt
 import bandcamp_dl.bandcamp
-print(bandcamp_dl.bandcamp)
 from bandcamp_dl.bandcamp import Bandcamp
 from bandcamp_dl.bandcampdownloader import BandcampDownloader
 from bandcamp_dl.__init__ import __version__
 
-print(Bandcamp)
 
 def main():
     arguments = docopt(__doc__, version='bandcamp-dl {}'.format(__version__))
