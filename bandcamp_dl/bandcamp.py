@@ -38,39 +38,41 @@ class Bandcamp:
 
         logging.debug(" Generating BandcampJSON..")
         bandcamp_json = BandcampJSON(self.soup, debugging).generate()
-        album_json = json.loads(bandcamp_json[0])
-        embed_json = json.loads(bandcamp_json[1])
-        page_json = json.loads(bandcamp_json[2])
+
+        page_json = {
+            **json.loads(bandcamp_json.get('pagedata')),
+            **json.loads(bandcamp_json.get('target')),
+        }
         logging.debug(" BandcampJSON generated..")
 
         logging.debug(" Generating Album..")
-        self.tracks = album_json['trackinfo']
+        self.tracks = page_json['trackinfo']
 
-        album_release = album_json['album_release_date']
+        album_release = page_json['album_release_date']
         if album_release is None:
-            album_release = album_json['current']['release_date']
+            album_release = page_json['current']['release_date']
 
         try:
-            album_title = embed_json['album_title']
+            album_title = page_json['album_title']
         except KeyError:
-            album_title = album_json['trackinfo'][0]['title']
+            album_title = page_json['trackinfo'][0]['title']
 
         try:
-            label = page_json['item_sellers']['{}'.format(album_json['current']['selling_band_id'])]['name']
+            label = page_json['item_sellers']['{}'.format(page_json['current']['selling_band_id'])]['name']
         except KeyError:
             label = None
 
         album = {
             "tracks": [],
             "title": album_title,
-            "artist": embed_json['artist'],
+            "artist": page_json['artist'],
             "label": label,
             "full": False,
             "art": "",
             "date": str(dt.strptime(album_release, "%d %b %Y %H:%M:%S GMT").year)
         }
 
-        artist_url = album_json['url'].rpartition('/album/')[0]
+        artist_url = page_json['url'].rpartition('/album/')[0]
         for track in self.tracks:
             if lyrics:
                 track['lyrics'] = self.get_track_lyrics("{}{}#lyrics".format(artist_url, track['title_link']))
