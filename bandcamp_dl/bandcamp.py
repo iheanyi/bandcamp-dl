@@ -51,7 +51,7 @@ class Bandcamp:
             album_release = page_json['current']['release_date']
 
         try:
-            album_title = page_json['album_title']
+            album_title = page_json['current']['title']
         except KeyError:
             album_title = page_json['trackinfo'][0]['title']
 
