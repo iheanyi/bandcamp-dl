@@ -38,11 +38,9 @@ class Bandcamp:
 
         logging.debug(" Generating BandcampJSON..")
         bandcamp_json = BandcampJSON(self.soup, debugging).generate()
-
-        page_json = {
-            **json.loads(bandcamp_json.get('pagedata')),
-            **json.loads(bandcamp_json.get('target')),
-        }
+        page_json = {}
+        for entry in bandcamp_json:
+            page_json = {**page_json, **json.loads(entry)}
         logging.debug(" BandcampJSON generated..")
 
         logging.debug(" Generating Album..")
