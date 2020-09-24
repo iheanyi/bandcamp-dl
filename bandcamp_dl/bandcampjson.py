@@ -25,8 +25,14 @@ class BandcampJSON:
 
     def get_js(self):
         """Get <script> element containing the data we need and return the raw JS"""
-        logging.debug("Grabbing embedded script..")
+        logging.debug("Grabbing embedded scripts..")
         embedded_scripts_raw = [self.body.find("script", {"type": "application/json+ld"}).string]
+        for script in self.body.find_all('script'):
+            try:
+                album_info = script['data-tralbum']
+                embedded_scripts_raw.append(album_info)
+            except:
+                continue
         for script in embedded_scripts_raw:
             js_data = self.js_to_json(script)
             self.json_data.append(js_data)
