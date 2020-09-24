@@ -29,7 +29,7 @@ class BandcampJSON:
     def get_js(self):
         """Get <script> element containing the data we need and return the raw JS"""
         logging.debug("Grabbing embedded script..")
-        self.js_data = self.body.find("script", {"src": False}, text=re.compile(self.target)).string
+        self.js_data = self.body.find("script", {"type": "application/json+ld"}, text=re.compile(self.target)).string
         self.extract_data(self.js_data)
 
     def extract_data(self, js: str):
