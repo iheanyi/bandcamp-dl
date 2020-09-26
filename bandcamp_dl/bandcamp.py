@@ -158,7 +158,7 @@ class Bandcamp:
         :return: url as str
         """
         try:
-            url = self.soup.find(id='tralbumArt').find_all('img')[0]['src']
+            url = self.soup.find(id='tralbumArt').find_all('a')[0]['href']
             return url
         except None:
             pass
