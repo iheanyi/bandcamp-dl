@@ -1,7 +1,7 @@
 """bandcamp-dl
 
 Usage:
-    bandcamp-dl [options] [URL]
+    bandcamp-dl [options] [URL ...]
 
 Arguments:
     URL         Bandcamp album/track URL
@@ -48,9 +48,9 @@ Iheanyi:
 import os
 import ast
 import logging
-
+import importlib
 from docopt import docopt
-
+import bandcamp_dl.bandcamp
 from bandcamp_dl.bandcamp import Bandcamp
 from bandcamp_dl.bandcampdownloader import BandcampDownloader
 from bandcamp_dl.__init__ import __version__
@@ -75,39 +75,43 @@ def main():
             f.write("".join(str(arguments).split('\n')))
 
     if arguments['--artist'] and arguments['--album']:
-        url = Bandcamp.generate_album_url(arguments['--artist'], arguments['--album'], "album")
+        urls = Bandcamp.generate_album_url(arguments['--artist'], arguments['--album'], "album")
     elif arguments['--artist'] and arguments['--track']:
-        url = Bandcamp.generate_album_url(arguments['--artist'], arguments['--track'], "track")
+        urls = Bandcamp.generate_album_url(arguments['--artist'], arguments['--track'], "track")
     elif arguments['--artist']:
         print(__doc__)
         os.remove(session_file)
         exit()
     else:
-        url = arguments['URL']
+        urls = arguments['URL']
+    for url in urls:
+        logging.debug("\n\tURL: {}".format(url))
+    # url is now a list of URLs. So lets make an albumList and append each parsed album to it.
+    albumList = [];
+    for url in urls:
+        albumList.append(bandcamp.parse(url, not arguments['--no-art'], arguments['--embed-lyrics'], arguments['--debug']))
+    
+    for album in albumList:
+        logging.debug(" Album data:\n\t{}".format(album))
 
-    logging.debug("\n\tURL: {}".format(url))
+    for album in albumList:
+        if arguments['--full-album'] and not album['full']:
+            print("Full album not available. Skipping ", album['title'], " ...")
+            albumList.remove(album) #Remove not-full albums BUT continue with the rest of the albums.
 
-    if arguments['--no-art']:
-        album = bandcamp.parse(url, False, arguments['--embed-lyrics'], arguments['--debug'])
-    else:
-        album = bandcamp.parse(url, True, arguments['--embed-lyrics'], arguments['--debug'])
-
-    logging.debug(" Album data:\n\t{}".format(album))
-
-    if arguments['--full-album'] and not album['full']:
-        print("Full album not available. Skipping...")
-    elif arguments['URL'] or arguments['--artist']:
+    if arguments['URL'] or arguments['--artist']:
         logging.debug("Preparing download process..")
-        bandcamp_downloader = BandcampDownloader(arguments['--template'], basedir, arguments['--overwrite'],
+        for album in albumList:
+            bandcamp_downloader = BandcampDownloader(arguments['--template'], basedir, arguments['--overwrite'],
                                                  arguments['--embed-lyrics'], arguments['--group'],
                                                  arguments['--embed-art'], arguments['--no-slugify'],
-                                                 arguments['--debug'], url)
-        logging.debug("Initiating download process..")
-        bandcamp_downloader.start(album)
-        # Add a newline to stop prompt mangling
-        print("")
+                                                 arguments['--debug'], album['url'])
+            logging.debug("Initiating download process..")
+            bandcamp_downloader.start(album)
+            # Add a newline to stop prompt mangling
+            print("")
     else:
-        logging.debug(" /!\ Something went horribly wrong /!\ ")
+        logging.debug(r" /!\ Something went horribly wrong /!\ ")
 
 
 if __name__ == '__main__':
