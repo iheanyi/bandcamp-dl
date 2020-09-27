@@ -7,48 +7,41 @@ import demjson
 class BandcampJSON:
     def __init__(self, body, debugging: bool=False):
         self.body = body
-        self.targets = ['TralbumData', 'EmbedData', 'pagedata']
         self.json_data = []
 
         if debugging:
             logging.basicConfig(level=logging.DEBUG)
 
-    def generate(self) -> list:
-        """Iterate through targets grabbing needed data"""
-        for target in self.targets:
-            if target[:4] == 'page':
-                self.get_pagedata()
-            else:
-                logging.debug(" Grabbing target data..")
-                self.regex = re.compile(r"(?<=var\s" + target + "\s=\s).*?(?=};)", re.DOTALL)
-                self.target = target
-                self.js_to_json()
+    def generate(self):
+        """Grabbing needed data from the page"""
+        self.get_pagedata()
+        self.get_js()
         return self.json_data
 
     def get_pagedata(self):
-        """Grab bandcamp pagedata JSON"""
+        logging.debug(" Grab pagedata JSON..")
         pagedata = self.body.find('div', {'id': 'pagedata'})['data-blob']
-        # Add pagedata to the list of JSON strings
         self.json_data.append(pagedata)
 
     def get_js(self):
         """Get <script> element containing the data we need and return the raw JS"""
-        logging.debug(" Grabbing embedded script..")
-        self.js_data = self.body.find("script", {"src": False}, text=re.compile(self.target)).string
-        self.extract_data(self.js_data)
+        logging.debug(" Grabbing embedded scripts..")
+        embedded_scripts_raw = [self.body.find("script", {"type": "application/json+ld"}).string]
+        for script in self.body.find_all('script'):
+            try:
+                album_info = script['data-tralbum']
+                embedded_scripts_raw.append(album_info)
+            except:
+                continue
+        for script in embedded_scripts_raw:
+            js_data = self.js_to_json(script)
+            self.json_data.append(js_data)
 
-    def extract_data(self, js: str):
-        """Extract values from JS dictionary
-
-        :param js: Raw JS
-        """
-        self.js_data = self.regex.search(js).group().replace('" + "', '') + "}"
-
-    def js_to_json(self):
+    def js_to_json(self, js_data):
         """Convert JavaScript dictionary to JSON"""
         logging.debug(" Converting JS to JSON..")
-        self.get_js()
         # Decode with demjson first to reformat keys and lists
-        decoded_js = demjson.decode(self.js_data)
+        decoded_js = demjson.decode(js_data)
         # Encode to make valid JSON, add to list of JSON strings
-        self.json_data.append(demjson.encode(decoded_js))
+        return demjson.encode(decoded_js)
+        
