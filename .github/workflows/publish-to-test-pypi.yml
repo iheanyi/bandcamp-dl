@@ -14,7 +14,6 @@ jobs:
           python -m
           build
           --sdist
-          --bdist
           --wheel
           --outdir dist/
       - name: Publish distribution to TestPyPI
