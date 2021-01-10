@@ -1,0 +1,29 @@
+on: push
+jobs:
+  build-n-publish:
+    name: Build and publish bandcamp-downloader to TestPyPI
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@master
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Build a binary wheel and a source tarball
+        run: >-
+          python -m
+          build
+          --sdist
+          --bdist
+          --wheel
+          --outdir dist/
+      - name: Publish distribution to TestPyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
+      #- name: Publish distribution to PyPI
+      #  if: startsWith(github.ref, 'refs/tags')
+      #  uses: pypa/gh-action-pypi-publish@master
+      #  with:
+      #    password: ${{ secrets.PYPI_API_TOKEN }}
