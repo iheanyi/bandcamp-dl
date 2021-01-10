@@ -23,6 +23,14 @@ Options:
     -g --group              Use album/track Label as iTunes grouping.
     -r --embed-art          Embed album art (If available)
     -y --no-slugify         Disable slugification of track, album, and artist names.
+    -c --ok-chars=<chars>   Specify allowed chars in slugify.
+                            [default: -_~]
+    -s --space-char=<char>  Specify the char to use in place of spaces.
+                            [default: -]
+    -a --ascii-only         Only allow ASCII chars (北京 (capital of china) -> bei-jing-capital-of-china)
+    -k --keep-spaces        Retain whitespace in filenames
+    -u --keep-upper         Retain uppercase letters in filenames
+
 """
 """
 Coded by:
@@ -87,7 +95,7 @@ def main():
     for url in urls:
         logging.debug("\n\tURL: {}".format(url))
     # url is now a list of URLs. So lets make an albumList and append each parsed album to it.
-    albumList = [];
+    albumList = []
     for url in urls:
         albumList.append(bandcamp.parse(url, not arguments['--no-art'], arguments['--embed-lyrics'], arguments['--debug']))
     
@@ -97,15 +105,17 @@ def main():
     for album in albumList:
         if arguments['--full-album'] and not album['full']:
             print("Full album not available. Skipping ", album['title'], " ...")
-            albumList.remove(album) #Remove not-full albums BUT continue with the rest of the albums.
+            albumList.remove(album)  # Remove not-full albums BUT continue with the rest of the albums.
 
     if arguments['URL'] or arguments['--artist']:
         logging.debug("Preparing download process..")
         for album in albumList:
             bandcamp_downloader = BandcampDownloader(arguments['--template'], basedir, arguments['--overwrite'],
-                                                 arguments['--embed-lyrics'], arguments['--group'],
-                                                 arguments['--embed-art'], arguments['--no-slugify'],
-                                                 arguments['--debug'], album['url'])
+                                                     arguments['--embed-lyrics'], arguments['--group'],
+                                                     arguments['--embed-art'], arguments['--no-slugify'],
+                                                     arguments['--ok-chars'], arguments['--space-char'],
+                                                     arguments['--ascii-only'], arguments['--keep-spaces'],
+                                                     arguments['--keep-upper'], arguments['--debug'], album['url'])
             logging.debug("Initiating download process..")
             bandcamp_downloader.start(album)
             # Add a newline to stop prompt mangling

@@ -8,7 +8,7 @@ from mutagen.id3._frames import TIT1
 from mutagen.id3._frames import TIT2
 from mutagen.id3._frames import USLT
 from mutagen.id3._frames import APIC
-from slugify import slugify
+from bandcamp_dl.utils.unicode_slugify import slugify
 
 if not sys.version_info[:2] == (3, 6):
     import mock
@@ -20,7 +20,8 @@ from bandcamp_dl.utils.clean_print import print_clean
 
 
 class BandcampDownloader:
-    def __init__(self, template, directory, overwrite, embed_lyrics, grouping, embed_art, no_slugify, debugging, urls=None):
+    def __init__(self, template, directory, overwrite, embed_lyrics, grouping, embed_art, no_slugify, ok_chars,
+                 space_char, ascii_only, keep_space, keep_upper, debugging, urls=None):
         """Initialize variables we will need throughout the Class
 
         :param urls: list of urls
@@ -42,6 +43,11 @@ class BandcampDownloader:
         self.embed_art = embed_art
         self.embed_lyrics = embed_lyrics
         self.no_slugify = no_slugify
+        self.ok_chars = ok_chars
+        self.space_char = space_char
+        self.ascii_only = ascii_only
+        self.keep_space = keep_space
+        self.keep_upper = keep_upper
         self.debugging = debugging
 
     def start(self, album: dict):
@@ -63,23 +69,33 @@ class BandcampDownloader:
         else:
             self.download_album(album)
 
-    def template_to_path(self, track: dict) -> str:
+    def template_to_path(self, track: dict, ascii_only, ok_chars, space_char, keep_space, keep_upper) -> str:
         """Create valid filepath based on template
 
         :param track: track metadata
+        :param ok_chars: optional chars to allow
+        :param ascii_only: allow only ascii chars in filename
+        :param keep_space: retain whitespace in filename
+        :param keep_upper: retain uppercase chars in filename
+        :param space_char: char to use in place of spaces
         :return: filepath
         """
         logging.debug(" Generating filepath/trackname..")
         path = self.template
+
+        def slugify_preset(content):
+            slugged = slugify(content, ok=ok_chars, only_ascii=ascii_only, spaces=keep_space, lower=not keep_upper,
+                              space_replacement=space_char)
+            return slugged
 
         if self.no_slugify:
             path = path.replace("%{artist}", track['artist'])
             path = path.replace("%{album}", track['album'])
             path = path.replace("%{title}", track['title'])
         else:
-            path = path.replace("%{artist}", slugify(track['artist']))
-            path = path.replace("%{album}", slugify(track['album']))
-            path = path.replace("%{title}", slugify(track['title']))
+            path = path.replace("%{artist}", slugify_preset(track['artist']))
+            path = path.replace("%{album}", slugify_preset(track['album']))
+            path = path.replace("%{title}", slugify_preset(track['title']))
 
         if track['track'] == "None":
             path = path.replace("%{track}", "Single")
@@ -128,7 +144,7 @@ class BandcampDownloader:
             self.num_tracks = len(album['tracks'])
             self.track_num = track_index + 1
 
-            filepath = self.template_to_path(track_meta) + ".tmp"
+            filepath = self.template_to_path(track_meta, self.ascii_only, self.ok_chars, self.space_char, self.keep_space, self.keep_upper) + ".tmp"
             filename = filepath.rsplit('/', 1)[1]
             dirname = self.create_directory(filepath)
 

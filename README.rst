@@ -79,6 +79,13 @@ Options
         -g --group              Use album/track Label as iTunes grouping.
         -r --embed-art          Embed album art (If available)
         -y --no-slugify         Disable slugification of track, album, and artist names.
+        -c --ok-chars=<chars>   Specify allowed chars in slugify.
+                                [default: -_~]
+        -s --space-char=<char>  Specify the char to use in place of spaces.
+                                [default: -]
+        -a --ascii-only         Only allow ASCII chars (北京 (capital of china) -> bei-jing-capital-of-china)
+        -k --keep-spaces        Retain whitespace in filenames
+        -u --keep-upper         Retain uppercase letters in filenames
 
 Filename Template
 -----------------
@@ -170,9 +177,9 @@ Dependencies
 -  `BeautifulSoup4 <https://pypi.python.org/pypi/beautifulsoup4>`_ - HTML Parsing
 -  `Demjson <https://pypi.python.org/pypi/demjson>`_- JavaScript dict to JSON conversion
 -  `Mutagen <https://pypi.python.org/pypi/mutagen>`_ - ID3 Encoding
--  `Requests <https://pypi.python.org/pypi/requests>`_ - for retriving the HTML
+-  `Requests <https://pypi.python.org/pypi/requests>`_ - for retrieving the HTML
 -  `Unicode-Slugify <https://pypi.python.org/pypi/unicode-slugify>`_ - A slug generator that turns strings into unicode slugs.
--  `Chardet <https://pypi.python.org/pypi/chardet>`_ - Charecter encoding detection
+-  `Chardet <https://pypi.python.org/pypi/chardet>`_ - Character encoding detection
 -  `Docopt <https://pypi.python.org/pypi/docopt>`_ - CLI help
 -  `Six <https://pypi.python.org/pypi/six>`_ - Python 2-3 compatibility
 -  `Unidecode <https://pypi.python.org/pypi/unidecode>`_ - ASCII representation of Unicode text

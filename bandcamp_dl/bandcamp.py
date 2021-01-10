@@ -68,7 +68,7 @@ class Bandcamp:
             "full": False,
             "art": "",
             "date": str(dt.strptime(album_release, "%d %b %Y %H:%M:%S GMT").year),
-            "url":url
+            "url": url
         }
 
         artist_url = page_json['url'].rpartition('/album/')[0]
@@ -84,7 +84,8 @@ class Bandcamp:
             album['art'] = self.get_album_art()
 
         logging.debug(" Album generated..")
-        print("ALBUM URL:", album["url"])
+        logging.debug(" Album URL: {}".format(album['url']))
+
         return album
 
     def get_track_lyrics(self, track_url):

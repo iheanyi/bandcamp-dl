@@ -1,4 +1,3 @@
-import re
 import logging
 
 import demjson
@@ -37,11 +36,11 @@ class BandcampJSON:
             js_data = self.js_to_json(script)
             self.json_data.append(js_data)
 
-    def js_to_json(self, js_data):
+    @staticmethod
+    def js_to_json(js_data):
         """Convert JavaScript dictionary to JSON"""
         logging.debug(" Converting JS to JSON..")
         # Decode with demjson first to reformat keys and lists
         decoded_js = demjson.decode(js_data)
         # Encode to make valid JSON, add to list of JSON strings
         return demjson.encode(decoded_js)
-        
