@@ -49,7 +49,8 @@ class Bandcamp:
         album_release = page_json['album_release_date']
         if album_release is None:
             album_release = page_json['current']['release_date']
-
+            if album_release is None:
+                album_release = page_json['current']['publish_date']
         try:
             album_title = page_json['current']['title']
         except KeyError:
