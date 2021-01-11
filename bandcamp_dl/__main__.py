@@ -92,24 +92,29 @@ def main():
         exit()
     else:
         urls = arguments['URL']
-    for url in urls:
-        logging.debug("\n\tURL: {}".format(url))
-    # url is now a list of URLs. So lets make an albumList and append each parsed album to it.
-    albumList = []
-    for url in urls:
-        albumList.append(bandcamp.parse(url, not arguments['--no-art'], arguments['--embed-lyrics'], arguments['--debug']))
-    
-    for album in albumList:
+
+    # url is now a list of URLs. So lets make an album_list and append each parsed album to it.
+    album_list = []
+    if type(urls) is str:
+        album_list.append(bandcamp.parse(urls, not arguments['--no-art'], arguments['--embed-lyrics'],
+                                         arguments['--debug']))
+    else:
+        for url in urls:
+            logging.debug("\n\tURL: {}".format(url))
+            album_list.append(bandcamp.parse(url, not arguments['--no-art'], arguments['--embed-lyrics'],
+                                             arguments['--debug']))
+
+    for album in album_list:
         logging.debug(" Album data:\n\t{}".format(album))
 
-    for album in albumList:
+    for album in album_list:
         if arguments['--full-album'] and not album['full']:
             print("Full album not available. Skipping ", album['title'], " ...")
-            albumList.remove(album)  # Remove not-full albums BUT continue with the rest of the albums.
+            album_list.remove(album)  # Remove not-full albums BUT continue with the rest of the albums.
 
     if arguments['URL'] or arguments['--artist']:
         logging.debug("Preparing download process..")
-        for album in albumList:
+        for album in album_list:
             bandcamp_downloader = BandcampDownloader(arguments['--template'], basedir, arguments['--overwrite'],
                                                      arguments['--embed-lyrics'], arguments['--group'],
                                                      arguments['--embed-art'], arguments['--no-slugify'],
