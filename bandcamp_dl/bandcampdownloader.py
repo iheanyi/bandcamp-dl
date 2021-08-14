@@ -92,10 +92,14 @@ class BandcampDownloader:
             path = path.replace("%{artist}", track['artist'])
             path = path.replace("%{album}", track['album'])
             path = path.replace("%{title}", track['title'])
+            path = path.replace("%{date}", track['date'])
+            path = path.replace("%{label}", track['label'])
         else:
             path = path.replace("%{artist}", slugify_preset(track['artist']))
             path = path.replace("%{album}", slugify_preset(track['album']))
             path = path.replace("%{title}", slugify_preset(track['title']))
+            path = path.replace("%{date}", slugify_preset(track['date']))
+            path = path.replace("%{label}", slugify_preset(track['label']))
 
         if track['track'] == "None":
             path = path.replace("%{track}", "Single")
