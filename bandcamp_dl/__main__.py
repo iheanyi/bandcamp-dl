@@ -65,15 +65,15 @@ from bandcamp_dl.__init__ import __version__
 
 
 def main():
-    arguments = docopt(__doc__, version='bandcamp-dl {}'.format(__version__))
+    arguments = docopt(__doc__, version=f'bandcamp-dl {__version__}')
 
     if arguments['--debug']:
         logging.basicConfig(level=logging.DEBUG)
 
     bandcamp = Bandcamp()
 
-    basedir = arguments['--base-dir'] or os.getcwd()
-    session_file = "{}/{}.not.finished".format(basedir, __version__)
+    basedir = arguments['--base-dir'] or os.path.expanduser('~')
+    session_file = f"{basedir}/{__version__}.not.finished"
 
     if os.path.isfile(session_file) and arguments['URL'] is None:
         with open(session_file, "r") as f:
@@ -93,14 +93,14 @@ def main():
     else:
         urls = arguments['URL']
 
-    # url is now a list of URLs. So lets make an album_list and append each parsed album to it.
     album_list = []
+
     if type(urls) is str:
         album_list.append(bandcamp.parse(urls, not arguments['--no-art'], arguments['--embed-lyrics'],
                                          arguments['--debug']))
     else:
         for url in urls:
-            logging.debug("\n\tURL: {}".format(url))
+            logging.debug(f"\n\tURL: {url}")
             album_list.append(bandcamp.parse(url, not arguments['--no-art'], arguments['--embed-lyrics'],
                                              arguments['--debug']))
 
