@@ -65,15 +65,15 @@ from bandcamp_dl.__init__ import __version__
 
 
 def main():
-    arguments = docopt(__doc__, version='bandcamp-dl {}'.format(__version__))
+    arguments = docopt(__doc__, version=f'bandcamp-dl {__version__}')
 
     if arguments['--debug']:
         logging.basicConfig(level=logging.DEBUG)
 
     bandcamp = Bandcamp()
 
-    basedir = arguments['--base-dir'] or os.getcwd()
-    session_file = "{}/{}.not.finished".format(basedir, __version__)
+    basedir = arguments['--base-dir'] or os.path.expanduser('~')
+    session_file = f"{basedir}/{__version__}.not.finished"
 
     if os.path.isfile(session_file) and arguments['URL'] is None:
         with open(session_file, "r") as f:
@@ -92,24 +92,25 @@ def main():
         exit()
     else:
         urls = arguments['URL']
+
+    album_list = []
     for url in urls:
         logging.debug("\n\tURL: {}".format(url))
-    # url is now a list of URLs. So lets make an albumList and append each parsed album to it.
-    albumList = []
-    for url in urls:
-        albumList.append(bandcamp.parse(url, not arguments['--no-art'], arguments['--embed-lyrics'], arguments['--debug']))
+        album_list.append(
+            bandcamp.parse(url, not arguments['--no-art'], arguments['--embed-lyrics'], arguments['--debug']))
+    # url is now a list of URLs. So lets make an album_list and append each parsed album to it.
     
-    for album in albumList:
+    for album in album_list:
         logging.debug(" Album data:\n\t{}".format(album))
 
-    for album in albumList:
+    for album in album_list:
         if arguments['--full-album'] and not album['full']:
             print("Full album not available. Skipping ", album['title'], " ...")
-            albumList.remove(album)  # Remove not-full albums BUT continue with the rest of the albums.
+            album_list.remove(album)  # Remove not-full albums BUT continue with the rest of the albums.
 
     if arguments['URL'] or arguments['--artist']:
         logging.debug("Preparing download process..")
-        for album in albumList:
+        for album in album_list:
             bandcamp_downloader = BandcampDownloader(arguments['--template'], basedir, arguments['--overwrite'],
                                                      arguments['--embed-lyrics'], arguments['--group'],
                                                      arguments['--embed-art'], arguments['--no-slugify'],

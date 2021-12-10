@@ -1,10 +1,10 @@
 import logging
 
-import demjson
+import demjson3
 
 
 class BandcampJSON:
-    def __init__(self, body, debugging: bool=False):
+    def __init__(self, body, debugging: bool = False):
         self.body = body
         self.json_data = []
 
@@ -41,6 +41,7 @@ class BandcampJSON:
         """Convert JavaScript dictionary to JSON"""
         logging.debug(" Converting JS to JSON..")
         # Decode with demjson first to reformat keys and lists
-        decoded_js = demjson.decode(js_data)
+        decoded_js = demjson3.decode(js_data)
         # Encode to make valid JSON, add to list of JSON strings
-        return demjson.encode(decoded_js)
+        encoded_json = demjson3.encode(decoded_js)
+        return demjson3.encode(decoded_js)

@@ -27,7 +27,7 @@ def parse_headers(fp, _class=http.client.HTTPMessage):
             raise http.client.LineTooLong("header line")
         headers.append(line)
         if len(headers) > http.client._MAXHEADERS:
-            raise HTTPException("got more than {} headers".format(http.client._MAXHEADERS))
+            raise HTTPException(f"got more than {http.client._MAXHEADERS} headers")
         if line in (b'\r\n', b'\n', b''):
             break
 

@@ -29,7 +29,7 @@ class BandcampDownloader:
         :param directory: download location
         :param overwrite: if True overwrite existing files
         """
-        self.headers = {'User-Agent': 'bandcamp-dl/{} (https://github.com/iheanyi/bandcamp-dl)'.format(__version__)}
+        self.headers = {'User-Agent': f'bandcamp-dl/{__version__} (https://github.com/iheanyi/bandcamp-dl)'}
         self.session = requests.Session()
 
         if type(urls) is str:
@@ -102,10 +102,12 @@ class BandcampDownloader:
         else:
             path = path.replace("%{track}", str(track['track']).zfill(2))
 
-        path = u"{0}/{1}.{2}".format(self.directory, path, "mp3")
+        # Double check that the old issue in Python 2 with unicode strings isn't a problem with f-strings
+        # Otherwise find an alternative to u'STRING'
+        path = f"{self.directory}/{path}.mp3"
 
         logging.debug(" filepath/trackname generated..")
-        logging.debug("\n\tPath: {}".format(path))
+        logging.debug(f"\n\tPath: {path}")
         return path
 
     @staticmethod
@@ -116,7 +118,7 @@ class BandcampDownloader:
         :return: directory path
         """
         directory = os.path.dirname(filename)
-        logging.debug(" Directory:\n\t{}".format(directory))
+        logging.debug(f" Directory:\n\t{directory}")
         logging.debug(" Directory doesn't exist, creating..")
         if not os.path.exists(directory):
             os.makedirs(directory)
@@ -144,11 +146,12 @@ class BandcampDownloader:
             self.num_tracks = len(album['tracks'])
             self.track_num = track_index + 1
 
-            filepath = self.template_to_path(track_meta, self.ascii_only, self.ok_chars, self.space_char, self.keep_space, self.keep_upper) + ".tmp"
+            filepath = self.template_to_path(track_meta, self.ascii_only, self.ok_chars, self.space_char,
+                                             self.keep_space, self.keep_upper) + ".tmp"
             filename = filepath.rsplit('/', 1)[1]
             dirname = self.create_directory(filepath)
 
-            logging.debug(" Current file:\n\t{}".format(filepath))
+            logging.debug(f" Current file:\n\t{filepath}")
 
             if album['art'] and not os.path.exists(dirname + "/cover.jpg"):
                 try:
@@ -180,7 +183,7 @@ class BandcampDownloader:
                         # break out of the try/except and move on to the next file
                         break
                     elif os.path.exists(filepath[:-4]) and self.overwrite is not True:
-                        print("File: {} already exists and is complete, skipping..".format(filename[:-4]))
+                        print(f"File: {filename[:-4]} already exists and is complete, skipping..")
                         skip = True
                         break
                     with open(filepath, "wb") as f:
@@ -194,13 +197,11 @@ class BandcampDownloader:
                                 if not self.debugging:
                                     done = int(50 * dl / file_length)
                                     print_clean(
-                                        "\r({}/{}) [{}{}] :: Downloading: {}".format(self.track_num, self.num_tracks,
-                                                                                     "=" * done, " " * (50 - done),
-                                                                                     filename[:-8]))
+                                        f'\r({self.track_num}/{self.num_tracks}) [{"=" * done}{" " * (50 - done)}] :: Downloading: {filename[:-8]}')
                     local_size = os.path.getsize(filepath)
                     # if the local filesize before encoding doesn't match the remote filesize redownload
                     if local_size != file_length and attempts != 3:
-                        print("{} is incomplete, retrying..".format(filename))
+                        print(f"{filename} is incomplete, retrying..")
                         continue
                     # if the maximum number of retry attempts is reached give up and move on
                     elif attempts == 3:
@@ -218,8 +219,8 @@ class BandcampDownloader:
             if skip is False:
                 self.write_id3_tags(filepath, track_meta)
 
-        if os.path.isfile("{}/{}.not.finished".format(self.directory, __version__)):
-            os.remove("{}/{}.not.finished".format(self.directory, __version__))
+        if os.path.isfile(f"{self.directory}/{__version__}.not.finished"):
+            os.remove(f"{self.directory}/{__version__}.not.finished")
 
         # Remove album art image as it is embedded
         if self.embed_art:
@@ -238,7 +239,7 @@ class BandcampDownloader:
         filename = filepath.rsplit('/', 1)[1][:-8]
 
         if not self.debugging:
-            print_clean("\r({}/{}) [{}] :: Encoding: {}".format(self.track_num, self.num_tracks, "=" * 50, filename))
+            print_clean(f'\r({self.track_num}/{self.num_tracks}) [{"=" * 50}] :: Encoding: {filename}')
 
         audio = MP3(filepath)
         audio.delete()
@@ -267,7 +268,7 @@ class BandcampDownloader:
         audio.save()
 
         logging.debug(" Encoding process finished..")
-        logging.debug(" Renaming:\n\t{} -to-> {}".format(filepath, filepath[:-4]))
+        logging.debug(f" Renaming:\n\t{filepath} -to-> {filepath[:-4]}")
 
         try:
             os.rename(filepath, filepath[:-4])
@@ -276,4 +277,4 @@ class BandcampDownloader:
             os.rename(filepath, filepath[:-4])
 
         if not self.debugging:
-            print_clean("\r({}/{}) [{}] :: Finished: {}".format(self.track_num, self.num_tracks, "=" * 50, filename))
+            print_clean(f'\r({self.track_num}/{self.num_tracks}) [{"=" * 50}] :: Finished: {filename}')

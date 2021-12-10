@@ -12,10 +12,12 @@ from bandcamp_dl.__init__ import __version__
 
 class Bandcamp:
     def __init__(self):
-        self.headers = {'User-Agent': 'bandcamp-dl/{} (https://github.com/iheanyi/bandcamp-dl)'.format(__version__)}
+        self.headers = {'User-Agent': f'bandcamp-dl/{__version__} (https://github.com/iheanyi/bandcamp-dl)'}
+        self.soup = None
+        self.tracks = None
 
-    def parse(self, url: str, art: bool=True, lyrics: bool=False, debugging: bool=False) -> dict or None:
-        """Requests the page, cherry picks album info
+    def parse(self, url: str, art: bool = True, lyrics: bool = False, debugging: bool = False) -> dict or None:
+        """Requests the page, cherry-picks album info
 
         :param url: album/track url
         :param art: if True download album art
@@ -56,7 +58,7 @@ class Bandcamp:
             album_title = page_json['trackinfo'][0]['title']
 
         try:
-            label = page_json['item_sellers']['{}'.format(page_json['current']['selling_band_id'])]['name']
+            label = page_json['item_sellers'][f'{page_json["current"]["selling_band_id"]}']['name']
         except KeyError:
             label = None
 
@@ -71,10 +73,14 @@ class Bandcamp:
             "url": url
         }
 
-        artist_url = page_json['url'].rpartition('/album/')[0]
+        if "track" in page_json['url']:
+            artist_url = page_json['url'].rpartition('/track/')[0]
+        else:
+            artist_url = page_json['url'].rpartition('/album/')[0]
+
         for track in self.tracks:
             if lyrics:
-                track['lyrics'] = self.get_track_lyrics("{}{}#lyrics".format(artist_url, track['title_link']))
+                track['lyrics'] = self.get_track_lyrics(f"{artist_url}{track['title_link']}#lyrics")
             if track['file'] is not None:
                 track = self.get_track_metadata(track)
                 album['tracks'].append(track)
@@ -84,7 +90,7 @@ class Bandcamp:
             album['art'] = self.get_album_art()
 
         logging.debug(" Album generated..")
-        logging.debug(" Album URL: {}".format(album['url']))
+        logging.debug(f" Album URL: {album['url']}")
 
         return album
 
@@ -153,7 +159,7 @@ class Bandcamp:
         :param page_type: Type of page album/track
         :return: url as str
         """
-        return "http://{0}.bandcamp.com/{1}/{2}".format(artist, page_type, slug)
+        return f"http://{artist}.bandcamp.com/{page_type}/{slug}"
 
     def get_album_art(self) -> str:
         """Find and retrieve album art url from page

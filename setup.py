@@ -1,20 +1,19 @@
 from setuptools import setup, find_packages
-from codecs import open
-from os import path
-import sys
+import pathlib
 
-appversion = "0.0.10"
+appversion = "0.0.11-dev"
 
-here = path.abspath(path.dirname(__file__))
+here = pathlib.Path(__file__).parent.resolve()
 
-with open(here + '/bandcamp_dl/__init__.py', 'w') as initpy:
-    initpy.write('__version__ = "{}"'.format(appversion))
+with open(f'{here}/bandcamp_dl/__init__.py', 'w') as initpy:
+    initpy.write(f'__version__ = "{appversion}"')
 
 setup(
     name='bandcamp-downloader',
     version=appversion,
     description='bandcamp-dl downloads albums and tracks from Bandcamp for you',
     long_description=open('README.rst').read(),
+    long_description_content_type='text/x-rst',
     url='https://github.com/iheanyi/bandcamp-dl',
     author='Iheanyi Ekechukwu',
     author_email='iekechukwu@gmail.com',
@@ -28,13 +27,19 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3 :: Only',
     ],
     keywords=['bandcamp', 'downloader', 'music', 'cli', 'albums', 'dl'],
     packages=find_packages(exclude=['tests']),
-    python_requires='~=3.4',
+    python_requires='>=3.4',
     install_requires=[
         'beautifulsoup4',
-        'demjson',
+        'lxml',
+        'demjson3',
         'docopt',
         'mutagen',
         'requests',
@@ -52,5 +57,9 @@ setup(
         'console_scripts': [
             'bandcamp-dl=bandcamp_dl.__main__:main',
         ],
+    },
+    project_urls={
+        'Bug Reports': 'https://github.com/iheanyi/bandcamp-dl/issues',
+        'Source': 'https://github.com/iheanyi/bandcamp-dl',
     },
 )
