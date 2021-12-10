@@ -94,12 +94,16 @@ def main():
         urls = arguments['URL']
 
     album_list = []
-    for url in urls:
-        logging.debug("\n\tURL: {}".format(url))
-        album_list.append(
-            bandcamp.parse(url, not arguments['--no-art'], arguments['--embed-lyrics'], arguments['--debug']))
-    # url is now a list of URLs. So lets make an album_list and append each parsed album to it.
-    
+
+    if type(urls) is str:
+        album_list.append(bandcamp.parse(urls, not arguments['--no-art'], arguments['--embed-lyrics'],
+                                         arguments['--debug']))
+    else:
+        for url in urls:
+            logging.debug(f"\n\tURL: {url}")
+            album_list.append(bandcamp.parse(url, not arguments['--no-art'], arguments['--embed-lyrics'],
+                                             arguments['--debug']))
+
     for album in album_list:
         logging.debug(" Album data:\n\t{}".format(album))
 
