@@ -175,7 +175,7 @@ Dependencies
 ------------
 
 -  `BeautifulSoup4 <https://pypi.python.org/pypi/beautifulsoup4>`_ - HTML Parsing
--  `Demjson <https://pypi.python.org/pypi/demjson>`_- JavaScript dict to JSON conversion
+-  `Demjson <https://pypi.org/project/demjson3/>`_- JavaScript dict to JSON conversion
 -  `Mutagen <https://pypi.python.org/pypi/mutagen>`_ - ID3 Encoding
 -  `Requests <https://pypi.python.org/pypi/requests>`_ - for retrieving the HTML
 -  `Unicode-Slugify <https://pypi.python.org/pypi/unicode-slugify>`_ - A slug generator that turns strings into unicode slugs.
