@@ -99,6 +99,8 @@ tokens:
 -  ``album``: The album name.
 -  ``track``: The track number.
 -  ``title``: The track title.
+-  ``date``: The album date.
+-  ``label``: The album label.
 
 The default template is: ``%{artist}/%{album}/%{track} - %{title}``.
 
