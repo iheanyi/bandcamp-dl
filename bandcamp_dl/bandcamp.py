@@ -51,6 +51,8 @@ class Bandcamp:
         album_release = page_json['album_release_date']
         if album_release is None:
             album_release = page_json['current']['release_date']
+            if album_release is None:
+                album_release = page_json['embed_info']['item_public']
 
         try:
             album_title = page_json['current']['title']
