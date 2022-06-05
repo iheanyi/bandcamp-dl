@@ -1,7 +1,7 @@
 import logging
 
 import demjson3
-
+import re
 
 class BandcampJSON:
     def __init__(self, body, debugging: bool = False):
