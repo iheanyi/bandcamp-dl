@@ -163,6 +163,21 @@ class Bandcamp:
         """
         return f"http://{artist}.bandcamp.com/{page_type}/{slug}"
 
+    @staticmethod
+    def generate_all_albums_url(artist: str) -> list:
+        """Generate a list of album url based on the artist name
+
+        :param artist: artist name
+        :return: list of url as str
+        """
+        discog_url = f"https://{artist}.bandcamp.com/music"
+        response = requests.get(discog_url)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        albums_grid = soup.find('ol', {'id': 'music-grid'})
+        albums_list = BandcampJSON.list_all_albums(albums_grid)
+        albums_list = [f"http://{artist}.bandcamp.com/{a}" for a in albums_list]
+        return albums_list
+    
     def get_album_art(self) -> str:
         """Find and retrieve album art url from page
 
