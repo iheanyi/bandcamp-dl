@@ -87,9 +87,7 @@ def main():
     elif arguments['--artist'] and arguments['--track']:
         urls = Bandcamp.generate_album_url(arguments['--artist'], arguments['--track'], "track")
     elif arguments['--artist']:
-        print(__doc__)
-        os.remove(session_file)
-        exit()
+        urls = Bandcamp.generate_all_albums_url(arguments['--artist'])
     else:
         urls = arguments['URL']
 
