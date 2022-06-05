@@ -35,6 +35,17 @@ class BandcampJSON:
         for script in embedded_scripts_raw:
             js_data = self.js_to_json(script)
             self.json_data.append(js_data)
+            
+    @staticmethod
+    def list_all_albums(body, albums=True, tracks=True):
+        albums = body.find_all('li', attrs={'class': 'music-grid-item'})
+        albums = [a.find('a') for a in albums if a.find('a')]
+        albums_url = [a['href'] for a in albums if a.has_attr('href')]
+        if not albums:
+            albums_url = [a for a in albums_url if not re.match(r'/album/.*', a)]
+        if not tracks:
+            albums_url = [a for a in albums_url if not re.match(r'/track/.*', a)]
+        return albums_url
 
     @staticmethod
     def js_to_json(js_data):
