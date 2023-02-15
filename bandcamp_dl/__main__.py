@@ -30,6 +30,7 @@ Options:
     -a --ascii-only         Only allow ASCII chars (北京 (capital of china) -> bei-jing-capital-of-china)
     -k --keep-spaces        Retain whitespace in filenames
     -u --keep-upper         Retain uppercase letters in filenames
+    --no-confirm            Override confirmation prompts. Use with caution.
 
 """
 """
@@ -120,7 +121,8 @@ def main():
                                                      arguments['--embed-art'], arguments['--no-slugify'],
                                                      arguments['--ok-chars'], arguments['--space-char'],
                                                      arguments['--ascii-only'], arguments['--keep-spaces'],
-                                                     arguments['--keep-upper'], arguments['--debug'], album['url'])
+                                                     arguments['--keep-upper'], arguments['--debug'],
+                                                     arguments['--no-confirm'], album['url'])
             logging.debug("Initiating download process..")
             bandcamp_downloader.start(album)
             # Add a newline to stop prompt mangling
