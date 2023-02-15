@@ -21,7 +21,7 @@ from bandcamp_dl.utils.clean_print import print_clean
 
 class BandcampDownloader:
     def __init__(self, template, directory, overwrite, embed_lyrics, grouping, embed_art, no_slugify, ok_chars,
-                 space_char, ascii_only, keep_space, keep_upper, debugging, urls=None):
+                 space_char, ascii_only, keep_space, keep_upper, debugging, no_confirm, urls=None):
         """Initialize variables we will need throughout the Class
 
         :param urls: list of urls
@@ -49,6 +49,7 @@ class BandcampDownloader:
         self.keep_space = keep_space
         self.keep_upper = keep_upper
         self.debugging = debugging
+        self.confirmation_skip = no_confirm
 
     def start(self, album: dict):
         """Start album download process
@@ -58,7 +59,7 @@ class BandcampDownloader:
         if self.debugging:
             logging.basicConfig(level=logging.DEBUG)
 
-        if album['full'] is not True:
+        if not album['full'] and not self.confirmation_skip:
             choice = input("Track list incomplete, some tracks may be private, download anyway? (yes/no): ").lower()
             if choice == "yes" or choice == "y":
                 print("Starting download process.")
