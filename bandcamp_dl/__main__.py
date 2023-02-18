@@ -56,32 +56,27 @@ Iheanyi:
 
 import os
 import ast
+import json
 import logging
 import importlib
 from docopt import docopt
 import bandcamp_dl.bandcamp
 from bandcamp_dl.bandcamp import Bandcamp
 from bandcamp_dl.bandcampdownloader import BandcampDownloader
+from bandcamp_dl.utils.config import init_config
 from bandcamp_dl.__init__ import __version__
 
 
 def main():
     arguments = docopt(__doc__, version=f'bandcamp-dl {__version__}')
 
-    if arguments['--debug']:
-        logging.basicConfig(level=logging.DEBUG)
-
     bandcamp = Bandcamp()
 
-    basedir = arguments['--base-dir'] or os.path.expanduser('~')
-    session_file = f"{basedir}/{__version__}.not.finished"
+    # TODO: Its possible to break bandcamp-dl temporarily by simply erasing a line in the config, catch this and warn.
+    config = init_config(arguments)
 
-    if os.path.isfile(session_file) and arguments['URL'] is None:
-        with open(session_file, "r") as f:
-            arguments = ast.literal_eval(f.readline())
-    else:
-        with open(session_file, "w") as f:
-            f.write("".join(str(arguments).split('\n')))
+    if config['debug']:
+        logging.basicConfig(level=logging.DEBUG)
 
     if arguments['--artist'] and arguments['--album']:
         urls = Bandcamp.generate_album_url(arguments['--artist'], arguments['--album'], "album")
@@ -89,7 +84,7 @@ def main():
         urls = Bandcamp.generate_album_url(arguments['--artist'], arguments['--track'], "track")
     elif arguments['--artist']:
         print(__doc__)
-        os.remove(session_file)
+        os.remove(f"{config['basedir']}/{__version__}.not.finished")
         exit()
     else:
         urls = arguments['URL']
@@ -116,13 +111,7 @@ def main():
     if arguments['URL'] or arguments['--artist']:
         logging.debug("Preparing download process..")
         for album in album_list:
-            bandcamp_downloader = BandcampDownloader(arguments['--template'], basedir, arguments['--overwrite'],
-                                                     arguments['--embed-lyrics'], arguments['--group'],
-                                                     arguments['--embed-art'], arguments['--no-slugify'],
-                                                     arguments['--ok-chars'], arguments['--space-char'],
-                                                     arguments['--ascii-only'], arguments['--keep-spaces'],
-                                                     arguments['--keep-upper'], arguments['--debug'],
-                                                     arguments['--no-confirm'], album['url'])
+            bandcamp_downloader = BandcampDownloader(config, album['url'])
             logging.debug("Initiating download process..")
             bandcamp_downloader.start(album)
             # Add a newline to stop prompt mangling
