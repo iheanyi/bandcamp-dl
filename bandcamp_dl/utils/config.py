@@ -31,28 +31,29 @@ def init_config(arguments) -> json or dict:
         with open(config_path, "w") as config_file:
             # Where config defaults are set/added
             config = {
-                "basedir": user_home,
-                "template": "%{artist}/%{album}/%{track} - %{title}",
-                "overwrite": False,
-                "no_art": False,
-                "embed_art": False,
-                "embed_lyrics": False,
-                "group": False,
-                "no_slugify": False,
-                "allowed_chars": "-_~",
-                "space_char": "-",
-                "ascii_only": False,
-                "keep_spaces": False,
-                "keep_upper": False,
-                "confirmation_skip": False,
-                "debug": False
+                "--base-dir": user_home,
+                "--template": "%{artist}/%{album}/%{track} - %{title}",
+                "--overwrite": False,
+                "--no-art": False,
+                "--embed-art": False,
+                "--embed-lyrics": False,
+                "--group": False,
+                "--no-slugify": False,
+                "--ok-chars": "-_~",
+                "--space-char": "-",
+                "--ascii-only": False,
+                "--keep-spaces": False,
+                "--keep-upper": False,
+                "--no-confirm": False,
+                "--debug": False
             }
             config_json = json.dumps(config, indent=4)
             logging.debug("Creating config file...")
             config_file.write(config_json)
 
+    # TODO: Replace all this shuffling around values with a dict comprehension if possible !!!!
     # TODO: Session file should override config, as its essentially replaying manually set args
-    session_file = f"{config['basedir']}/{__version__}.not.finished"
+    session_file = f"{config['--base-dir']}/{__version__}.not.finished"
 
     if os.path.isfile(session_file) and arguments['URL'] is None:
         with open(session_file, "r") as f:
@@ -61,49 +62,5 @@ def init_config(arguments) -> json or dict:
         with open(session_file, "w") as f:
             f.write("".join(str(arguments).split('\n')))
 
-    if arguments['--base-dir'] is not None:
-        config['basedir'] = arguments['--base-dir']
-
-    if arguments['--template'] != config['template']:
-        config['template'] = arguments['--template']
-
-    if arguments['--overwrite'] != config['overwrite']:
-        config['overwrite'] = arguments['--overwrite']
-
-    if arguments['--no-art'] != config['no_art']:
-        config['no_art'] = arguments['--no-art']
-
-    if arguments['--embed-art'] != config['embed_art']:
-        config['embed_art'] = arguments['--embed-art']
-
-    if arguments['--embed-lyrics'] != config['embed_lyrics']:
-        config['embed_lyrics'] = arguments['--embed-lyrics']
-
-    if arguments['--group'] != config['group']:
-        config['group'] = arguments['--group']
-
-    if arguments['--no-slugify'] != config['no_slugify']:
-        config['no_slugify'] = arguments['--no-slugify']
-
-    if arguments['--ok-chars'] != config['allowed_chars']:
-        config['allowed_chars'] = arguments['--ok-chars']
-
-    if arguments['--space-char'] != config['space_char']:
-        config['space_char'] = arguments['--space-char']
-
-    if arguments['--ascii-only'] != config['ascii_only']:
-        config['ascii_only'] = arguments['--ascii-only']
-
-    if arguments['--keep-spaces'] != config['keep_spaces']:
-        config['keep_spaces'] = arguments['--keep-spaces']
-
-    if arguments['--keep-upper'] != config['keep_upper']:
-        config['keep_upper'] = arguments['--keep-upper']
-
-    if arguments['--no-confirm'] != config['confirmation_skip']:
-        config['confirmation_skip'] = arguments['--no-confirm']
-
-    if arguments['--debug'] != config['debug']:
-        config['debug'] = arguments['--debug']
-
+    config = {key: arguments.get(key, config[key]) for key in config}
     return config

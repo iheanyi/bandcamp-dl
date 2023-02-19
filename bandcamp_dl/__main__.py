@@ -75,7 +75,7 @@ def main():
     # TODO: Its possible to break bandcamp-dl temporarily by simply erasing a line in the config, catch this and warn.
     config = init_config(arguments)
 
-    if config['debug']:
+    if config['--debug']:
         logging.basicConfig(level=logging.DEBUG)
 
     if arguments['--artist'] and arguments['--album']:
@@ -84,7 +84,7 @@ def main():
         urls = Bandcamp.generate_album_url(arguments['--artist'], arguments['--track'], "track")
     elif arguments['--artist']:
         print(__doc__)
-        os.remove(f"{config['basedir']}/{__version__}.not.finished")
+        os.remove(f"{config['--base-dir']}/{__version__}.not.finished")
         exit()
     else:
         urls = arguments['URL']

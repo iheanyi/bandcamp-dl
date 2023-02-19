@@ -40,10 +40,10 @@ class BandcampDownloader:
 
         :param album: album dict
         """
-        if self.config['debug']:
+        if self.config['--debug']:
             logging.basicConfig(level=logging.DEBUG)
 
-        if not album['full'] and not self.config['confirmation_skip']:
+        if not album['full'] and not self.config['--no-confirm']:
             choice = input("Track list incomplete, some tracks may be private, download anyway? (yes/no): ").lower()
             if choice == "yes" or choice == "y":
                 print("Starting download process.")
@@ -66,14 +66,14 @@ class BandcampDownloader:
         :return: filepath
         """
         logging.debug(" Generating filepath/trackname..")
-        path = self.config['template']
+        path = self.config['--template']
 
         def slugify_preset(content):
             slugged = slugify(content, ok=ok_chars, only_ascii=ascii_only, spaces=keep_space, lower=not keep_upper,
                               space_replacement=space_char)
             return slugged
 
-        if self.config['no_slugify']:
+        if self.config['--no-slugify']:
             path = path.replace("%{artist}", track['artist'])
             path = path.replace("%{album}", track['album'])
             path = path.replace("%{title}", track['title'])
@@ -91,7 +91,7 @@ class BandcampDownloader:
         else:
             path = path.replace("%{track}", str(track['track']).zfill(2))
 
-        path = f"{self.config['basedir']}/{path}.mp3"
+        path = f"{self.config['--base-dir']}/{path}.mp3"
 
         logging.debug(" filepath/trackname generated..")
         logging.debug(f"\n\tPath: {path}")
@@ -133,9 +133,9 @@ class BandcampDownloader:
             self.num_tracks = len(album['tracks'])
             self.track_num = track_index + 1
 
-            filepath = self.template_to_path(track_meta, self.config['ascii_only'], self.config['allowed_chars'],
-                                             self.config['space_char'], self.config['keep_spaces'],
-                                             self.config['keep_upper']) + ".tmp"
+            filepath = self.template_to_path(track_meta, self.config['--ascii-only'], self.config['--ok-chars'],
+                                             self.config['--space-char'], self.config['--keep-spaces'],
+                                             self.config['--keep-upper']) + ".tmp"
             filename = filepath.rsplit('/', 1)[1]
             dirname = self.create_directory(filepath)
 
@@ -170,7 +170,7 @@ class BandcampDownloader:
                         skip = True
                         # break out of the try/except and move on to the next file
                         break
-                    elif os.path.exists(filepath[:-4]) and self.config['overwrite'] is not True:
+                    elif os.path.exists(filepath[:-4]) and self.config['--overwrite'] is not True:
                         print(f"File: {filename[:-4]} already exists and is complete, skipping..")
                         skip = True
                         break
@@ -182,7 +182,7 @@ class BandcampDownloader:
                             for data in r.iter_content(chunk_size=total):
                                 dl += len(data)
                                 f.write(data)
-                                if not self.config['debug']:
+                                if not self.config['--debug']:
                                     done = int(50 * dl / file_length)
                                     print_clean(
                                         f'\r({self.track_num}/{self.num_tracks}) [{"=" * done}{" " * (50 - done)}] :: Downloading: {filename[:-8]}')
@@ -207,11 +207,11 @@ class BandcampDownloader:
             if skip is False:
                 self.write_id3_tags(filepath, track_meta)
 
-        if os.path.isfile(f"{self.config['basedir']}/{__version__}.not.finished"):
-            os.remove(f"{self.config['basedir']}/{__version__}.not.finished")
+        if os.path.isfile(f"{self.config['--base-dir']}/{__version__}.not.finished"):
+            os.remove(f"{self.config['--base-dir']}/{__version__}.not.finished")
 
         # Remove album art image as it is embedded
-        if self.config['embed_art']:
+        if self.config['--embed-art']:
             os.remove(self.album_art)
 
         return True
@@ -226,7 +226,7 @@ class BandcampDownloader:
 
         filename = filepath.rsplit('/', 1)[1][:-8]
 
-        if not self.config['debug']:
+        if not self.config['--debug']:
             print_clean(f'\r({self.track_num}/{self.num_tracks}) [{"=" * 50}] :: Encoding: {filename}')
 
         audio = MP3(filepath)
@@ -235,13 +235,13 @@ class BandcampDownloader:
         audio.save(filename=None, v1=2)
 
         audio = MP3(filepath)
-        if self.config['group'] and 'label' in meta:
+        if self.config['--group'] and 'label' in meta:
             audio["TIT1"] = TIT1(encoding=3, text=meta["label"])
 
-        if self.config['embed_lyrics']:
+        if self.config['--embed-lyrics']:
             audio["USLT"] = USLT(encoding=3, lang='eng', desc='', text=meta['lyrics'])
 
-        if self.config['embed_art']:
+        if self.config['--embed-art']:
             with open(self.album_art, 'rb') as cover_img:
                 cover_bytes = cover_img.read()
                 audio["APIC"] = APIC(encoding=3, mime='image/jpeg', type=3, desc='Cover', data=cover_bytes)
@@ -264,5 +264,5 @@ class BandcampDownloader:
             os.remove(filepath[:-4])
             os.rename(filepath, filepath[:-4])
 
-        if not self.config['debug']:
+        if not self.config['--debug']:
             print_clean(f'\r({self.track_num}/{self.num_tracks}) [{"=" * 50}] :: Finished: {filename}')
