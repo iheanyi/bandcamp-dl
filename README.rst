@@ -31,6 +31,11 @@ From Wheel
 
 ``brew install bandcamp-dl``
 
+[Arch] From the AUR
+~~~~~~~~~~~~~~~~~~~
+
+``yay -S bandcamp-dl-git``
+
 From Source
 ~~~~~~~~~~~
 
