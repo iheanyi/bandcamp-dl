@@ -173,3 +173,12 @@ class Bandcamp:
             return url
         except None:
             pass
+
+    def get_full_discography(artist: str, page_type: str) -> list:
+        html = requests.get(f"https://{artist}.bandcamp.com/{page_type}").text
+
+        soup = BeautifulSoup(html, "html.parser")
+
+        urls = [f"https://{artist}.bandcamp.com{a['href']}" for a in soup.find_all("a", href=True) if ("/" == a["href"].split("album")[0])]
+
+        return urls

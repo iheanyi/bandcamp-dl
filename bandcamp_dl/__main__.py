@@ -10,7 +10,7 @@ Options:
     -h --help               Show this screen.
     -v --version            Show version.
     -d --debug              Verbose logging.
-    --artist=<artist>       The artist's slug (from the URL, --track or --album is required)
+    --artist=<artist>       The artist's slug (from the URL)
     --track=<track>         The track's slug (from the URL, for use with --artist)
     --album=<album>         The album's slug (from the URL, for use with --artist)
     --template=<template>   Output filename template.
@@ -83,9 +83,7 @@ def main():
     elif arguments['--artist'] and arguments['--track']:
         urls = Bandcamp.generate_album_url(arguments['--artist'], arguments['--track'], "track")
     elif arguments['--artist']:
-        print(__doc__)
-        os.remove(f"{config['--base-dir']}/{__version__}.not.finished")
-        exit()
+        urls = Bandcamp.get_full_discography(arguments['--artist'], "music")
     else:
         urls = arguments['URL']
 
