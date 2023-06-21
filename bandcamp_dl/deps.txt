@@ -2,7 +2,7 @@ beautifulsoup4==4.10.0
 demjson3==3.0.5
 docopt-ng==0.8.1
 mutagen==1.45.1
-requests==2.26.0
+requests==2.31.0
 unicode-slugify==0.1.5
 mock==4.0.3
 chardet==4.0.0
