@@ -84,9 +84,6 @@ def main():
         urls = Bandcamp.generate_album_url(arguments['--artist'], arguments['--track'], "track")
     elif arguments['--artist']:
         urls = Bandcamp.get_full_discography(arguments['--artist'], "music")
-        print(f"{len(urls)} albums/tracks have been found:")
-        for url in urls:
-            print(url)
     else:
         urls = arguments['URL']
 
