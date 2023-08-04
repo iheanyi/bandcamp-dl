@@ -100,7 +100,8 @@ output file names and directories. Templates can be built using special
 tokens with the format of ``%{artist}``. Here is a list of allowed
 tokens:
 
--  ``artist``: The artist name.
+-  ``trackartist``: The artist name.
+-  ``artist``: The album artist name.
 -  ``album``: The album name.
 -  ``track``: The track number.
 -  ``title``: The track title.

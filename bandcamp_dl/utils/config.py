@@ -63,4 +63,5 @@ def init_config(arguments) -> json or dict:
             f.write("".join(str(arguments).split('\n')))
 
     config = {key: arguments.get(key, config[key]) for key in config}
+    
     return config

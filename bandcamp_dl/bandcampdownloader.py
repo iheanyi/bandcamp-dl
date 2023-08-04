@@ -74,13 +74,15 @@ class BandcampDownloader:
             return slugged
 
         if self.config['--no-slugify']:
-            path = path.replace("%{artist}", track['artist'])
+            path = path.replace("%{trackartist}", track['artist'])
+            path = path.replace("%{artist}", track['albumartist'])
             path = path.replace("%{album}", track['album'])
             path = path.replace("%{title}", track['title'])
             path = path.replace("%{date}", track['date'])
             path = path.replace("%{label}", track['label'])
         else:
-            path = path.replace("%{artist}", slugify_preset(track['artist']))
+            path = path.replace("%{trackartist}", slugify_preset(track['artist']))
+            path = path.replace("%{artist}", slugify_preset(track['albumartist']))
             path = path.replace("%{album}", slugify_preset(track['album']))
             path = path.replace("%{title}", slugify_preset(track['title']))
             path = path.replace("%{date}", slugify_preset(track['date']))
@@ -91,7 +93,10 @@ class BandcampDownloader:
         else:
             path = path.replace("%{track}", str(track['track']).zfill(2))
 
-        path = f"{self.config['--base-dir']}/{path}.mp3"
+        if self.config['--base-dir'] is not None:
+            path = f"{self.config['--base-dir']}/{path}.mp3"
+        else:
+            path = f"{path}.mp3"
 
         logging.debug(" filepath/trackname generated..")
         logging.debug(f"\n\tPath: {path}")
@@ -120,13 +125,14 @@ class BandcampDownloader:
         """
         for track_index, track in enumerate(album['tracks']):
             track_meta = {
-                "artist": album['artist'],
+                "artist": track['artist'],
+                "albumartist": album['artist'],
                 "label": album['label'],
                 "album": album['title'],
-                "title": track['title'],
+                "title": track['title'].replace(f"{track['artist']} - ", "", 1),
                 "track": track['track'],
                 # TODO: Find out why the 'lyrics' key seems to vanish.
-                "lyrics": track.get('lyrics', "lyrics unavailable"),
+                "lyrics": track.get('lyrics', ""),
                 "date": album['date']
             }
 
@@ -247,10 +253,20 @@ class BandcampDownloader:
                 audio["APIC"] = APIC(encoding=3, mime='image/jpeg', type=3, desc='Cover', data=cover_bytes)
         audio.save()
 
-        audio = EasyMP3(filepath)
-        audio["tracknumber"] = meta['track']
+        audio = EasyMP3(filepath)   
+        
+        if meta['track'].isdigit():
+            audio["tracknumber"] = meta['track']
+        else:
+            audio["tracknumber"] = '1'
+            
+        if meta['artist'] is not None:
+            audio["artist"] = meta['artist']
+        else:
+            audio["artist"] = meta['albumartist']
+        
         audio["title"] = meta["title"]
-        audio["artist"] = meta['artist']
+        audio["albumartist"] = meta['albumartist']
         audio["album"] = meta['album']
         audio["date"] = meta["date"]
         audio.save()
