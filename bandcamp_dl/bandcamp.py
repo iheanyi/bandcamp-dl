@@ -109,7 +109,7 @@ class Bandcamp:
             return track_lyrics.text
         else:
             logging.debug(" Lyrics not found..")
-            return "lyrics unavailable"
+            return ""
 
     def all_tracks_available(self) -> bool:
         """Verify that all tracks have a url
@@ -133,6 +133,7 @@ class Bandcamp:
             "duration": track['duration'],
             "track": str(track['track_num']),
             "title": track['title'],
+            "artist": track['artist'],
             "url": None
         }
 
@@ -145,9 +146,8 @@ class Bandcamp:
             track_metadata['url'] = None
 
         if track['has_lyrics'] is not False:
-            if track['lyrics'] is None:
-                track['lyrics'] = "lyrics unavailable"
-            track_metadata['lyrics'] = track['lyrics'].replace('\\r\\n', '\n')
+            if track['lyrics'] is not None:
+                track_metadata['lyrics'] = track['lyrics'].replace('\\r\\n', '\n')
 
         logging.debug(" Track metadata generated..")
         return track_metadata
