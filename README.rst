@@ -191,8 +191,6 @@ Dependencies
 -  `Docopt <https://pypi.python.org/pypi/docopt>`_ - CLI help
 -  `Six <https://pypi.python.org/pypi/six>`_ - Python 2-3 compatibility
 -  `Unidecode <https://pypi.python.org/pypi/unidecode>`_ - ASCII representation of Unicode text
--  `Mock <https://pypi.python.org/pypi/mock>`_ - Library for Python unit testing
--  `PBR <https://pypi.python.org/pypi/pbr>`_ - Setuptools injection library required by Mock
 
 Copyright
 ---------
