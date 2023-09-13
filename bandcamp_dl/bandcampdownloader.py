@@ -11,7 +11,7 @@ from mutagen.id3._frames import APIC
 from bandcamp_dl.utils.unicode_slugify import slugify
 
 if not sys.version_info[:2] == (3, 6):
-    import mock
+    import unittest.mock
     from bandcamp_dl.utils import requests_patch
 
 from bandcamp_dl.__init__ import __version__
@@ -163,7 +163,7 @@ class BandcampDownloader:
             while True:
                 try:
                     if not sys.version_info[:2] == (3, 6):
-                        with mock.patch('http.client.parse_headers', requests_patch.parse_headers):
+                        with unittest.mock.patch('http.client.parse_headers', requests_patch.parse_headers):
                             r = self.session.get(track['url'], headers=self.headers, stream=True)
                     else:
                         r = self.session.get(track['url'], headers=self.headers, stream=True)
@@ -253,18 +253,18 @@ class BandcampDownloader:
                 audio["APIC"] = APIC(encoding=3, mime='image/jpeg', type=3, desc='Cover', data=cover_bytes)
         audio.save()
 
-        audio = EasyMP3(filepath)   
-        
+        audio = EasyMP3(filepath)
+
         if meta['track'].isdigit():
             audio["tracknumber"] = meta['track']
         else:
             audio["tracknumber"] = '1'
-            
+
         if meta['artist'] is not None:
             audio["artist"] = meta['artist']
         else:
             audio["artist"] = meta['albumartist']
-        
+
         audio["title"] = meta["title"]
         audio["albumartist"] = meta['albumartist']
         audio["album"] = meta['album']

@@ -44,7 +44,6 @@ setup(
         'mutagen',
         'requests',
         'unicode-slugify',
-        'mock',
         'chardet',
     ],
     extras_require={
