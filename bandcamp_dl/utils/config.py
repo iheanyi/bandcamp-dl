@@ -62,6 +62,6 @@ def init_config(arguments) -> json or dict:
         with open(session_file, "w") as f:
             f.write("".join(str(arguments).split('\n')))
 
-    config = {key: arguments.get(key, config[key]) for key in config}
+    config = {key: config[key] if arguments.get(key, config[key]) is None else arguments.get(key, config[key]) for key in config}
     
     return config
