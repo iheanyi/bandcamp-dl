@@ -1,8 +1,9 @@
-import logging
-import os
 import ast
 import json
-from bandcamp_dl.__init__ import __version__
+import logging
+import os
+
+from bandcamp_dl import __version__
 
 user_home = os.path.expanduser('~')
 
@@ -30,23 +31,21 @@ def init_config(arguments) -> json or dict:
             first_run = True
         with open(config_path, "w") as config_file:
             # Where config defaults are set/added
-            config = {
-                "--base-dir": user_home,
-                "--template": "%{artist}/%{album}/%{track} - %{title}",
-                "--overwrite": False,
-                "--no-art": False,
-                "--embed-art": False,
-                "--embed-lyrics": False,
-                "--group": False,
-                "--no-slugify": False,
-                "--ok-chars": "-_~",
-                "--space-char": "-",
-                "--ascii-only": False,
-                "--keep-spaces": False,
-                "--keep-upper": False,
-                "--no-confirm": False,
-                "--debug": False
-            }
+            config = {"--base-dir": user_home,
+                      "--template": "%{artist}/%{album}/%{track} - %{title}",
+                      "--overwrite": False,
+                      "--no-art": False,
+                      "--embed-art": False,
+                      "--embed-lyrics": False,
+                      "--group": False,
+                      "--no-slugify": False,
+                      "--ok-chars": "-_~",
+                      "--space-char": "-",
+                      "--ascii-only": False,
+                      "--keep-spaces": False,
+                      "--keep-upper": False,
+                      "--no-confirm": False,
+                      "--debug": False}
             config_json = json.dumps(config, indent=4)
             logging.debug("Creating config file...")
             config_file.write(config_json)
@@ -62,6 +61,7 @@ def init_config(arguments) -> json or dict:
         with open(session_file, "w") as f:
             f.write("".join(str(arguments).split('\n')))
 
-    config = {key: config[key] if arguments.get(key, config[key]) is None else arguments.get(key, config[key]) for key in config}
-    
+    config = {key: config[key] if arguments.get(key, config[key]) is None
+              else arguments.get(key, config[key]) for key in config}
+
     return config
