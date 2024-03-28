@@ -1,22 +1,23 @@
-from datetime import datetime as dt
+import datetime
 import json
 import logging
 
+import bs4
 import requests
-from bs4 import BeautifulSoup
-from bs4 import FeatureNotFound
 
+from bandcamp_dl import __version__
 from bandcamp_dl.bandcampjson import BandcampJSON
-from bandcamp_dl.__init__ import __version__
 
 
 class Bandcamp:
     def __init__(self):
-        self.headers = {'User-Agent': f'bandcamp-dl/{__version__} (https://github.com/iheanyi/bandcamp-dl)'}
+        self.headers = {'User-Agent': f'bandcamp-dl/{__version__} '
+                        f'(https://github.com/iheanyi/bandcamp-dl)'}
         self.soup = None
         self.tracks = None
 
-    def parse(self, url: str, art: bool = True, lyrics: bool = False, debugging: bool = False) -> dict or None:
+    def parse(self, url: str, art: bool = True, lyrics: bool = False,
+              debugging: bool = False) -> dict or None:
         """Requests the page, cherry-picks album info
 
         :param url: album/track url
@@ -34,9 +35,9 @@ class Bandcamp:
             return None
 
         try:
-            self.soup = BeautifulSoup(response.text, "lxml")
-        except FeatureNotFound:
-            self.soup = BeautifulSoup(response.text, "html.parser")
+            self.soup = bs4.BeautifulSoup(response.text, "lxml")
+        except bs4.FeatureNotFound:
+            self.soup = bs4.BeautifulSoup(response.text, "html.parser")
 
         logging.debug(" Generating BandcampJSON..")
         bandcamp_json = BandcampJSON(self.soup, debugging).generate()
@@ -71,7 +72,7 @@ class Bandcamp:
             "label": label,
             "full": False,
             "art": "",
-            "date": str(dt.strptime(album_release, "%d %b %Y %H:%M:%S GMT").year),
+            "date": str(datetime.datetime.strptime(album_release, "%d %b %Y %H:%M:%S GMT").year),
             "url": url
         }
 
@@ -82,7 +83,8 @@ class Bandcamp:
 
         for track in self.tracks:
             if lyrics:
-                track['lyrics'] = self.get_track_lyrics(f"{artist_url}{track['title_link']}#lyrics")
+                track['lyrics'] = self.get_track_lyrics(f"{artist_url}"
+                                                        f"{track['title_link']}#lyrics")
             if track['file'] is not None:
                 track = self.get_track_metadata(track)
                 album['tracks'].append(track)
@@ -100,9 +102,9 @@ class Bandcamp:
         logging.debug(" Fetching track lyrics..")
         track_page = requests.get(track_url, headers=self.headers)
         try:
-            track_soup = BeautifulSoup(track_page.text, "lxml")
-        except FeatureNotFound:
-            track_soup = BeautifulSoup(track_page.text, "html.parser")
+            track_soup = bs4.BeautifulSoup(track_page.text, "lxml")
+        except bs4.FeatureNotFound:
+            track_soup = bs4.BeautifulSoup(track_page.text, "html.parser")
         track_lyrics = track_soup.find("div", {"class": "lyricsText"})
         if track_lyrics:
             logging.debug(" Lyrics retrieved..")
@@ -178,16 +180,18 @@ class Bandcamp:
         """Generate a list of album and track urls based on the artist name
 
         :param artist: artist name
-        :param page_type: Type of page, it should be music but it's a parameter so it's not hardcoded
+        :param page_type: Type of page, it should be music but it's a parameter so it's not
+                          hardcoded
         :return: urls as list of strs
         """
         html = requests.get(f"https://{artist}.bandcamp.com/{page_type}").text
 
         try:
-            soup = BeautifulSoup(html, "lxml")
-        except FeatureNotFound:
-            soup = BeautifulSoup(html, "html.parser")
+            soup = bs4.BeautifulSoup(html, "lxml")
+        except bs4.FeatureNotFound:
+            soup = bs4.BeautifulSoup(html, "html.parser")
 
-        urls = [f"https://{artist}.bandcamp.com{a['href']}" for a in soup.find_all("a", href=True) if ("/" == a["href"].split("album")[0] or "/" == a["href"].split("track")[0])]
+        urls = [f"https://{artist}.bandcamp.com{a['href']}" for a in soup.find_all("a", href=True)
+                if ("/" == a["href"].split("album")[0] or "/" == a["href"].split("track")[0])]
 
         return urls

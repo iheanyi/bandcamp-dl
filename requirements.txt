@@ -6,4 +6,3 @@ docopt-ng==0.8.1
 mutagen==1.45.1
 requests==2.31.0
 unicode-slugify==0.1.5
-chardet==4.0.0
