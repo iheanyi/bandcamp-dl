@@ -16,7 +16,6 @@ From PyPI
 
 ``pip3 install bandcamp-downloader``
 
-
 Some linux distros may require that python3-pip is installed first.
 
 From Wheel
@@ -39,7 +38,7 @@ From Wheel
 From Source
 ~~~~~~~~~~~
 
-1. Clone the project or `download and extract the zip <https://github.com/iheanyi/bandcamp-dl/archive/master.zip>`_
+1. Clone the project or `download and extract the zip`_ 
 2. ``cd`` to the project directory containing the ``setup.py``
 3. ``python setup.py install``
 
@@ -47,9 +46,10 @@ Description
 -----------
 
 bandcamp-dl is a small command-line app to download audio from
-BandCamp.com. It requires the Python interpreter, version 3.4 (or higher) and is
-not platform specific. It is released to the public domain, which means
-you can modify it, redistribute it or use it how ever you like.
+BandCamp.com. It requires the Python interpreter, version 3.4 (or
+higher) and is not platform specific. It is released to the public
+domain, which means you can modify it, redistribute it or use it how
+ever you like.
 
 Details
 -------
@@ -113,10 +113,10 @@ The default template is: ``%{artist}/%{album}/%{track} - %{title}``.
 Bugs
 ----
 
-Bugs should be reported `here <https://github.com/iheanyi/bandcamp-dl/issues>`_.
-Please include the URL and/or options used as well as the output when using the `--debug` option.
+Bugs should be reported `here`_. Please include the URL and/or options
+used as well as the output when using the `--debug` option.
 
-For discussions, join us in `Discord <https://discord.gg/nwdT4MP>`_.
+For discussions, join us in `Discord`_.
 
 When you submit a request, please re-read it once to avoid a couple of
 mistakes (you can and should use this as a checklist):
@@ -132,22 +132,20 @@ Is the issue already documented?
 --------------------------------
 
 Make sure that someone has not already opened the issue you're trying to
-open. Search at the top of the window or at
-`Issues <https://github.com/iheanyi/bandcamp-dl/search?type=Issues>`_.
-If there is an issue, feel free to write something along the lines of
-"This affects me as well, with version 2015.01.01. Here is some more
-information on the issue: ...". While some issues may be old, a new post
-into them often spurs rapid activity.
+open. Search at the top of the window or at `Issues`_. If there is an
+issue, feel free to write something along the lines of "This affects me
+as well, with version 2015.01.01. Here is some more information on the
+issue: ...". While some issues may be old, a new post into them often
+spurs rapid activity.
 
 Why are existing options not enough?
 ------------------------------------
 
-Before requesting a new feature, please have a quick peek at `the list
-of supported
-options <https://github.com/iheanyi/bandcamp-dl/blob/master/README.rst#synopsis>`_.
-Many feature requests are for features that actually exist already!
-Please, absolutely do show off your work in the issue report and detail
-how the existing similar options do *not* solve your problem.
+Before requesting a new feature, please have a quick peek at 
+`the list of supported options`_.  Many feature requests are for
+features that actually exist already!  Please, absolutely do show off
+your work in the issue report and detail how the existing similar
+options do *not* solve your problem.
 
 Does the issue involve one problem, and one problem only?
 ---------------------------------------------------------
@@ -182,21 +180,32 @@ related to bandcamp-dl, by all means, go ahead and report the bug.
 Dependencies
 ------------
 
--  `BeautifulSoup4 <https://pypi.python.org/pypi/beautifulsoup4>`_ - HTML Parsing
--  `Demjson <https://pypi.python.org/pypi/demjson>`_- JavaScript dict to JSON conversion
--  `Mutagen <https://pypi.python.org/pypi/mutagen>`_ - ID3 Encoding
--  `Requests <https://pypi.python.org/pypi/requests>`_ - for retrieving the HTML
--  `Unicode-Slugify <https://pypi.python.org/pypi/unicode-slugify>`_ - A slug generator that turns strings into unicode slugs.
--  `Chardet <https://pypi.python.org/pypi/chardet>`_ - Character encoding detection
--  `Docopt <https://pypi.python.org/pypi/docopt>`_ - CLI help
--  `Six <https://pypi.python.org/pypi/six>`_ - Python 2-3 compatibility
--  `Unidecode <https://pypi.python.org/pypi/unidecode>`_ - ASCII representation of Unicode text
+- `BeautifulSoup4`_ - HTML Parsing
+- `Demjson`_- JavaScript dict to JSON conversion
+- `Mutagen`_ - ID3 Encoding
+- `Requests`_ - for retrieving the HTML
+- `Unicode-Slugify`_ - A slug generator that turns strings into unicode 
+  slugs.
+- `Docopt`_ - CLI help
 
 Copyright
 ---------
 
 bandcamp-dl is released into the public domain by the copyright holders
 
-This README file was inspired by the
-`youtube-dl <https://github.com/rg3/youtube-dl/blob/master/README.md>`_
-docs and is likewise released into the public domain.
+This README file was inspired by the `youtube-dl`_ docs and is likewise
+released into the public domain.
+
+
+.. _download and extract the zip: https://github.com/iheanyi/bandcamp-dl/archive/master.zip
+.. _here: https://github.com/iheanyi/bandcamp-dl/issues
+.. _Discord: https://discord.gg/nwdT4MP
+.. _Issues: https://github.com/iheanyi/bandcamp-dl/search?type=Issues
+.. _the list of supported options: https://github.com/iheanyi/bandcamp-dl/blob/master/README.rst#synopsis
+.. _BeautifulSoup4: https://pypi.python.org/pypi/beautifulsoup4 
+.. _Demjson: https://pypi.python.org/pypi/demjson
+.. _Mutagen: https://pypi.python.org/pypi/mutagen
+.. _Requests: https://pypi.python.org/pypi/requests
+.. _Unicode-Slugify: https://pypi.python.org/pypi/unicode-slugify
+.. _Docopt: https://pypi.python.org/pypi/docopt
+.. _youtube-dl: https://github.com/rg3/youtube-dl/blob/master/README.md
