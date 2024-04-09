@@ -30,7 +30,7 @@ class BandcampJSON:
             try:
                 album_info = script['data-tralbum']
                 embedded_scripts_raw.append(album_info)
-            except:
+            except Exception:
                 continue
         for script in embedded_scripts_raw:
             js_data = self.js_to_json(script)
@@ -42,6 +42,4 @@ class BandcampJSON:
         logging.debug(" Converting JS to JSON..")
         # Decode with demjson first to reformat keys and lists
         decoded_js = demjson3.decode(js_data)
-        # Encode to make valid JSON, add to list of JSON strings
-        encoded_json = demjson3.encode(decoded_js)
         return demjson3.encode(decoded_js)

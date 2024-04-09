@@ -53,18 +53,14 @@ Iheanyi:
     Feel free to use this in any way you wish. I made this just for fun.
     Shout out to darkf for writing the previous helper function for parsing the JavaScript!
 """
-
-import os
-import ast
-import json
 import logging
-import importlib
+
 from docopt import docopt
-import bandcamp_dl.bandcamp
+
+from bandcamp_dl import __version__
 from bandcamp_dl.bandcamp import Bandcamp
 from bandcamp_dl.bandcampdownloader import BandcampDownloader
-from bandcamp_dl.utils.config import init_config
-from bandcamp_dl.__init__ import __version__
+from bandcamp_dl.config import init_config
 
 
 def main():
@@ -72,7 +68,8 @@ def main():
 
     bandcamp = Bandcamp()
 
-    # TODO: Its possible to break bandcamp-dl temporarily by simply erasing a line in the config, catch this and warn.
+    # TODO: Its possible to break bandcamp-dl temporarily by simply erasing a line in the config,
+    # catch this and warn.
     config = init_config(arguments)
 
     if config['--debug']:
@@ -90,21 +87,22 @@ def main():
     album_list = []
 
     if type(urls) is str:
-        album_list.append(bandcamp.parse(urls, not arguments['--no-art'], arguments['--embed-lyrics'],
-                                         arguments['--debug']))
+        album_list.append(bandcamp.parse(urls, not arguments['--no-art'],
+                                         arguments['--embed-lyrics'], arguments['--debug']))
     else:
         for url in urls:
             logging.debug(f"\n\tURL: {url}")
-            album_list.append(bandcamp.parse(url, not arguments['--no-art'], arguments['--embed-lyrics'],
-                                             arguments['--debug']))
+            album_list.append(bandcamp.parse(url, not arguments['--no-art'],
+                                             arguments['--embed-lyrics'], arguments['--debug']))
 
     for album in album_list:
-        logging.debug(" Album data:\n\t{}".format(album))
+        logging.debug(" Album data:\n\t%s", album)
 
     for album in album_list:
         if arguments['--full-album'] and not album['full']:
             print("Full album not available. Skipping ", album['title'], " ...")
-            album_list.remove(album)  # Remove not-full albums BUT continue with the rest of the albums.
+            # Remove not-full albums BUT continue with the rest of the albums.
+            album_list.remove(album)
 
     if arguments['URL'] or arguments['--artist']:
         logging.debug("Preparing download process..")
