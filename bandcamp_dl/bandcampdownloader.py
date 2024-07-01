@@ -25,6 +25,7 @@ class BandcampDownloader:
         self.headers = {'User-Agent': f'bandcamp-dl/{__version__} '
                         f'(https://github.com/iheanyi/bandcamp-dl)'}
         self.session = requests.Session()
+        self.logger = logging.getLogger("bandcamp-dl").getChild("Downloader")
 
         if type(urls) is str:
             self.urls = [urls]
@@ -37,8 +38,6 @@ class BandcampDownloader:
 
         :param album: album dict
         """
-        if self.config.debug:
-            logging.basicConfig(level=logging.DEBUG)
 
         if not album['full'] and not self.config.no_confirm:
             choice = input("Track list incomplete, some tracks may be private, download anyway? "
@@ -64,8 +63,8 @@ class BandcampDownloader:
         :param space_char: char to use in place of spaces
         :return: filepath
         """
-        logging.debug(" Generating filepath/trackname..")
-        path = self.config.template
+        self.logger.debug(" Generating filepath/trackname..")
+        path = self.config['--template']
 
         def slugify_preset(content):
             slugged = slugify.slugify(content, ok=ok_chars, only_ascii=ascii_only,
@@ -98,20 +97,20 @@ class BandcampDownloader:
         else:
             path = f"{path}.mp3"
 
-        logging.debug(" filepath/trackname generated..")
-        logging.debug("\n\tPath: %s", path)
+        self.logger.debug(" filepath/trackname generated..")
+        self.logger.debug(f"\n\tPath: {path}")
         return path
 
-    @staticmethod
-    def create_directory(filename: str) -> str:
+
+    def create_directory(self, filename: str) -> str:
         """Create directory based on filename if it doesn't exist
 
         :param filename: full filename
         :return: directory path
         """
         directory = os.path.dirname(filename)
-        logging.debug(" Directory:\n\t%s", directory)
-        logging.debug(" Directory doesn't exist, creating..")
+        self.logger.debug(f" Directory:\n\t{directory}")
+        self.logger.debug(" Directory doesn't exist, creating..")
         if not os.path.exists(directory):
             os.makedirs(directory)
 
@@ -225,7 +224,7 @@ class BandcampDownloader:
         :param filepath: name of mp3 file
         :param meta: dict of track metadata
         """
-        logging.debug(" Encoding process starting..")
+        self.logger.debug(" Encoding process starting..")
 
         filename = filepath.rsplit('/', 1)[1][:-8]
 

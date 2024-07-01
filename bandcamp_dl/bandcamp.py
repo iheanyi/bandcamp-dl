@@ -15,6 +15,7 @@ class Bandcamp:
                         f'(https://github.com/iheanyi/bandcamp-dl)'}
         self.soup = None
         self.tracks = None
+        self.logger = logging.getLogger("bandcamp-dl").getChild("Main")
 
     def parse(self, url: str, art: bool = True, lyrics: bool = False,
               debugging: bool = False) -> dict or None:
@@ -26,8 +27,6 @@ class Bandcamp:
         :param debugging: if True then verbose output
         :return: album metadata
         """
-        if debugging:
-            logging.basicConfig(level=logging.DEBUG)
 
         try:
             response = requests.get(url, headers=self.headers)
@@ -39,14 +38,14 @@ class Bandcamp:
         except bs4.FeatureNotFound:
             self.soup = bs4.BeautifulSoup(response.text, "html.parser")
 
-        logging.debug(" Generating BandcampJSON..")
+        self.logger.debug(" Generating BandcampJSON..")
         bandcamp_json = BandcampJSON(self.soup, debugging).generate()
         page_json = {}
         for entry in bandcamp_json:
             page_json = {**page_json, **json.loads(entry)}
-        logging.debug(" BandcampJSON generated..")
+        self.logger.debug(" BandcampJSON generated..")
 
-        logging.debug(" Generating Album..")
+        self.logger.debug(" Generating Album..")
         self.tracks = page_json['trackinfo']
 
         album_release = page_json['album_release_date']
@@ -93,13 +92,13 @@ class Bandcamp:
         if art:
             album['art'] = self.get_album_art()
 
-        logging.debug(" Album generated..")
-        logging.debug(f" Album URL: {album['url']}")
+        self.logger.debug(" Album generated..")
+        self.logger.debug(f" Album URL: {album['url']}")
 
         return album
 
     def get_track_lyrics(self, track_url):
-        logging.debug(" Fetching track lyrics..")
+        self.logger.debug(" Fetching track lyrics..")
         track_page = requests.get(track_url, headers=self.headers)
         try:
             track_soup = bs4.BeautifulSoup(track_page.text, "lxml")
@@ -107,10 +106,10 @@ class Bandcamp:
             track_soup = bs4.BeautifulSoup(track_page.text, "html.parser")
         track_lyrics = track_soup.find("div", {"class": "lyricsText"})
         if track_lyrics:
-            logging.debug(" Lyrics retrieved..")
+            self.logger.debug(" Lyrics retrieved..")
             return track_lyrics.text
         else:
-            logging.debug(" Lyrics not found..")
+            self.logger.debug(" Lyrics not found..")
             return ""
 
     def all_tracks_available(self) -> bool:
@@ -123,14 +122,13 @@ class Bandcamp:
                 return False
         return True
 
-    @staticmethod
-    def get_track_metadata(track: dict or None) -> dict:
+    def get_track_metadata(self, track: dict or None) -> dict:
         """Extract individual track metadata
 
         :param track: track dict
         :return: track metadata dict
         """
-        logging.debug(" Generating track metadata..")
+        self.logger.debug(" Generating track metadata..")
         track_metadata = {
             "duration": track['duration'],
             "track": str(track['track_num']),
@@ -151,7 +149,7 @@ class Bandcamp:
             if track['lyrics'] is not None:
                 track_metadata['lyrics'] = track['lyrics'].replace('\\r\\n', '\n')
 
-        logging.debug(" Track metadata generated..")
+        self.logger.debug(" Track metadata generated..")
         return track_metadata
 
     @staticmethod

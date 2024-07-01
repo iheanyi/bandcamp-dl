@@ -71,21 +71,22 @@ def main():
         sys.stdout.write(f"{os.path.basename(sys.argv[0])} {__version__}\n")
         return
 
+    logging.basicConfig(level=logging.NOTSET)
+    logging_handle = "bandcamp-dl"
+    logger = logging.getLogger(logging_handle)
+
+    # TODO: Its possible to break bandcamp-dl temporarily by simply erasing a line in the config, catch this and warn.
+    config = init_config(arguments)
     if not arguments.URL:
         parser.print_usage()
         sys.stderr.write(f"{os.path.basename(sys.argv[0])}: error: the following arguments are "
                          f"required: URL\n")
         sys.exit(2)
 
-    conf = config.init_config(arguments)
     for arg, val in [('base_dir', config.USER_HOME), ('template', config.TEMPLATE),
                      ('ok_chars', config.OK_CHARS), ('space_char', config.SPACE_CHAR)]:
         if not getattr(arguments, arg):
             setattr(arguments, arg, val)
-
-    if conf['debug']:
-        logging.basicConfig(level=logging.DEBUG)
-
     bandcamp = Bandcamp()
 
     # TODO: Its possible to break bandcamp-dl temporarily by simply erasing a line in the config,
@@ -97,6 +98,8 @@ def main():
         urls = Bandcamp.generate_album_url(arguments.artist, arguments.track, "track")
     elif arguments.artist:
         urls = Bandcamp.get_full_discography(arguments.artist, "music")
+
+
     else:
         urls = arguments.URL
 
@@ -125,7 +128,7 @@ def main():
             # Add a newline to stop prompt mangling
             print("")
     else:
-        logging.debug(r" /!\ Something went horribly wrong /!\ ")
+        logger.debug(r" /!\ Something went horribly wrong /!\ ")
 
 
 if __name__ == '__main__':
