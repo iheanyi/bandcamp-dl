@@ -1,3 +1,4 @@
+import sys
 import datetime
 import json
 import logging
@@ -32,6 +33,12 @@ class Bandcamp:
             response = requests.get(url, headers=self.headers)
         except requests.exceptions.MissingSchema:
             return None
+
+        if not response.ok:
+            self.logger.debug(" Status code: %s", response.status_code)
+            print(f"The Album/Track requested does not exist at: {url}")
+            sys.exit(2)
+
 
         try:
             self.soup = bs4.BeautifulSoup(response.text, "lxml")
@@ -93,7 +100,7 @@ class Bandcamp:
             album['art'] = self.get_album_art()
 
         self.logger.debug(" Album generated..")
-        self.logger.debug(f" Album URL: {album['url']}")
+        self.logger.debug(" Album URL: %s", album['url'])
 
         return album
 

@@ -64,7 +64,7 @@ class BandcampDownloader:
         :return: filepath
         """
         self.logger.debug(" Generating filepath/trackname..")
-        path = self.config['--template']
+        path = self.config.template
 
         def slugify_preset(content):
             slugged = slugify.slugify(content, ok=ok_chars, only_ascii=ascii_only,
@@ -143,7 +143,7 @@ class BandcampDownloader:
             filename = filepath.rsplit('/', 1)[1]
             dirname = self.create_directory(filepath)
 
-            logging.debug(" Current file:\n\t%s", filepath)
+            self.logger.debug(" Current file:\n\t%s", filepath)
 
             if album['art'] and not os.path.exists(dirname + "/cover.jpg"):
                 try:
@@ -269,8 +269,8 @@ class BandcampDownloader:
         audio["date"] = meta["date"]
         audio.save()
 
-        logging.debug(" Encoding process finished..")
-        logging.debug(" Renaming:\n\t%s -to-> {filepath[:-4]}", filepath)
+        self.logger.debug(" Encoding process finished..")
+        self.logger.debug(" Renaming:\n\t%s -to-> %s", filepath, filepath[:-4])
 
         try:
             os.rename(filepath, filepath[:-4])

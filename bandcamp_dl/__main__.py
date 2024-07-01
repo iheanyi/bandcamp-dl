@@ -76,7 +76,7 @@ def main():
     logger = logging.getLogger(logging_handle)
 
     # TODO: Its possible to break bandcamp-dl temporarily by simply erasing a line in the config, catch this and warn.
-    config = init_config(arguments)
+    conf = config.init_config(arguments)
     if not arguments.URL:
         parser.print_usage()
         sys.stderr.write(f"{os.path.basename(sys.argv[0])}: error: the following arguments are "
@@ -106,12 +106,12 @@ def main():
     album_list = []
 
     for url in urls:
-        logging.debug("\n\tURL: %s", url)
+        logger.debug("\n\tURL: %s", url)
         album_list.append(bandcamp.parse(url, not arguments.no_art, arguments.embed_lyrics,
                                          arguments.debug))
 
     for album in album_list:
-        logging.debug(" Album data:\n\t%s", album)
+        logger.debug(f" Album data:\n\t{album}")
 
     for album in album_list:
         if arguments.full_album and not album['full']:
@@ -120,10 +120,10 @@ def main():
             album_list.remove(album)
 
     if arguments.URL or arguments.artist:
-        logging.debug("Preparing download process..")
+        logger.debug("Preparing download process..")
         for album in album_list:
             bandcamp_downloader = BandcampDownloader(arguments, album['url'])
-            logging.debug("Initiating download process..")
+            logger.debug("Initiating download process..")
             bandcamp_downloader.start(album)
             # Add a newline to stop prompt mangling
             print("")
