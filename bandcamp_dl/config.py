@@ -17,7 +17,8 @@ else:
     # .appname is fine in Windows and MacOS
     config_dir = ".bandcamp-dl"
 
-config_path = f"{USER_HOME}/{config_dir}/bandcamp-dl.json"
+config_path = f"{user_home}/{config_dir}/bandcamp-dl.json"
+first_run = True
 
 
 def init_config(arguments) -> json or dict:
