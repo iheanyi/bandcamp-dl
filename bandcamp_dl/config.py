@@ -21,6 +21,19 @@ config_path = f"{user_home}/{config_dir}/bandcamp-dl.json"
 first_run = True
 
 
+def merge(dict_1, dict_2):
+    """Merge two dictionaries.
+
+    Values that evaluate to true take priority over falsy values.
+    `dict_1` takes priority over `dict_2`.
+
+    """
+    return dict(
+        (str(key), dict_1.get(key) or dict_2.get(key))
+        for key in set(dict_2) | set(dict_1)
+    )
+
+
 def init_config(arguments) -> json or dict:
     """Create and populate a default config, otherwise load it"""
     if os.path.isfile(config_path):
@@ -65,7 +78,6 @@ def init_config(arguments) -> json or dict:
         with open(session_file, "w") as f:
             f.write("".join(str(vars(arguments))))
 
-    config = {key: config[key] if getattr(arguments, key, config[key]) is None
-              else getattr(arguments, key, config[key]) for key in config}
+    config = merge(arguments, config)
 
     return config
