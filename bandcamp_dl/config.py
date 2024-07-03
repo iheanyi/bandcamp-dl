@@ -3,7 +3,8 @@ import json
 import logging
 import os
 
-from bandcamp_dl import __version__
+import importlib.metadata
+__version__ = importlib.metadata.version("bandcamp-downloader")
 
 TEMPLATE = '%{artist}/%{album}/%{track} - %{title}'
 OK_CHARS = '-_~'

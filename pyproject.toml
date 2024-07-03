@@ -23,7 +23,8 @@ dependencies = [
     "beautifulsoup4 >= 4.13.0b2",
     "demjson3 >= 3.0.6",
     "mutagen >= 1.47.0",
-    "requests >= 2.32.3"
+    "requests >= 2.32.3",
+    "unicode-slugify >= 0.1.5"
 ]
 
 [project.scripts]

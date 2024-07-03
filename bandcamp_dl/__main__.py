@@ -23,10 +23,12 @@ import logging
 import os
 import sys
 
-from bandcamp_dl import __version__
 from bandcamp_dl.bandcamp import Bandcamp
 from bandcamp_dl.bandcampdownloader import BandcampDownloader
 from bandcamp_dl import config
+
+import importlib.metadata
+__version__ = importlib.metadata.version("bandcamp-downloader")
 
 
 def main():
@@ -71,7 +73,10 @@ def main():
         sys.stdout.write(f"{os.path.basename(sys.argv[0])} {__version__}\n")
         return
 
-    logging.basicConfig(level=logging.NOTSET)
+    if arguments.debug:
+        logging.basicConfig(level=logging.DEBUG)
+    else:
+        logging.basicConfig()
     logging_handle = "bandcamp-dl"
     logger = logging.getLogger(logging_handle)
 

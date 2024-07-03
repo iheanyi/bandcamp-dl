@@ -6,8 +6,11 @@ import logging
 import bs4
 import requests
 
-from bandcamp_dl import __version__
+import importlib.metadata
+__version__ = importlib.metadata.version("bandcamp-downloader")
+
 from bandcamp_dl.bandcampjson import BandcampJSON
+
 
 
 class Bandcamp:
