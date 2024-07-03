@@ -68,7 +68,7 @@ def main():
 
     arguments = parser.parse_args()
     if arguments.version:
-        sys.stdout.write(f"{os.path.basename(sys.argv[0])} {__version__}\n")
+        sys.stdout.write(f"bandcamp-dl {__version__}\n")
         return
 
     if arguments.debug:
