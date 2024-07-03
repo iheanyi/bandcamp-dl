@@ -26,6 +26,9 @@ dependencies = [
     "requests >= 2.32.3"
 ]
 
+[project.scripts]
+bandcamp-dl = "bandcamp_dl.__main__:main"
+
 [project.urls]
 Documentation = "https://github.com/iheanyi/bandcamp-dl/blob/master/README.rst"
 Source = "https://github.com/iheanyi/bandcamp-dl"
