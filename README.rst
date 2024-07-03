@@ -1,12 +1,35 @@
 bandcamp-dl
 ===========
+|PyPI pyversions|
 
-download audio from BandCamp.com
+.. |PyPI pyversions| image:: https://img.shields.io/pypi/pyversions/bandcamp-downloader.svg
+   :target: https://pypi.python.org/pypi/bandcamp-downloader/
+
+|PyPI download month|
+
+.. |PyPI download month| image:: https://img.shields.io/pypi/dm/bandcamp-downloader.svg
+   :target: https://pypi.python.org/pypi/bandcamp-downloader/
+
+|PyPI license|
+
+.. |PyPI license| image:: https://img.shields.io/pypi/l/bandcamp-downloader.svg
+   :target: https://pypi.python.org/pypi/bandcamp-downloader/
+
+|GitHub release|
+
+.. |GitHub release| image:: https://img.shields.io/github/release/Iheanyi/bandcamp-dl.svg
+   :target: https://GitHub.com/iheanyi/bandcamp-dl/releases/
+
+|GitHub commits|
+
+.. |GitHub commits| image:: https://img.shields.io/github/commits-since/Iheanyi/bandcamp-dl/v0.0.13.svg
+   :target: https://GitHub.com/iheanyi/bandcamp-dl/commit/
+Download audio from `bandcamp.com`_
 
 Synopsis
 --------
 
-bandcamp-dl URL
+``bandcamp-dl URL``
 
 Installation
 ------------
@@ -38,15 +61,15 @@ From Wheel
 From Source
 ~~~~~~~~~~~
 
-1. Clone the project or `download and extract the zip`_ 
-2. ``cd`` to the project directory containing the ``setup.py``
-3. ``python setup.py install``
+1. Clone the project or `download and extract the zip`_
+2. ``cd`` to the project directory
+3. Run ``pip install .``
 
 Description
 -----------
 
 bandcamp-dl is a small command-line app to download audio from
-BandCamp.com. It requires the Python interpreter, version 3.4 (or
+bandcamp.com. It requires the Python interpreter, version 3.4 (or
 higher) and is not platform specific. It is released to the public
 domain, which means you can modify it, redistribute it or use it how
 ever you like.
@@ -184,9 +207,6 @@ Dependencies
 - `Demjson`_- JavaScript dict to JSON conversion
 - `Mutagen`_ - ID3 Encoding
 - `Requests`_ - for retrieving the HTML
-- `Unicode-Slugify`_ - A slug generator that turns strings into unicode 
-  slugs.
-- `Docopt`_ - CLI help
 
 Copyright
 ---------
@@ -200,6 +220,7 @@ released into the public domain.
 .. _download and extract the zip: https://github.com/iheanyi/bandcamp-dl/archive/master.zip
 .. _here: https://github.com/iheanyi/bandcamp-dl/issues
 .. _Discord: https://discord.gg/nwdT4MP
+.. _bandcamp.com: https://www.bandcamp.com
 .. _Issues: https://github.com/iheanyi/bandcamp-dl/search?type=Issues
 .. _the list of supported options: https://github.com/iheanyi/bandcamp-dl/blob/master/README.rst#synopsis
 .. _BeautifulSoup4: https://pypi.python.org/pypi/beautifulsoup4 

@@ -1,6 +1,0 @@
---index-url https://pypi.python.org/simple/
-
-beautifulsoup4==4.12.3
-demjson3==3.0.6
-mutagen==1.47.0
-requests==2.32.3
