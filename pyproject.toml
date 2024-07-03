@@ -22,7 +22,8 @@ version = "0.0.15"
 dependencies = [
     "beautifulsoup4 >= 4.13.0b2",
     "demjson3 >= 3.0.6",
-    "mutagen >= 1.47.0"
+    "mutagen >= 1.47.0",
+    "requests >= 2.32.3"
 ]
 
 [project.urls]

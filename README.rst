@@ -1,29 +1,7 @@
 bandcamp-dl
 ===========
-|PyPI pyversions|
+|PyPI pyversions| |PyPI download month| |PyPI license| |GitHub release| |GitHub commits|
 
-.. |PyPI pyversions| image:: https://img.shields.io/pypi/pyversions/bandcamp-downloader.svg
-   :target: https://pypi.python.org/pypi/bandcamp-downloader/
-
-|PyPI download month|
-
-.. |PyPI download month| image:: https://img.shields.io/pypi/dm/bandcamp-downloader.svg
-   :target: https://pypi.python.org/pypi/bandcamp-downloader/
-
-|PyPI license|
-
-.. |PyPI license| image:: https://img.shields.io/pypi/l/bandcamp-downloader.svg
-   :target: https://pypi.python.org/pypi/bandcamp-downloader/
-
-|GitHub release|
-
-.. |GitHub release| image:: https://img.shields.io/github/release/Iheanyi/bandcamp-dl.svg
-   :target: https://GitHub.com/iheanyi/bandcamp-dl/releases/
-
-|GitHub commits|
-
-.. |GitHub commits| image:: https://img.shields.io/github/commits-since/Iheanyi/bandcamp-dl/v0.0.13.svg
-   :target: https://GitHub.com/iheanyi/bandcamp-dl/commit/
 Download audio from `bandcamp.com`_
 
 Synopsis
@@ -227,6 +205,23 @@ released into the public domain.
 .. _Demjson: https://pypi.python.org/pypi/demjson
 .. _Mutagen: https://pypi.python.org/pypi/mutagen
 .. _Requests: https://pypi.python.org/pypi/requests
-.. _Unicode-Slugify: https://pypi.python.org/pypi/unicode-slugify
-.. _Docopt: https://pypi.python.org/pypi/docopt
 .. _youtube-dl: https://github.com/rg3/youtube-dl/blob/master/README.md
+
+.. |PyPI pyversions| image:: https://img.shields.io/pypi/pyversions/bandcamp-downloader.svg
+   :target: https://pypi.python.org/pypi/bandcamp-downloader/
+
+
+.. |PyPI download month| image:: https://img.shields.io/pypi/dm/bandcamp-downloader.svg
+   :target: https://pypi.python.org/pypi/bandcamp-downloader/
+
+
+.. |PyPI license| image:: https://img.shields.io/pypi/l/bandcamp-downloader.svg
+   :target: https://pypi.python.org/pypi/bandcamp-downloader/
+
+
+.. |GitHub release| image:: https://img.shields.io/github/release/Iheanyi/bandcamp-dl.svg
+   :target: https://GitHub.com/iheanyi/bandcamp-dl/releases/
+
+
+.. |GitHub commits| image:: https://img.shields.io/github/commits-since/Iheanyi/bandcamp-dl/v0.0.13.svg
+   :target: https://GitHub.com/iheanyi/bandcamp-dl/commit/
