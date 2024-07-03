@@ -7,8 +7,7 @@ from mutagen import id3
 import requests
 import slugify
 
-import importlib.metadata
-__version__ = importlib.metadata.version("bandcamp-downloader")
+from bandcamp_dl import __version__
 
 
 def print_clean(msg):

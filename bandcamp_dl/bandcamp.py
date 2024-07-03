@@ -6,9 +6,7 @@ import logging
 import bs4
 import requests
 
-import importlib.metadata
-__version__ = importlib.metadata.version("bandcamp-downloader")
-
+from bandcamp_dl import __version__
 from bandcamp_dl.bandcampjson import BandcampJSON
 
 

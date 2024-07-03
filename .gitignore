@@ -46,5 +46,4 @@ bandcamp_dl/asyncdownloader.py
 .flake8
 .local.vimrc
 
-bandcamp_dl/__init__\.py
 venv/

@@ -23,12 +23,10 @@ import logging
 import os
 import sys
 
+from bandcamp_dl import __version__
 from bandcamp_dl.bandcamp import Bandcamp
 from bandcamp_dl.bandcampdownloader import BandcampDownloader
 from bandcamp_dl import config
-
-import importlib.metadata
-__version__ = importlib.metadata.version("bandcamp-downloader")
 
 
 def main():
