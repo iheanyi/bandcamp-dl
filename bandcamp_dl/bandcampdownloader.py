@@ -65,6 +65,7 @@ class BandcampDownloader:
         """
         self.logger.debug(" Generating filepath/trackname..")
         path = self.config.template
+        self.logger.debug(f"\n\tTemplate: {path}")
 
         def slugify_preset(content):
             slugged = slugify.slugify(content, ok=ok_chars, only_ascii=ascii_only,

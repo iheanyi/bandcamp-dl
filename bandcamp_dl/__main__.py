@@ -79,7 +79,8 @@ def main():
     logger = logging.getLogger(logging_handle)
 
     # TODO: Its possible to break bandcamp-dl temporarily by simply erasing a line in the config, catch this and warn.
-    conf = config.init_config(arguments)
+    arguments = config.init_config(parser)
+    logger.debug(f"Config/Args: {arguments}")
     if not arguments.URL:
         parser.print_usage()
         sys.stderr.write(f"{os.path.basename(sys.argv[0])}: error: the following arguments are "
@@ -92,17 +93,12 @@ def main():
             setattr(arguments, arg, val)
     bandcamp = Bandcamp()
 
-    # TODO: Its possible to break bandcamp-dl temporarily by simply erasing a line in the config,
-    # catch this and warn.
-
     if arguments.artist and arguments.album:
         urls = Bandcamp.generate_album_url(arguments.artist, arguments.album, "album")
     elif arguments.artist and arguments.track:
         urls = Bandcamp.generate_album_url(arguments.artist, arguments.track, "track")
     elif arguments.artist:
         urls = Bandcamp.get_full_discography(arguments.artist, "music")
-
-
     else:
         urls = arguments.URL
 
@@ -115,8 +111,6 @@ def main():
 
     for album in album_list:
         logger.debug(f" Album data:\n\t{album}")
-
-    for album in album_list:
         if arguments.full_album and not album['full']:
             print("Full album not available. Skipping ", album['title'], " ...")
             # Remove not-full albums BUT continue with the rest of the albums.
