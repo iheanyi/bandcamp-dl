@@ -20,7 +20,7 @@ Iheanyi:
 """
 import argparse
 import logging
-import os
+import pathlib
 import sys
 
 from bandcamp_dl import __version__
@@ -30,41 +30,48 @@ from bandcamp_dl import config
 
 
 def main():
+    # parse config if found, else create it
+    conf = config.Config()
+
     parser = argparse.ArgumentParser()
     parser.add_argument('URL', help="Bandcamp album/track URL", nargs="*")
     parser.add_argument('-v', '--version', action='store_true', help='Show version')
-    parser.add_argument('-d', '--debug', action='store_true', help='Verbose logging')
+    parser.add_argument('-d', '--debug', action='store_true', help='Verbose logging', default=conf.debug)
     parser.add_argument('--artist', help="The artist's slug (from the URL)")
     parser.add_argument('--track', help="he track's slug (from the URL, for use with --artist)")
     parser.add_argument('--album', help="The album's slug (from the URL, for use with --artist)")
     parser.add_argument('--template', help=f"Output filename template, default: "
-                        f"{config.TEMPLATE.replace('%', '%%')}")
-    parser.add_argument('--base-dir', help='Base location of which all files are downloaded')
+                        f"{conf.template.replace('%', '%%')}", default=conf.template)
+    parser.add_argument('--base-dir', help='Base location of which all files are downloaded',
+                        default=conf.base_dir)
     parser.add_argument('-f', '--full-album', help='Download only if all tracks are available',
                         action='store_true')
     parser.add_argument('-o', '--overwrite', action='store_true',
-                        help='Overwrite tracks that already exist. Default is False.')
-    parser.add_argument('-n', '--no-art', help='Skip grabbing album art', action='store_true')
+                        help=f'Overwrite tracks that already exist. Default is {conf.overwrite}.',
+                        default=conf.overwrite)
+    parser.add_argument('-n', '--no-art', help='Skip grabbing album art', action='store_true',
+                        default=conf.no_art)
     parser.add_argument('-e', '--embed-lyrics', help='Embed track lyrics (If available)',
-                        action='store_true')
+                        action='store_true', default=conf.embed_lyrics)
     parser.add_argument('-g', '--group', help='Use album/track Label as iTunes grouping',
-                        action='store_true')
+                        action='store_true', default=conf.group)
     parser.add_argument('-r', '--embed-art', help='Use album/track Label as iTunes grouping',
-                        action='store_true')
-    parser.add_argument('-y', '--no-slugify', action='store_true',
+                        action='store_true', default=conf.embed_art)
+    parser.add_argument('-y', '--no-slugify', action='store_true', default=conf.no_slugify,
                         help='Disable slugification of track, album, and artist names')
-    parser.add_argument('-c', '--ok-chars',
-                        help='Specify allowed chars in slugify, default: ' + config.OK_CHARS)
-    parser.add_argument('-s', '--space-char', help='Specify the char to use in place of spaces, '
-                        'default: ' + config.SPACE_CHAR)
+    parser.add_argument('-c', '--ok-chars', default=conf.ok_chars,
+                        help=f'Specify allowed chars in slugify, default: {conf.ok_chars}')
+    parser.add_argument('-s', '--space-char', help=f'Specify the char to use in place of spaces, '
+                        f'default: {conf.space_char}', default=conf.space_char)
     parser.add_argument('-a', '--ascii-only', help='Only allow ASCII chars (北京 (capital of '
-                        'china) -> bei-jing-capital-of-china)', action='store_true')
+                        'china) -> bei-jing-capital-of-china)', action='store_true',
+                        default=conf.ascii_only)
     parser.add_argument('-k', '--keep-spaces', help='Retain whitespace in filenames',
-                        action='store_true')
+                        action='store_true', default=conf.keep_spaces)
     parser.add_argument('-u', '--keep-upper', help='Retain uppercase letters in filenames',
-                        action='store_true')
+                        action='store_true', default=conf.keep_upper)
     parser.add_argument('--no-confirm', help='Override confirmation prompts. Use with caution',
-                        action='store_true')
+                        action='store_true', default=conf.no_confirm)
 
     arguments = parser.parse_args()
     if arguments.version:
@@ -83,7 +90,7 @@ def main():
     logger.debug(f"Config/Args: {arguments}")
     if not arguments.URL:
         parser.print_usage()
-        sys.stderr.write(f"{os.path.basename(sys.argv[0])}: error: the following arguments are "
+        sys.stderr.write(f"{pathlib.Path(sys.argv[0]).name}: error: the following arguments are "
                          f"required: URL\n")
         sys.exit(2)
 
