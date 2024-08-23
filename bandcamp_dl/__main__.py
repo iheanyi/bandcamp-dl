@@ -112,6 +112,8 @@ def main():
     album_list = []
 
     for url in urls:
+        if "/album/" not in url and "/track/" not in url:
+            continue
         logger.debug("\n\tURL: %s", url)
         album_list.append(bandcamp.parse(url, not arguments.no_art, arguments.embed_lyrics,
                                          arguments.debug))
