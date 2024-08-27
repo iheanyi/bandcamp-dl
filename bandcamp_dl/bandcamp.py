@@ -5,11 +5,49 @@ import logging
 
 import bs4
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util import create_urllib3_context
 
 from bandcamp_dl import __version__
 from bandcamp_dl.bandcampjson import BandcampJSON
 
+class SSLAdapter(HTTPAdapter):
+    def __init__(self, ssl_context=None, **kwargs):
+        self.ssl_context = ssl_context
+        super().__init__(**kwargs)
 
+    def init_poolmanager(self, *args, **kwargs):
+        kwargs['ssl_context'] = self.ssl_context
+        return super().init_poolmanager(*args, **kwargs)
+
+    def proxy_manager_for(self, *args, **kwargs):
+        kwargs['ssl_context'] = self.ssl_context
+        return super().proxy_manager_for(*args, **kwargs)
+    
+# Create the SSL context with the custom ciphers
+ctx = create_urllib3_context()
+ctx.load_default_certs()
+
+DEFAULT_CIPHERS = ":".join(
+    [
+        "ECDHE+AESGCM",
+        "ECDHE+CHACHA20",
+        "DHE+AESGCM",
+        "DHE+CHACHA20",
+        "ECDH+AESGCM",
+        "DH+AESGCM",
+        "ECDH+AES",
+        "DH+AES",
+        "RSA+AESGCM",
+        "RSA+AES",
+        "!aNULL",
+        "!eNULL",
+        "!MD5",
+        "!DSS",
+        "!AESCCM",
+    ]
+)
+ctx.set_ciphers(DEFAULT_CIPHERS)
 
 class Bandcamp:
     def __init__(self):
@@ -18,6 +56,11 @@ class Bandcamp:
         self.soup = None
         self.tracks = None
         self.logger = logging.getLogger("bandcamp-dl").getChild("Main")
+        
+        # Mount the adapter with the custom SSL context to the session
+        self.session = requests.Session()
+        self.adapter = SSLAdapter(ssl_context=ctx)
+        self.session.mount('https://', self.adapter)
 
     def parse(self, url: str, art: bool = True, lyrics: bool = False,
               debugging: bool = False) -> dict or None:
@@ -31,7 +74,7 @@ class Bandcamp:
         """
 
         try:
-            response = requests.get(url, headers=self.headers)
+            response = self.session.get(url, headers=self.headers)
         except requests.exceptions.MissingSchema:
             return None
 
@@ -107,7 +150,7 @@ class Bandcamp:
 
     def get_track_lyrics(self, track_url):
         self.logger.debug(" Fetching track lyrics..")
-        track_page = requests.get(track_url, headers=self.headers)
+        track_page = self.session.get(track_url, headers=self.headers)
         try:
             track_soup = bs4.BeautifulSoup(track_page.text, "lxml")
         except bs4.FeatureNotFound:
@@ -182,7 +225,7 @@ class Bandcamp:
         except None:
             pass
 
-    def get_full_discography(artist: str, page_type: str) -> list:
+    def get_full_discography(self, artist: str, page_type: str) -> list:
         """Generate a list of album and track urls based on the artist name
 
         :param artist: artist name
@@ -190,7 +233,7 @@ class Bandcamp:
                           hardcoded
         :return: urls as list of strs
         """
-        html = requests.get(f"https://{artist}.bandcamp.com/{page_type}").text
+        html = self.session.get(f"https://{artist}.bandcamp.com/{page_type}").text
 
         try:
             soup = bs4.BeautifulSoup(html, "lxml")
