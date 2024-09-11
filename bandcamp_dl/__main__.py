@@ -86,7 +86,6 @@ def main():
     logger = logging.getLogger(logging_handle)
 
     # TODO: Its possible to break bandcamp-dl temporarily by simply erasing a line in the config, catch this and warn.
-    arguments = config.init_config(parser)
     logger.debug(f"Config/Args: {arguments}")
     if not arguments.URL:
         parser.print_usage()
@@ -105,13 +104,15 @@ def main():
     elif arguments.artist and arguments.track:
         urls = Bandcamp.generate_album_url(arguments.artist, arguments.track, "track")
     elif arguments.artist:
-        urls = Bandcamp.get_full_discography(arguments.artist, "music")
+        urls = Bandcamp.get_full_discography(bandcamp, arguments.artist, "music")
     else:
         urls = arguments.URL
 
     album_list = []
 
     for url in urls:
+        if "/album/" not in url and "/track/" not in url:
+            continue
         logger.debug("\n\tURL: %s", url)
         album_list.append(bandcamp.parse(url, not arguments.no_art, arguments.embed_lyrics,
                                          arguments.debug))
