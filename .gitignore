@@ -47,3 +47,5 @@ bandcamp_dl/asyncdownloader.py
 .local.vimrc
 
 venv/
+
+*.patch
