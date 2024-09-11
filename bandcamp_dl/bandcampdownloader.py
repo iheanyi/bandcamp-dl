@@ -73,15 +73,26 @@ class BandcampDownloader:
                                       space_replacement=space_char)
             return slugged
 
+        # TODO: simplify, both halves of this are near identical
         if self.config.no_slugify:
-            path = path.replace("%{trackartist}", track['artist'])
+            if track['artist'] is None:
+                self.logger.debug('Track artist is None, replacing with album artist')
+                path = path.replace("%{trackartist}", track['albumartist'])
+            else:
+                self.logger.debug('Track artist is not None')
+                path = path.replace("%{trackartist}", track['artist'])
             path = path.replace("%{artist}", track['albumartist'])
             path = path.replace("%{album}", track['album'])
             path = path.replace("%{title}", track['title'])
             path = path.replace("%{date}", track['date'])
             path = path.replace("%{label}", track['label'])
         else:
-            path = path.replace("%{trackartist}", slugify_preset(track['artist']))
+            if track['artist'] is None:
+                self.logger.debug(f'Track artist is None, replacing with {slugify_preset(track["albumartist"])}')
+                path = path.replace("%{trackartist}", slugify_preset(track['albumartist']))
+            else:
+                self.logger.debug('Track artist is not None')
+                path = path.replace("%{trackartist}", slugify_preset(track['artist']))
             path = path.replace("%{artist}", slugify_preset(track['albumartist']))
             path = path.replace("%{album}", slugify_preset(track['album']))
             path = path.replace("%{title}", slugify_preset(track['title']))
