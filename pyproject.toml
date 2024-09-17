@@ -26,6 +26,7 @@ dependencies = [
     "requests >= 2.32.3",
     "unicode-slugify >= 0.1.5"
 ]
+dynamic = ["license", "keywords", "optional-dependencies"]
 
 [project.scripts]
 bandcamp-dl = "bandcamp_dl.__main__:main"
