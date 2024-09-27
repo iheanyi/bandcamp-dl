@@ -223,5 +223,5 @@ released into the public domain.
    :target: https://GitHub.com/iheanyi/bandcamp-dl/releases/
 
 
-.. |GitHub commits| image:: https://img.shields.io/github/commits-since/Iheanyi/bandcamp-dl/v0.0.13.svg
+.. |GitHub commits| image:: https://img.shields.io/github/commits-since/Iheanyi/bandcamp-dl/v0.0.16.svg
    :target: https://GitHub.com/iheanyi/bandcamp-dl/commit/
