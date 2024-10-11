@@ -25,7 +25,8 @@ dependencies = [
     "mutagen >= 1.47.0",
     "requests >= 2.32.3",
     "unicode-slugify >= 0.1.5",
-    "urllib3 >= 2.2.2"
+    "urllib3 >= 2.2.2",
+    "toml ; python_version < '3.11'"
 ]
 
 [project.scripts]

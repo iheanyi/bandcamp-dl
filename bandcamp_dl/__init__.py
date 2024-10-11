@@ -1,6 +1,10 @@
 import importlib.metadata
 import pathlib
-import tomllib
+
+try:
+    import tomllib
+except ModuleNotFoundError:
+    import toml
 
 try:
     __version__ = importlib.metadata.version("bandcamp-downloader")
