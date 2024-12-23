@@ -33,7 +33,8 @@ class Config(dict):
                  "keep_spaces": False,
                  "keep_upper": False,
                  "no_confirm": False,
-                 "debug": False}
+                 "debug": False,
+                 "embed_genres": False}
 
     def __init__(self, dict_=None):
         if dict_ is None:
