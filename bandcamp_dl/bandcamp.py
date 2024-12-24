@@ -62,13 +62,14 @@ class Bandcamp:
         self.adapter = SSLAdapter(ssl_context=ctx)
         self.session.mount('https://', self.adapter)
 
-    def parse(self, url: str, art: bool = True, lyrics: bool = False,
+    def parse(self, url: str, art: bool = True, lyrics: bool = False, genres: bool = False,
               debugging: bool = False) -> dict or None:
         """Requests the page, cherry-picks album info
 
         :param url: album/track url
         :param art: if True download album art
         :param lyrics: if True fetch track lyrics
+        :param genres: if True fetch track tags
         :param debugging: if True then verbose output
         :return: album metadata
         """
@@ -123,7 +124,8 @@ class Bandcamp:
             "full": False,
             "art": "",
             "date": str(datetime.datetime.strptime(album_release, "%d %b %Y %H:%M:%S GMT").year),
-            "url": url
+            "url": url,
+            "genres": ""
         }
 
         if "track" in page_json['url']:
@@ -135,6 +137,7 @@ class Bandcamp:
             if lyrics:
                 track['lyrics'] = self.get_track_lyrics(f"{artist_url}"
                                                         f"{track['title_link']}#lyrics")
+
             if track['file'] is not None:
                 track = self.get_track_metadata(track)
                 album['tracks'].append(track)
@@ -142,6 +145,8 @@ class Bandcamp:
         album['full'] = self.all_tracks_available()
         if art:
             album['art'] = self.get_album_art()
+        if genres:
+            album['genres'] = ','.join(page_json['keywords'])
 
         self.logger.debug(" Album generated..")
         self.logger.debug(" Album URL: %s", album['url'])

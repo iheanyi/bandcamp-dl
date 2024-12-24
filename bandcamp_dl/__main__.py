@@ -55,7 +55,7 @@ def main():
                         action='store_true', default=conf.embed_lyrics)
     parser.add_argument('-g', '--group', help='Use album/track Label as iTunes grouping',
                         action='store_true', default=conf.group)
-    parser.add_argument('-r', '--embed-art', help='Use album/track Label as iTunes grouping',
+    parser.add_argument('-r', '--embed-art', help='Embed album art (If available)',
                         action='store_true', default=conf.embed_art)
     parser.add_argument('-y', '--no-slugify', action='store_true', default=conf.no_slugify,
                         help='Disable slugification of track, album, and artist names')
@@ -72,6 +72,8 @@ def main():
                         action='store_true', default=conf.keep_upper)
     parser.add_argument('--no-confirm', help='Override confirmation prompts. Use with caution',
                         action='store_true', default=conf.no_confirm)
+    parser.add_argument('--embed-genres', help='Embed album/track genres',
+                        action='store_true', default=conf.embed_genres)
 
     arguments = parser.parse_args()
     if arguments.version:
@@ -114,7 +116,7 @@ def main():
         if "/album/" not in url and "/track/" not in url:
             continue
         logger.debug("\n\tURL: %s", url)
-        album_list.append(bandcamp.parse(url, not arguments.no_art, arguments.embed_lyrics,
+        album_list.append(bandcamp.parse(url, not arguments.no_art, arguments.embed_lyrics, arguments.embed_genres,
                                          arguments.debug))
 
     for album in album_list:

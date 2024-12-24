@@ -143,7 +143,8 @@ class BandcampDownloader:
                           "track": track['track'],
                           # TODO: Find out why the 'lyrics' key seems to vanish.
                           "lyrics": track.get('lyrics', ""),
-                          "date": album['date']}
+                          "date": album['date'],
+                          "genres": album['genres'],}
 
             self.num_tracks = len(album['tracks'])
             self.track_num = track_index + 1
@@ -261,6 +262,8 @@ class BandcampDownloader:
                 cover_bytes = cover_img.read()
                 audio["APIC"] = id3._frames.APIC(encoding=3, mime='image/jpeg', type=3,
                                                  desc='Cover', data=cover_bytes)
+        if self.config.embed_genres:
+            audio["TCON"] = id3._frames.TCON(encoding=3, text=meta['genres'])
         audio.save()
 
         audio = mp3.EasyMP3(filepath)
@@ -274,7 +277,6 @@ class BandcampDownloader:
             audio["artist"] = meta['artist']
         else:
             audio["artist"] = meta['albumartist']
-
         audio["title"] = meta["title"]
         audio["albumartist"] = meta['albumartist']
         audio["album"] = meta['album']
