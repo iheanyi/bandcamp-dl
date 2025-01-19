@@ -7,6 +7,7 @@ import bs4
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util import create_urllib3_context
+from urllib.parse import urlparse, urlunparse
 
 from bandcamp_dl import __version__
 from bandcamp_dl.bandcampjson import BandcampJSON
@@ -245,7 +246,41 @@ class Bandcamp:
         except bs4.FeatureNotFound:
             soup = bs4.BeautifulSoup(html, "html.parser")
 
-        urls = [f"https://{artist}.bandcamp.com{a['href']}" for a in soup.find_all("a", href=True)
-                if ("/" == a["href"].split("album")[0] or "/" == a["href"].split("track")[0])]
+        urls = []
+
+        for music_grid_item in soup.find_all("li", class_="music-grid-item"):
+            for a in music_grid_item.find_all("a", href=True):
+                url = a['href']
+                if not url.startswith('http'):
+                    url = f"https://{artist}.bandcamp.com{a['href']}"
+                
+                parsed_url = urlparse(url)
+                url = urlunparse(parsed_url._replace(query='', fragment=''))
+                urls.append(url)
+
+        data_client_items_attributes = soup.find_all(attrs={"data-client-items": True})
+
+        data_client_items = []
+
+        for data_client_items_attribute in data_client_items_attributes:
+            data_client_items += json.loads(
+                    data_client_items_attribute['data-client-items'])
+
+        for album in data_client_items:
+            if 'page_url' in album:
+                page_url = album['page_url']
+                url = ""
+
+                if page_url.startswith('http'):
+                    url = page_url
+                else:
+                    url = f"https://{artist}.bandcamp.com{page_url}"
+                
+                parsed_url = urlparse(url)
+                url = urlunparse(parsed_url._replace(query='', fragment=''))
+                urls.append(url)
+
+        self.logger.debug(f" {len(urls)} Album URLs found for {artist}.\nURLs: \n" + "\n"
+            .join(url for url in urls) + "\n")
 
         return urls
