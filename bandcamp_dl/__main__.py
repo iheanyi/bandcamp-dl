@@ -38,7 +38,7 @@ def main():
     parser.add_argument('-v', '--version', action='store_true', help='Show version')
     parser.add_argument('-d', '--debug', action='store_true', help='Verbose logging', default=conf.debug)
     parser.add_argument('--artist', help="The artist's slug (from the URL)")
-    parser.add_argument('--track', help="he track's slug (from the URL, for use with --artist)")
+    parser.add_argument('--track', help="The track's slug (from the URL, for use with --artist)")
     parser.add_argument('--album', help="The album's slug (from the URL, for use with --artist)")
     parser.add_argument('--template', help=f"Output filename template, default: "
                         f"{conf.template.replace('%', '%%')}", default=conf.template)
