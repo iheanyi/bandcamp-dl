@@ -129,7 +129,7 @@ class Bandcamp:
             "genres": ""
         }
 
-        if "track" in page_json['url']:
+        if "/track/" in page_json['url']:
             artist_url = page_json['url'].rpartition('/track/')[0]
         else:
             artist_url = page_json['url'].rpartition('/album/')[0]
