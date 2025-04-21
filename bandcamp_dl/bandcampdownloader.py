@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 import shutil
 
 from mutagen import mp3
@@ -8,6 +9,7 @@ import requests
 import slugify
 
 from bandcamp_dl import __version__
+from bandcamp_dl.config import CASE_LOWER, CASE_UPPER, CASE_CAMEL, CASE_NONE
 
 
 def print_clean(msg):
@@ -52,14 +54,14 @@ class BandcampDownloader:
             self.download_album(album)
 
     def template_to_path(self, track: dict, ascii_only, ok_chars, space_char, keep_space,
-                         keep_upper) -> str:
+                         case_mode) -> str:
         """Create valid filepath based on template
 
         :param track: track metadata
         :param ok_chars: optional chars to allow
         :param ascii_only: allow only ascii chars in filename
         :param keep_space: retain whitespace in filename
-        :param keep_upper: retain uppercase chars in filename
+        :param case_mode: char case conversion logic (or none / retain)
         :param space_char: char to use in place of spaces
         :return: filepath
         """
@@ -68,8 +70,13 @@ class BandcampDownloader:
         self.logger.debug(f"\n\tTemplate: {path}")
 
         def slugify_preset(content):
+            retain_case = case_mode != CASE_LOWER
+            if case_mode == CASE_UPPER:
+                content = content.upper()
+            if case_mode == CASE_CAMEL:
+                content = re.sub(r'(((?<=\s)|^|-)[a-z])', lambda x: x.group().upper(), content.lower())
             slugged = slugify.slugify(content, ok=ok_chars, only_ascii=ascii_only,
-                                      spaces=keep_space, lower=not keep_upper,
+                                      spaces=keep_space, lower=not retain_case,
                                       space_replacement=space_char)
             return slugged
 
@@ -151,7 +158,7 @@ class BandcampDownloader:
 
             filepath = self.template_to_path(track_meta, self.config.ascii_only,
                                              self.config.ok_chars, self.config.space_char,
-                                             self.config.keep_spaces, self.config.keep_upper)
+                                             self.config.keep_spaces, self.config.case_mode)
             filepath = filepath + ".tmp"
             filename = filepath.rsplit('/', 1)[1]
             dirname = self.create_directory(filepath)

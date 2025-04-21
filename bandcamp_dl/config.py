@@ -10,6 +10,10 @@ from bandcamp_dl import __version__
 TEMPLATE = '%{artist}/%{album}/%{track} - %{title}'
 OK_CHARS = '-_~'
 SPACE_CHAR = '-'
+CASE_LOWER = 'lower'
+CASE_UPPER = 'upper'
+CASE_CAMEL = 'camel'
+CASE_NONE = 'none'
 USER_HOME = pathlib.Path.home()
 # For Linux/BSD https://www.freedesktop.org/wiki/Software/xdg-user-dirs/
 # For Windows ans MacOS .appname is fine
@@ -33,7 +37,7 @@ class Config(dict):
                  "space_char": SPACE_CHAR,
                  "ascii_only": False,
                  "keep_spaces": False,
-                 "keep_upper": False,
+                 "case_mode": CASE_LOWER,
                  "no_confirm": False,
                  "debug": False,
                  "embed_genres": False}
@@ -92,12 +96,17 @@ class Config(dict):
            true / false to indicate whether or not this key was
            supported"""
         migration_type = migration_key = migration_val = None
-        if key == "case_mode":
+        if key == "keep_upper":
+            # forward migration
+            migration_type = OPTION_MIGRATION_FORWARD
+            migration_key = "case_mode"
+            migration_val = self.case_mode = CASE_NONE if val else CASE_LOWER
+        elif key == "case_mode":
             # reverse migration
             migration_type = OPTION_MIGRATION_REVERSE
             migration_key = "keep_upper"
-            migration_val = self.keep_upper = False if val == "lower" else True
-            if val in ["upper", "camel"]:
+            migration_val = self.keep_upper = False if val == CASE_LOWER else True
+            if val in [CASE_UPPER, CASE_CAMEL]:
                 sys.stderr.write(f"Warning, lossy reverse migration, new value '{val}' is not backwards compatible\n")
         if migration_type:
             sys.stderr.write(f"{migration_type.capitalize()} migration of config option: '{key}={val}' -> " \
