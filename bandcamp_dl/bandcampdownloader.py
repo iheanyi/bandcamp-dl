@@ -226,7 +226,7 @@ class BandcampDownloader:
             os.remove(f"{self.config.base_dir}/{__version__}.not.finished")
 
         # Remove album art image as it is embedded
-        if self.config.embed_art:
+        if self.config.embed_art and hasattr(self, "album_art"):
             os.remove(self.album_art)
 
         return True
