@@ -49,7 +49,7 @@ class Config(dict):
             with pathlib.Path.open(CONFIG_PATH) as fobj:
                 try:
                     user_config = json.load(fobj)
-                    # change hyphen with undersore
+                    # change hyphen with underscore
                     user_config = {k.replace('-', '_'): v for k, v in user_config.items()}
                     # overwrite defaults with user provided config
                     self._update_with_dict(user_config)
