@@ -91,7 +91,8 @@ Options
                                 [default: -]
         -a --ascii-only         Only allow ASCII chars (北京 (capital of china) -> bei-jing-capital-of-china)
         -k --keep-spaces        Retain whitespace in filenames
-        -u --keep-upper         Retain uppercase letters in filenames
+        -x {lower,upper,camel,none}, --case-convert {lower,upper,camel,none}
+                                Specify the char case conversion logic, default: lower
 
 Filename Template
 -----------------

@@ -68,8 +68,10 @@ def main():
                         default=conf.ascii_only)
     parser.add_argument('-k', '--keep-spaces', help='Retain whitespace in filenames',
                         action='store_true', default=conf.keep_spaces)
-    parser.add_argument('-u', '--keep-upper', help='Retain uppercase letters in filenames',
-                        action='store_true', default=conf.keep_upper)
+    parser.add_argument('-x', '--case-convert', help=f'Specify the char case conversion logic, '
+                        f'default: {conf.case_mode}', default=conf.case_mode, dest='case_mode',
+                        choices=[config.CASE_LOWER, config.CASE_UPPER, config.CASE_CAMEL,
+                        config.CASE_NONE]) 
     parser.add_argument('--no-confirm', help='Override confirmation prompts. Use with caution',
                         action='store_true', default=conf.no_confirm)
     parser.add_argument('--embed-genres', help='Embed album/track genres',
