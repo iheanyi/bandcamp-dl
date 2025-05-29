@@ -72,6 +72,7 @@ class Config(dict):
                     sys.stderr.write(f"Malformed configuration file `{CONFIG_PATH}'. Check json syntax.\n")
         else:
             # No config found - populate it with the defaults
+            os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)
             with pathlib.Path.open(CONFIG_PATH, mode="w") as fobj:
                 conf = {k.replace('_', '-'): v for k, v in self.items()}
                 json.dump(conf, fobj)
