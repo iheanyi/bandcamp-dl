@@ -80,36 +80,29 @@ class BandcampDownloader:
                                       space_replacement=space_char)
             return slugged
 
-        # TODO: simplify, both halves of this are near identical
-        if self.config.no_slugify:
-            if track['artist'] is None:
+        template_tokens = ['trackartist', 'artist', 'album', 'title', 'date', 'label', 'track']
+        for token in template_tokens:
+            if token == 'trackartist' and track['artist'] is None:
                 self.logger.debug('Track artist is None, replacing with album artist')
-                path = path.replace("%{trackartist}", track['albumartist'])
-            else:
-                self.logger.debug('Track artist is not None')
-                path = path.replace("%{trackartist}", track['artist'])
-            path = path.replace("%{artist}", track['albumartist'])
-            path = path.replace("%{album}", track['album'])
-            path = path.replace("%{title}", track['title'])
-            path = path.replace("%{date}", track['date'])
-            path = path.replace("%{label}", track['label'])
-        else:
-            if track['artist'] is None:
-                self.logger.debug(f'Track artist is None, replacing with {slugify_preset(track["albumartist"])}')
-                path = path.replace("%{trackartist}", slugify_preset(track['albumartist']))
-            else:
-                self.logger.debug('Track artist is not None')
-                path = path.replace("%{trackartist}", slugify_preset(track['artist']))
-            path = path.replace("%{artist}", slugify_preset(track['albumartist']))
-            path = path.replace("%{album}", slugify_preset(track['album']))
-            path = path.replace("%{title}", slugify_preset(track['title']))
-            path = path.replace("%{date}", slugify_preset(track['date']))
-            path = path.replace("%{label}", slugify_preset(track['label']))
+                token = 'albumartist'
 
-        if track['track'] == "None":
-            path = path.replace("%{track}", "Single")
-        else:
-            path = path.replace("%{track}", str(track['track']).zfill(2))
+            if token == 'album' and track['album'].lower() == 'untitled':
+                track['album'] = track['url'].split("/")[-1].replace("-"," ")
+
+            if token == 'track' and track['track'] == 'None':
+                track['track'] = "Single"
+            else:
+                track['track'] = str(track['track']).zfill(2)
+
+            if track['artist'] is None:
+                track['artist'] = track['albumartist']
+
+            if self.config.no_slugify:
+                replacement = track[token]
+            else:
+                replacement = slugify_preset(track[token])
+
+            path = path.replace(f'%{{{token}}}', replacement)
 
         if self.config.base_dir is not None:
             path = f"{self.config.base_dir}/{path}.mp3"
