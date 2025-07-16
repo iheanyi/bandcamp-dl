@@ -28,6 +28,7 @@ dependencies = [
     "urllib3 >= 2.2.2",
     "toml ; python_version < '3.11'"
 ]
+dynamic = ["license", "keywords", "optional-dependencies"]
 
 license = {text = "Unlicense"}
 
