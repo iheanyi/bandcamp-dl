@@ -227,7 +227,7 @@ class Bandcamp:
         """
         try:
             url = self.soup.find(id='tralbumArt').find_all('a')[0]['href']
-            return url
+            return f"{url[:-6]}0{url[-4:]}"
         except None:
             pass
 
