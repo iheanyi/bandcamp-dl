@@ -151,7 +151,7 @@ class BandcampDownloader:
                           # TODO: Find out why the 'lyrics' key seems to vanish.
                           "lyrics": track.get('lyrics', ""),
                           "date": album['date'],
-                          "url": album['url']},
+                          "url": album['url'],
                           "genres": album['genres']}
 
             self.num_tracks = len(album['tracks'])
