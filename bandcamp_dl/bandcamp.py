@@ -147,7 +147,7 @@ class Bandcamp:
         if art:
             album['art'] = self.get_album_art()
         if genres:
-            album['genres'] = ','.join(page_json['keywords'])
+            album['genres'] = "; ".join(page_json['keywords'])
 
         self.logger.debug(" Album generated..")
         self.logger.debug(" Album URL: %s", album['url'])
