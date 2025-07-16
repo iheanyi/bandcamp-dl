@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0.0", "wheel"]
+requires = ["setuptools>=69.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -18,7 +18,7 @@ classifiers=[
         'Programming Language :: Python :: 3.4',
 ]
 requires-python = ">=3.4"
-version = "0.0.17"
+version = "0.0.18"
 dependencies = [
     "beautifulsoup4 >= 4.13.0b2",
     "demjson3 >= 3.0.6",
@@ -28,6 +28,8 @@ dependencies = [
     "urllib3 >= 2.2.2",
     "toml ; python_version < '3.11'"
 ]
+
+license = {text = "Unlicense"}
 
 [project.scripts]
 bandcamp-dl = "bandcamp_dl.__main__:main"
