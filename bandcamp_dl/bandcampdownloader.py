@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 import shutil
 
 from mutagen import mp3
@@ -8,6 +9,7 @@ import requests
 import slugify
 
 from bandcamp_dl import __version__
+from bandcamp_dl.config import CASE_LOWER, CASE_UPPER, CASE_CAMEL, CASE_NONE
 
 
 def print_clean(msg):
@@ -52,14 +54,14 @@ class BandcampDownloader:
             self.download_album(album)
 
     def template_to_path(self, track: dict, ascii_only, ok_chars, space_char, keep_space,
-                         keep_upper) -> str:
+                         case_mode) -> str:
         """Create valid filepath based on template
 
         :param track: track metadata
         :param ok_chars: optional chars to allow
         :param ascii_only: allow only ascii chars in filename
         :param keep_space: retain whitespace in filename
-        :param keep_upper: retain uppercase chars in filename
+        :param case_mode: char case conversion logic (or none / retain)
         :param space_char: char to use in place of spaces
         :return: filepath
         """
@@ -68,20 +70,36 @@ class BandcampDownloader:
         self.logger.debug(f"\n\tTemplate: {path}")
 
         def slugify_preset(content):
+            retain_case = case_mode != CASE_LOWER
+            if case_mode == CASE_UPPER:
+                content = content.upper()
+            if case_mode == CASE_CAMEL:
+                content = re.sub(r'(((?<=\s)|^|-)[a-z])', lambda x: x.group().upper(), content.lower())
             slugged = slugify.slugify(content, ok=ok_chars, only_ascii=ascii_only,
-                                      spaces=keep_space, lower=not keep_upper,
+                                      spaces=keep_space, lower=not retain_case,
                                       space_replacement=space_char)
             return slugged
 
+        # TODO: simplify, both halves of this are near identical
         if self.config.no_slugify:
-            path = path.replace("%{trackartist}", track['artist'])
+            if track['artist'] is None:
+                self.logger.debug('Track artist is None, replacing with album artist')
+                path = path.replace("%{trackartist}", track['albumartist'])
+            else:
+                self.logger.debug('Track artist is not None')
+                path = path.replace("%{trackartist}", track['artist'])
             path = path.replace("%{artist}", track['albumartist'])
             path = path.replace("%{album}", track['album'])
             path = path.replace("%{title}", track['title'])
             path = path.replace("%{date}", track['date'])
             path = path.replace("%{label}", track['label'])
         else:
-            path = path.replace("%{trackartist}", slugify_preset(track['artist']))
+            if track['artist'] is None:
+                self.logger.debug(f'Track artist is None, replacing with {slugify_preset(track["albumartist"])}')
+                path = path.replace("%{trackartist}", slugify_preset(track['albumartist']))
+            else:
+                self.logger.debug('Track artist is not None')
+                path = path.replace("%{trackartist}", slugify_preset(track['artist']))
             path = path.replace("%{artist}", slugify_preset(track['albumartist']))
             path = path.replace("%{album}", slugify_preset(track['album']))
             path = path.replace("%{title}", slugify_preset(track['title']))
@@ -133,14 +151,15 @@ class BandcampDownloader:
                           # TODO: Find out why the 'lyrics' key seems to vanish.
                           "lyrics": track.get('lyrics', ""),
                           "date": album['date'],
-                          "url": album['url']}
+                          "url": album['url']},
+                          "genres": album['genres']}
 
             self.num_tracks = len(album['tracks'])
             self.track_num = track_index + 1
 
             filepath = self.template_to_path(track_meta, self.config.ascii_only,
                                              self.config.ok_chars, self.config.space_char,
-                                             self.config.keep_spaces, self.config.keep_upper)
+                                             self.config.keep_spaces, self.config.case_mode)
             filepath = filepath + ".tmp"
             filename = filepath.rsplit('/', 1)[1]
             dirname = self.create_directory(filepath)
@@ -215,7 +234,7 @@ class BandcampDownloader:
             os.remove(f"{self.config.base_dir}/{__version__}.not.finished")
 
         # Remove album art image as it is embedded
-        if self.config.embed_art:
+        if self.config.embed_art and hasattr(self, "album_art"):
             os.remove(self.album_art)
 
         return True
@@ -252,6 +271,8 @@ class BandcampDownloader:
                 cover_bytes = cover_img.read()
                 audio["APIC"] = id3._frames.APIC(encoding=3, mime='image/jpeg', type=3,
                                                  desc='Cover', data=cover_bytes)
+        if self.config.embed_genres:
+            audio["TCON"] = id3._frames.TCON(encoding=3, text=meta['genres'])
         audio.save()
 
         audio = mp3.EasyMP3(filepath)
@@ -265,7 +286,6 @@ class BandcampDownloader:
             audio["artist"] = meta['artist']
         else:
             audio["artist"] = meta['albumartist']
-
         audio["title"] = meta["title"]
         audio["albumartist"] = meta['albumartist']
         audio["album"] = meta['album']

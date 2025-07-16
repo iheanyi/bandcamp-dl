@@ -18,13 +18,15 @@ classifiers=[
         'Programming Language :: Python :: 3.4',
 ]
 requires-python = ">=3.4"
-version = "0.0.15"
+version = "0.0.17"
 dependencies = [
     "beautifulsoup4 >= 4.13.0b2",
     "demjson3 >= 3.0.6",
     "mutagen >= 1.47.0",
     "requests >= 2.32.3",
-    "unicode-slugify >= 0.1.5"
+    "unicode-slugify >= 0.1.5",
+    "urllib3 >= 2.2.2",
+    "toml ; python_version < '3.11'"
 ]
 
 [project.scripts]

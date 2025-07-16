@@ -91,7 +91,8 @@ Options
                                 [default: -]
         -a --ascii-only         Only allow ASCII chars (北京 (capital of china) -> bei-jing-capital-of-china)
         -k --keep-spaces        Retain whitespace in filenames
-        -u --keep-upper         Retain uppercase letters in filenames
+        -x {lower,upper,camel,none}, --case-convert {lower,upper,camel,none}
+                                Specify the char case conversion logic, default: lower
 
 Filename Template
 -----------------
@@ -223,5 +224,5 @@ released into the public domain.
    :target: https://GitHub.com/iheanyi/bandcamp-dl/releases/
 
 
-.. |GitHub commits| image:: https://img.shields.io/github/commits-since/Iheanyi/bandcamp-dl/v0.0.13.svg
+.. |GitHub commits| image:: https://img.shields.io/github/commits-since/Iheanyi/bandcamp-dl/v0.0.16.svg
    :target: https://GitHub.com/iheanyi/bandcamp-dl/commit/

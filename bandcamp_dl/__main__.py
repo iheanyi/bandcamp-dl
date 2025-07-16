@@ -38,7 +38,7 @@ def main():
     parser.add_argument('-v', '--version', action='store_true', help='Show version')
     parser.add_argument('-d', '--debug', action='store_true', help='Verbose logging', default=conf.debug)
     parser.add_argument('--artist', help="The artist's slug (from the URL)")
-    parser.add_argument('--track', help="he track's slug (from the URL, for use with --artist)")
+    parser.add_argument('--track', help="The track's slug (from the URL, for use with --artist)")
     parser.add_argument('--album', help="The album's slug (from the URL, for use with --artist)")
     parser.add_argument('--template', help=f"Output filename template, default: "
                         f"{conf.template.replace('%', '%%')}", default=conf.template)
@@ -55,7 +55,7 @@ def main():
                         action='store_true', default=conf.embed_lyrics)
     parser.add_argument('-g', '--group', help='Use album/track Label as iTunes grouping',
                         action='store_true', default=conf.group)
-    parser.add_argument('-r', '--embed-art', help='Use album/track Label as iTunes grouping',
+    parser.add_argument('-r', '--embed-art', help='Embed album art (If available)',
                         action='store_true', default=conf.embed_art)
     parser.add_argument('-y', '--no-slugify', action='store_true', default=conf.no_slugify,
                         help='Disable slugification of track, album, and artist names')
@@ -68,10 +68,14 @@ def main():
                         default=conf.ascii_only)
     parser.add_argument('-k', '--keep-spaces', help='Retain whitespace in filenames',
                         action='store_true', default=conf.keep_spaces)
-    parser.add_argument('-u', '--keep-upper', help='Retain uppercase letters in filenames',
-                        action='store_true', default=conf.keep_upper)
+    parser.add_argument('-x', '--case-convert', help=f'Specify the char case conversion logic, '
+                        f'default: {conf.case_mode}', default=conf.case_mode, dest='case_mode',
+                        choices=[config.CASE_LOWER, config.CASE_UPPER, config.CASE_CAMEL,
+                        config.CASE_NONE]) 
     parser.add_argument('--no-confirm', help='Override confirmation prompts. Use with caution',
                         action='store_true', default=conf.no_confirm)
+    parser.add_argument('--embed-genres', help='Embed album/track genres',
+                        action='store_true', default=conf.embed_genres)
 
     arguments = parser.parse_args()
     if arguments.version:
@@ -86,7 +90,6 @@ def main():
     logger = logging.getLogger(logging_handle)
 
     # TODO: Its possible to break bandcamp-dl temporarily by simply erasing a line in the config, catch this and warn.
-    arguments = config.init_config(parser)
     logger.debug(f"Config/Args: {arguments}")
     if not arguments.URL:
         parser.print_usage()
@@ -105,15 +108,17 @@ def main():
     elif arguments.artist and arguments.track:
         urls = Bandcamp.generate_album_url(arguments.artist, arguments.track, "track")
     elif arguments.artist:
-        urls = Bandcamp.get_full_discography(arguments.artist, "music")
+        urls = Bandcamp.get_full_discography(bandcamp, arguments.artist, "music")
     else:
         urls = arguments.URL
 
     album_list = []
 
     for url in urls:
+        if "/album/" not in url and "/track/" not in url:
+            continue
         logger.debug("\n\tURL: %s", url)
-        album_list.append(bandcamp.parse(url, not arguments.no_art, arguments.embed_lyrics,
+        album_list.append(bandcamp.parse(url, not arguments.no_art, arguments.embed_lyrics, arguments.embed_genres,
                                          arguments.debug))
 
     for album in album_list:
