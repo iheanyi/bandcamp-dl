@@ -24,6 +24,7 @@ dependencies = [
     "demjson3 >= 3.0.6",
     "mutagen >= 1.47.0",
     "requests >= 2.32.3",
+    "tqdm >= 4.67.1",
     "unicode-slugify >= 0.1.5",
     "urllib3 >= 2.2.2",
     "toml ; python_version < '3.11'"
