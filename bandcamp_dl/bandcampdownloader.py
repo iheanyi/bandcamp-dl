@@ -151,7 +151,8 @@ class BandcampDownloader:
                           # TODO: Find out why the 'lyrics' key seems to vanish.
                           "lyrics": track.get('lyrics', ""),
                           "date": album['date'],
-                          "genres": album['genres'],}
+                          "url": album['url']},
+                          "genres": album['genres']}
 
             self.num_tracks = len(album['tracks'])
             self.track_num = track_index + 1
@@ -255,6 +256,7 @@ class BandcampDownloader:
         audio = mp3.MP3(filepath)
         audio.delete()
         audio["TIT2"] = id3._frames.TIT2(encoding=3, text=["title"])
+        audio["WOAF"] = id3._frames.WOAF(url=meta["url"])
         audio.save(filename=None, v1=2)
 
         audio = mp3.MP3(filepath)
