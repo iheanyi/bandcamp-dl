@@ -22,12 +22,12 @@ import argparse
 import logging
 import pathlib
 import sys
+from tqdm import tqdm
 
 from bandcamp_dl import __version__
 from bandcamp_dl.bandcamp import Bandcamp
 from bandcamp_dl.bandcampdownloader import BandcampDownloader
 from bandcamp_dl import config
-
 
 def main():
     # parse config if found, else create it
@@ -114,12 +114,30 @@ def main():
 
     album_list = []
 
+    urls_pbar = tqdm(
+            urls, 
+            desc="Processing URLs", 
+            unit="url",
+            bar_format='{bar:10}{l_bar}{r_bar}',
+            leave=False,
+            disable = arguments.debug
+            )
+
     for url in urls:
         if "/album/" not in url and "/track/" not in url:
             continue
         logger.debug("\n\tURL: %s", url)
-        album_list.append(bandcamp.parse(url, not arguments.no_art, arguments.embed_lyrics, arguments.embed_genres,
-                                         arguments.debug))
+        album_list.append(
+                bandcamp.parse(
+                    url,
+                    not arguments.no_art,
+                    arguments.embed_lyrics,
+                    arguments.embed_genres,
+                    arguments.debug
+                    )
+                )
+        urls_pbar.update(1)
+    urls_pbar.close()
 
     for album in album_list:
         logger.debug(f" Album data:\n\t{album}")
@@ -135,7 +153,7 @@ def main():
             logger.debug("Initiating download process..")
             bandcamp_downloader.start(album)
             # Add a newline to stop prompt mangling
-            print("")
+            tqdm.write("")
     else:
         logger.debug(r" /!\ Something went horribly wrong /!\ ")
 

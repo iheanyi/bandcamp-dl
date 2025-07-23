@@ -7,6 +7,7 @@ from mutagen import mp3
 from mutagen import id3
 import requests
 import slugify
+from tqdm import tqdm
 
 from bandcamp_dl import __version__
 from bandcamp_dl.config import CASE_LOWER, CASE_UPPER, CASE_CAMEL, CASE_NONE
@@ -134,6 +135,14 @@ class BandcampDownloader:
         :param album: album dict
         :return: True if successful
         """
+        album_pbar = tqdm(
+                total=len(album['tracks']),
+                bar_format='{bar:10}{l_bar}{r_bar}',
+                desc=f"Downloading: {album['title']}",
+                leave=False,
+                disable = self.config.debug
+                )
+
         for track_index, track in enumerate(album['tracks']):
             track_meta = {"artist": track['artist'],
                           "albumartist": album['artist'],
@@ -147,7 +156,6 @@ class BandcampDownloader:
                           "url": album['url'],
                           "genres": album['genres']}
 
-            self.num_tracks = len(album['tracks'])
             self.track_num = track_index + 1
 
             filepath = self.template_to_path(track_meta, self.config.ascii_only,
@@ -172,10 +180,22 @@ class BandcampDownloader:
             attempts = 0
             skip = False
 
+            track_pbar = tqdm(
+                    total=0,
+                    bar_format='{bar:10}{l_bar}{r_bar}',
+                    desc=f"Downloading: Track {filename}",
+                    leave=False,
+                    unit="B",
+                    disable = self.config.debug
+                    )
+
             while True:
                 try:
                     r = self.session.get(track['url'], headers=self.headers, stream=True)
                     file_length = int(r.headers.get('content-length', 0))
+
+                    track_pbar.reset(total=file_length)
+
                     total = int(file_length / 100)
                     # If file exists and is still a tmp file skip downloading and encode
                     if os.path.exists(filepath):
@@ -185,7 +205,7 @@ class BandcampDownloader:
                         # break out of the try/except and move on to the next file
                         break
                     elif os.path.exists(filepath[:-4]) and self.config.overwrite is not True:
-                        print(f"File: {filename[:-4]} already exists and is complete, skipping..")
+                        tqdm.write(f"File: {filename[:-4]} already exists and is complete, skipping.")
                         skip = True
                         break
                     with open(filepath, "wb") as f:
@@ -193,14 +213,13 @@ class BandcampDownloader:
                             f.write(r.content)
                         else:
                             dl = 0
+
                             for data in r.iter_content(chunk_size=total):
                                 dl += len(data)
                                 f.write(data)
                                 if not self.config.debug:
-                                    done = int(50 * dl / file_length)
-                                    print_clean(f'\r({self.track_num}/{self.num_tracks}) '
-                                                f'[{"=" * done}{" " * (50 - done)}] :: '
-                                                f'Downloading: {filename[:-8]}')
+                                    track_pbar.update(len(data))
+
                     local_size = os.path.getsize(filepath)
                     # if the local filesize before encoding doesn't match the remote filesize
                     # redownload
@@ -215,13 +234,18 @@ class BandcampDownloader:
                         break
                     # if all is well continue the download process for the rest of the tracks
                     else:
+                        album_pbar.update()
                         break
                 except Exception as e:
                     print(e)
                     print("Downloading failed..")
                     return False
             if skip is False:
+                track_pbar.set_description("Encoding: {filename}")
                 self.write_id3_tags(filepath, track_meta)
+                track_pbar.close()
+
+        album_pbar.close()
 
         if os.path.isfile(f"{self.config.base_dir}/{__version__}.not.finished"):
             os.remove(f"{self.config.base_dir}/{__version__}.not.finished")
@@ -241,10 +265,6 @@ class BandcampDownloader:
         self.logger.debug(" Encoding process starting..")
 
         filename = filepath.rsplit('/', 1)[1][:-8]
-
-        if not self.config.debug:
-            print_clean(f'\r({self.track_num}/{self.num_tracks}) [{"=" * 50}] '
-                        f':: Encoding: {filename}')
 
         audio = mp3.MP3(filepath)
         audio.delete()
@@ -297,4 +317,4 @@ class BandcampDownloader:
         if self.config.debug:
             return
 
-        print_clean(f'\r({self.track_num}/{self.num_tracks}) [{"=" * 50}] :: Finished: {filename}')
+        tqdm.write(f"Finished: {filename}")
