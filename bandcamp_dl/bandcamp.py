@@ -101,6 +101,11 @@ class Bandcamp:
         self.logger.debug(" Generating Album..")
         self.tracks = page_json['trackinfo']
 
+        track_nums = [track['track_num'] for track in self.tracks]
+        if len(track_nums) != len(set(track_nums)):
+            for i, track in enumerate(self.tracks):
+                track['track_num'] = i + 1
+        
         album_release = page_json['album_release_date']
         if album_release is None:
             album_release = page_json['current']['release_date']
