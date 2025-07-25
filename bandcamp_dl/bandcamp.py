@@ -64,7 +64,7 @@ class Bandcamp:
         self.session.mount('https://', self.adapter)
 
     def parse(self, url: str, art: bool = True, lyrics: bool = False, genres: bool = False,
-              debugging: bool = False) -> dict or None:
+              debugging: bool = False, cover_quality: int = 0) -> dict or None:
         """Requests the page, cherry-picks album info
 
         :param url: album/track url
@@ -145,7 +145,7 @@ class Bandcamp:
 
         album['full'] = self.all_tracks_available()
         if art:
-            album['art'] = self.get_album_art()
+            album['art'] = self.get_album_art(cover_quality)
         if genres:
             album['genres'] = "; ".join(page_json['keywords'])
 
@@ -220,14 +220,15 @@ class Bandcamp:
         """
         return f"http://{artist}.bandcamp.com/{page_type}/{slug}"
 
-    def get_album_art(self) -> str:
+    def get_album_art(self, quality: int = 16) -> str:
         """Find and retrieve album art url from page
 
+        :param quality: The quality of the album art to retrieve
         :return: url as str
         """
         try:
             url = self.soup.find(id='tralbumArt').find_all('a')[0]['href']
-            return f"{url[:-6]}0{url[-4:]}"
+            return f"{url[:-6]}{quality}{url[-4:]}"
         except None:
             pass
 
