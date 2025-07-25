@@ -57,6 +57,8 @@ def main():
                         action='store_true', default=conf.group)
     parser.add_argument('-r', '--embed-art', help='Embed album art (If available)',
                         action='store_true', default=conf.embed_art)
+    parser.add_argument('--cover-quality', help='Set the cover art quality. 0 is source, 10 is album page (1200x1200), 16 is default embed (700x700).',
+                        default=conf.cover_quality, type=int, choices=[0, 10, 16])
     parser.add_argument('-y', '--no-slugify', action='store_true', default=conf.no_slugify,
                         help='Disable slugification of track, album, and artist names')
     parser.add_argument('-c', '--ok-chars', default=conf.ok_chars,
@@ -119,7 +121,7 @@ def main():
             continue
         logger.debug("\n\tURL: %s", url)
         album_list.append(bandcamp.parse(url, not arguments.no_art, arguments.embed_lyrics, arguments.embed_genres,
-                                         arguments.debug))
+                                         arguments.debug, arguments.cover_quality))
 
     for album in album_list:
         logger.debug(f" Album data:\n\t{album}")
