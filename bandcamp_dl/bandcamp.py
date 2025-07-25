@@ -220,7 +220,7 @@ class Bandcamp:
         """
         return f"http://{artist}.bandcamp.com/{page_type}/{slug}"
 
-    def get_album_art(self, quality: int = 16) -> str:
+    def get_album_art(self, quality: int = 0) -> str:
         """Find and retrieve album art url from page
 
         :param quality: The quality of the album art to retrieve
