@@ -103,8 +103,26 @@ class Bandcamp:
 
         track_nums = [track['track_num'] for track in self.tracks]
         if len(track_nums) != len(set(track_nums)):
-            for i, track in enumerate(self.tracks):
-                track['track_num'] = i + 1
+            self.logger.debug(" Duplicate track numbers found, re-numbering based on position..")
+            track_positions = {}
+            if 'track' in page_json and 'itemListElement' in page_json['track']:
+                for item in page_json['track']['itemListElement']:
+                    track_url = item['item']['@id']
+                    position = item['position']
+                    track_positions[track_url] = position
+
+            if "/track/" in page_json['url']:
+                artist_url = page_json['url'].rpartition('/track/')[0]
+            else:
+                artist_url = page_json['url'].rpartition('/album/')[0]
+
+            for track in self.tracks:
+                full_track_url = f"{artist_url}{track['title_link']}"
+                if full_track_url in track_positions:
+                    track['track_num'] = track_positions[full_track_url]
+                else:
+                    self.logger.debug(f" Could not find position for track: {full_track_url}")
+                    track['track_num'] = self.tracks.index(track) + 1
         
         album_release = page_json['album_release_date']
         if album_release is None:
