@@ -7,7 +7,7 @@ import bs4
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util import create_urllib3_context
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import urlparse, urlunparse, urljoin
 
 from bandcamp_dl import __version__
 from bandcamp_dl.bandcampjson import BandcampJSON
@@ -240,48 +240,46 @@ class Bandcamp:
                           hardcoded
         :return: urls as list of strs
         """
-        html = self.session.get(f"https://{artist}.bandcamp.com/{page_type}").text
+
+        album_urls = set()
+
+        music_page_url = f"https://{artist}.bandcamp.com/{page_type}"
+        self.logger.info(f"Scraping discography from: {music_page_url}")
 
         try:
-            soup = bs4.BeautifulSoup(html, "lxml")
+            response = self.session.get(music_page_url, headers=self.headers)
+        except requests.exceptions.RequestException as e:
+            self.logger.error(f"Could not fetch artist page {music_page_url}: {e}")
+            return []
+
+        try:
+            soup = bs4.BeautifulSoup(response.text, "lxml")
         except bs4.FeatureNotFound:
-            soup = bs4.BeautifulSoup(html, "html.parser")
+            soup = bs4.BeautifulSoup(response.text, "html.parser")
 
-        urls = []
+        music_grid = soup.find('ol', {'id': 'music-grid'})
+        if not music_grid:
+            self.logger.warning("Could not find music grid on the page. No albums found.")
+            return []
 
-        for music_grid_item in soup.find_all("li", class_="music-grid-item"):
-            for a in music_grid_item.find_all("a", href=True):
-                url = a['href']
-                if not url.startswith('http'):
-                    url = f"https://{artist}.bandcamp.com{a['href']}"
-                
-                parsed_url = urlparse(url)
-                url = urlunparse(parsed_url._replace(query='', fragment=''))
-                urls.append(url)
+        if 'data-client-items' in music_grid.attrs:
+            self.logger.debug("Found data-client-items attribute. Parsing for album URLs.")
+            try:
+                json_string = bs4.BeautifulSoup(music_grid['data-client-items'], "html.parser").text
+                items = json.loads(json_string)
+                for item in items:
+                    if 'page_url' in item:
+                        full_url = urljoin(music_page_url, item['page_url'])
+                        album_urls.add(full_url)
+            except (json.JSONDecodeError, TypeError) as e:
+                self.logger.error(f"Failed to parse data-client-items JSON: {e}")
 
-        data_client_items_attributes = soup.find_all(attrs={"data-client-items": True})
+        self.logger.debug("Scraping all <li> elements in the music grid for links.")
+        for a in music_grid.select('li.music-grid-item a'):
+            href = a.get('href')
+            if href:
+                full_url = urljoin(music_page_url, href)
+                album_urls.add(full_url)
 
-        data_client_items = []
-
-        for data_client_items_attribute in data_client_items_attributes:
-            data_client_items += json.loads(
-                    data_client_items_attribute['data-client-items'])
-
-        for album in data_client_items:
-            if 'page_url' in album:
-                page_url = album['page_url']
-                url = ""
-
-                if page_url.startswith('http'):
-                    url = page_url
-                else:
-                    url = f"https://{artist}.bandcamp.com{page_url}"
-                
-                parsed_url = urlparse(url)
-                url = urlunparse(parsed_url._replace(query='', fragment=''))
-                urls.append(url)
-
-        self.logger.debug(f" {len(urls)} Album URLs found for {artist}.\nURLs: \n" + "\n"
-            .join(url for url in urls) + "\n")
-
-        return urls
+        self.logger.info(f"Found a total of {len(album_urls)} unique album/track links.")
+        return list(album_urls)
