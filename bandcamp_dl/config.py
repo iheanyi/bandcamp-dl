@@ -40,7 +40,8 @@ class Config(dict):
                  "case_mode": CASE_LOWER,
                  "no_confirm": False,
                  "debug": False,
-                 "embed_genres": False}
+                 "embed_genres": False,
+                 "cover_quality": 0}
 
     def __init__(self, dict_=None):
         if dict_ is None:
