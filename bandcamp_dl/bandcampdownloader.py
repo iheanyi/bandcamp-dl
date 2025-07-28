@@ -147,12 +147,20 @@ class BandcampDownloader:
                           "url": album['url'],
                           "genres": album['genres']}
 
+            path_meta = track_meta.copy()
+
+            if self.config.truncate_album > 0 and len(path_meta['album']) > self.config.truncate_album:
+                path_meta['album'] = path_meta['album'][:self.config.truncate_album]
+
+            if self.config.truncate_track > 0 and len(path_meta['title']) > self.config.truncate_track:
+                path_meta['title'] = path_meta['title'][:self.config.truncate_track]
+
             self.num_tracks = len(album['tracks'])
             self.track_num = track_index + 1
 
-            filepath = self.template_to_path(track_meta, self.config.ascii_only,
-                                             self.config.ok_chars, self.config.space_char,
-                                             self.config.keep_spaces, self.config.case_mode)
+            filepath = self.template_to_path(path_meta, self.config.ascii_only,
+                                            self.config.ok_chars, self.config.space_char,
+                                            self.config.keep_spaces, self.config.case_mode)
             filepath = filepath + ".tmp"
             filename = filepath.rsplit('/', 1)[1]
             dirname = self.create_directory(filepath)

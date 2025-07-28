@@ -78,6 +78,11 @@ def main():
                         action='store_true', default=conf.no_confirm)
     parser.add_argument('--embed-genres', help='Embed album/track genres',
                         action='store_true', default=conf.embed_genres)
+    parser.add_argument('--truncate-album', metavar='LENGTH', type=int, default=0,
+                        help='Truncate album title to a maximum length. 0 for no limit.')
+    parser.add_argument('--truncate-track', metavar='LENGTH', type=int, default=0,
+                        help='Truncate track title to a maximum length. 0 for no limit.')
+
 
     arguments = parser.parse_args()
     if arguments.version:
