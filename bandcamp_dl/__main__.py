@@ -28,6 +28,8 @@ from bandcamp_dl.bandcamp import Bandcamp
 from bandcamp_dl.bandcampdownloader import BandcampDownloader
 from bandcamp_dl import config
 
+from urllib.parse import urlparse
+
 
 def main():
     # parse config if found, else create it
@@ -112,7 +114,16 @@ def main():
     elif arguments.artist:
         urls = Bandcamp.get_full_discography(bandcamp, arguments.artist, "music")
     else:
-        urls = arguments.URL
+        urls = []
+        for url in arguments.URL:
+            parsed_url = urlparse(url)
+            if parsed_url.netloc.endswith('.bandcamp.com') and (parsed_url.path == '/music' or parsed_url.path == '/' or parsed_url.path == ''):
+                artist = parsed_url.netloc.split('.')[0]
+                print(f"Found artist page, fetching full discography for: {artist}")
+                urls.extend(bandcamp.get_full_discography(artist, "music"))
+            else:
+                urls.append(url)
+
 
     album_list = []
 
