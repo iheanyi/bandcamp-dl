@@ -80,7 +80,7 @@ class BandcampDownloader:
                                       space_replacement=space_char)
             return slugged
 
-        template_tokens = ['trackartist', 'artist', 'album', 'title', 'date', 'label', 'track']
+        template_tokens = ['trackartist', 'artist', 'album', 'title', 'date', 'label', 'track', 'album_id', 'track_id']
         for token in template_tokens:
             if token == 'trackartist' and track['artist'] is None:
                 self.logger.debug('Track artist is None, replacing with album artist')
@@ -141,6 +141,8 @@ class BandcampDownloader:
                           "album": album['title'],
                           "title": track['title'].replace(f"{track['artist']} - ", "", 1),
                           "track": track['track'],
+                          "track_id": track['track_id'],
+                          "album_id": album['album_id'],
                           # TODO: Find out why the 'lyrics' key seems to vanish.
                           "lyrics": track.get('lyrics', ""),
                           "date": album['date'],
