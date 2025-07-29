@@ -101,6 +101,15 @@ class Bandcamp:
         self.logger.debug(" Generating Album..")
         self.tracks = page_json['trackinfo']
 
+        track_ids = {}
+        if 'track' in page_json and 'itemListElement' in page_json['track']:
+            for item in page_json['track']['itemListElement']:
+                track_url = item['item']['@id']
+                for prop in item['item'].get('additionalProperty', []):
+                    if prop.get('name') == 'track_id':
+                        track_ids[track_url] = prop.get('value')
+                        break
+
         track_nums = [track['track_num'] for track in self.tracks]
         if len(track_nums) != len(set(track_nums)):
             self.logger.debug(" Duplicate track numbers found, re-numbering based on position..")
@@ -140,6 +149,17 @@ class Bandcamp:
         except KeyError:
             label = None
 
+        album_id = None
+        if 'albumRelease' in page_json:
+            for release in page_json['albumRelease']:
+                if 'additionalProperty' in release:
+                    for prop in release['additionalProperty']:
+                        if prop.get('name') == 'item_id':
+                            album_id = prop.get('value')
+                            break
+                if album_id:
+                    break          
+
         album = {
             "tracks": [],
             "title": album_title,
@@ -149,7 +169,8 @@ class Bandcamp:
             "art": "",
             "date": str(datetime.datetime.strptime(album_release, "%d %b %Y %H:%M:%S GMT").year),
             "url": url,
-            "genres": ""
+            "genres": "",
+            "album_id": album_id
         }
 
         if "/track/" in page_json['url']:
@@ -158,6 +179,8 @@ class Bandcamp:
             artist_url = page_json['url'].rpartition('/album/')[0]
 
         for track in self.tracks:
+            full_track_url = f"{artist_url}{track['title_link']}"
+            track['track_id'] = track_ids.get(full_track_url)
             if lyrics:
                 track['lyrics'] = self.get_track_lyrics(f"{artist_url}"
                                                         f"{track['title_link']}#lyrics")
@@ -214,6 +237,7 @@ class Bandcamp:
             "track": str(track['track_num']),
             "title": track['title'],
             "artist": track['artist'],
+            "track_id": track.get('track_id'),
             "url": None
         }
 
