@@ -28,6 +28,8 @@ from bandcamp_dl.bandcamp import Bandcamp
 from bandcamp_dl.bandcampdownloader import BandcampDownloader
 from bandcamp_dl import config
 
+from urllib.parse import urlparse
+
 
 def main():
     # parse config if found, else create it
@@ -37,9 +39,9 @@ def main():
     parser.add_argument('URL', help="Bandcamp album/track URL", nargs="*")
     parser.add_argument('-v', '--version', action='store_true', help='Show version')
     parser.add_argument('-d', '--debug', action='store_true', help='Verbose logging', default=conf.debug)
-    parser.add_argument('--artist', help="The artist's slug (from the URL)")
-    parser.add_argument('--track', help="The track's slug (from the URL, for use with --artist)")
-    parser.add_argument('--album', help="The album's slug (from the URL, for use with --artist)")
+    parser.add_argument('--artist', help="Specify an artist's slug to download their full discography.")
+    parser.add_argument('--track', help="Specify a track's slug to download a single track. Must be used with --artist.")
+    parser.add_argument('--album', help="Specify an album's slug to download a single album. Must be used with --artist.")
     parser.add_argument('--template', help=f"Output filename template, default: "
                         f"{conf.template.replace('%', '%%')}", default=conf.template)
     parser.add_argument('--base-dir', help='Base location of which all files are downloaded',
@@ -98,10 +100,10 @@ def main():
 
     # TODO: Its possible to break bandcamp-dl temporarily by simply erasing a line in the config, catch this and warn.
     logger.debug(f"Config/Args: {arguments}")
-    if not arguments.URL:
+    if not arguments.URL and not arguments.artist:
         parser.print_usage()
         sys.stderr.write(f"{pathlib.Path(sys.argv[0]).name}: error: the following arguments are "
-                         f"required: URL\n")
+                         f"required: URL or --artist\n")
         sys.exit(2)
 
     for arg, val in [('base_dir', config.USER_HOME), ('template', config.TEMPLATE),
@@ -117,7 +119,16 @@ def main():
     elif arguments.artist:
         urls = Bandcamp.get_full_discography(bandcamp, arguments.artist, "music")
     else:
-        urls = arguments.URL
+        urls = []
+        for url in arguments.URL:
+            parsed_url = urlparse(url)
+            if parsed_url.netloc.endswith('.bandcamp.com') and (parsed_url.path == '/music' or parsed_url.path == '/' or parsed_url.path == ''):
+                artist = parsed_url.netloc.split('.')[0]
+                print(f"Found artist page, fetching full discography for: {artist}")
+                urls.extend(bandcamp.get_full_discography(artist, "music"))
+            else:
+                urls.append(url)
+
 
     album_list = []
 
