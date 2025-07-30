@@ -69,30 +69,38 @@ Options
 ::
 
     Options:
-        -h --help               Show this screen.
-        -v --version            Show version.
-        -d --debug              Verbose logging.
-        --artist=<artist>       The artist's slug (from the URL, --track or --album is required)
-        --track=<track>         The track's slug (from the URL, for use with --artist)
-        --album=<album>         The album's slug (from the URL, for use with --artist)
-        --template=<template>   Output filename template.
-                                [default: %{artist}/%{album}/%{track} - %{title}]
-        --base-dir=<dir>        Base location of which all files are downloaded.
-        -f --full-album         Download only if all tracks are available.
-        -o --overwrite          Overwrite tracks that already exist. Default is False.
-        -n --no-art             Skip grabbing album art.
-        -e --embed-lyrics       Embed track lyrics (If available)
-        -g --group              Use album/track Label as iTunes grouping.
-        -r --embed-art          Embed album art (If available)
-        -y --no-slugify         Disable slugification of track, album, and artist names.
-        -c --ok-chars=<chars>   Specify allowed chars in slugify.
-                                [default: -_~]
-        -s --space-char=<char>  Specify the char to use in place of spaces.
-                                [default: -]
-        -a --ascii-only         Only allow ASCII chars (北京 (capital of china) -> bei-jing-capital-of-china)
-        -k --keep-spaces        Retain whitespace in filenames
-        -x {lower,upper,camel,none}, --case-convert {lower,upper,camel,none}
-                                Specify the char case conversion logic, default: lower
+      -h, --help            show this help message and exit
+      -v, --version         Show version
+      -d, --debug           Verbose logging
+      --artist ARTIST       Specify an artist's slug to download their full discography.
+      --track TRACK         Specify a track's slug to download a single track. Must be used with --artist.
+      --album ALBUM         Specify an album's slug to download a single album. Must be used with --artist.
+      --template TEMPLATE   Output filename template, default: %{artist}/%{album}/%{track} - %{title}
+      --base-dir BASE_DIR   Base location of which all files are downloaded
+      -f, --full-album      Download only if all tracks are available
+      -o, --overwrite       Overwrite tracks that already exist. Default is False.
+      -n, --no-art          Skip grabbing album art
+      -e, --embed-lyrics    Embed track lyrics (If available)
+      -g, --group           Use album/track Label as iTunes grouping
+      -r, --embed-art       Embed album art (If available)
+      --cover-quality {0,10,16}
+                              Set the cover art quality. 0 is source, 10 is album page (1200x1200), 16 is default embed
+                              (700x700).
+      -y, --no-slugify      Disable slugification of track, album, and artist names
+      -c OK_CHARS, --ok-chars OK_CHARS
+                              Specify allowed chars in slugify, default: -_~
+      -s SPACE_CHAR, --space-char SPACE_CHAR
+                              Specify the char to use in place of spaces, default: -
+      -a, --ascii-only      Only allow ASCII chars (北京 (capital of china) -> bei-jing-capital-of-china)
+      -k, --keep-spaces     Retain whitespace in filenames
+      -x {lower,upper,camel,none}, --case-convert {lower,upper,camel,none}
+                              Specify the char case conversion logic, default: lower
+      --no-confirm          Override confirmation prompts. Use with caution
+      --embed-genres        Embed album/track genres
+      --truncate-album LENGTH
+                              Truncate album title to a maximum length. 0 for no limit.
+      --truncate-track LENGTH
+                              Truncate track title to a maximum length. 0 for no limit.
 
 Filename Template
 -----------------
