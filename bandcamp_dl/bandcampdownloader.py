@@ -82,9 +82,15 @@ class BandcampDownloader:
 
         template_tokens = ['trackartist', 'artist', 'album', 'title', 'date', 'label', 'track', 'album_id', 'track_id']
         for token in template_tokens:
-            if token == 'trackartist' and track['artist'] is None:
-                self.logger.debug('Track artist is None, replacing with album artist')
-                token = 'albumartist'
+            key = token
+            if token == 'trackartist':
+                key = 'artist'
+            elif token == 'artist':
+                key = 'albumartist'
+
+            if key == 'artist' and track.get('artist') is None:
+                self.logger.debug('Track artist is None, replacing with album artist')                
+                track['artist'] = track.get('albumartist')
 
             if token == 'album' and track['album'].lower() == 'untitled':
                 track['album'] = track['url'].split("/")[-1].replace("-"," ")
@@ -94,13 +100,10 @@ class BandcampDownloader:
             else:
                 track['track'] = str(track['track']).zfill(2)
 
-            if track['artist'] is None:
-                track['artist'] = track['albumartist']
-
             if self.config.no_slugify:
-                replacement = track[token]
+                replacement = track.get(key, "")
             else:
-                replacement = slugify_preset(track[token])
+                replacement = slugify_preset(track.get(key, ""))
 
             path = path.replace(f'%{{{token}}}', replacement)
 
