@@ -150,15 +150,27 @@ class Bandcamp:
             label = None
 
         album_id = None
-        if 'albumRelease' in page_json:
-            for release in page_json['albumRelease']:
-                if 'additionalProperty' in release:
-                    for prop in release['additionalProperty']:
-                        if prop.get('name') == 'item_id':
-                            album_id = prop.get('value')
-                            break
-                if album_id:
-                    break          
+        track_id_from_music_recording = None
+
+        if page_json.get('@type') == 'MusicRecording':
+            if 'additionalProperty' in page_json:
+                for prop in page_json['additionalProperty']:
+                    if prop.get('name') == 'track_id':
+                        track_id_from_music_recording = prop.get('value')
+                        album_id = track_id_from_music_recording
+                        self.logger.debug(f" Single track page, found track_id: {track_id_from_music_recording}")
+                        break
+        elif page_json.get('@type') == 'MusicAlbum':
+            if 'albumRelease' in page_json:
+                for release in page_json['albumRelease']:
+                    if 'additionalProperty' in release:
+                        for prop in release['additionalProperty']:
+                            if prop.get('name') == 'item_id':
+                                album_id = prop.get('value')
+                                self.logger.debug(f" Album page, found album_id: {album_id}")
+                                break
+                    if album_id:
+                        break
 
         album = {
             "tracks": [],
@@ -180,7 +192,11 @@ class Bandcamp:
 
         for track in self.tracks:
             full_track_url = f"{artist_url}{track['title_link']}"
-            track['track_id'] = track_ids.get(full_track_url)
+            if track_id_from_music_recording:
+                track['track_id'] = track_id_from_music_recording
+            else:
+                track['track_id'] = track_ids.get(full_track_url)
+
             if lyrics:
                 track['lyrics'] = self.get_track_lyrics(f"{artist_url}"
                                                         f"{track['title_link']}#lyrics")
