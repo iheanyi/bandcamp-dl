@@ -42,6 +42,7 @@ class Config(dict):
                  "debug": False,
                  "embed_genres": False,
                  "cover_quality": 0,
+                 "untitled_path_from_slug": False,
                  "truncate_album": 0,
                  "truncate_track": 0}
 
