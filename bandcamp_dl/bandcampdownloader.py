@@ -92,7 +92,7 @@ class BandcampDownloader:
                 self.logger.debug('Track artist is None, replacing with album artist')                
                 track['artist'] = track.get('albumartist')
 
-            if token == 'album' and track['album'].lower() == 'untitled':
+            if self.config.untitled_path_from_slug and token == 'album' and track['album'].lower() == 'untitled':
                 track['album'] = track['url'].split("/")[-1].replace("-"," ")
 
             if token == 'track' and track['track'] == 'None':
