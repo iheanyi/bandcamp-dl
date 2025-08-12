@@ -101,7 +101,7 @@ class BandcampDownloader:
                 track['track'] = str(track['track']).zfill(2)
 
             if self.config.no_slugify:
-                replacement = track.get(key, "")
+                replacement = str(track.get(key, ""))
             else:
                 replacement = slugify_preset(track.get(key, ""))
 
