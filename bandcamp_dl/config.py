@@ -32,6 +32,7 @@ class Config(dict):
                  "embed_art": False,
                  "embed_lyrics": False,
                  "group": False,
+                 "minimal_slugify": False, 
                  "no_slugify": False,
                  "ok_chars": OK_CHARS,
                  "space_char": SPACE_CHAR,
