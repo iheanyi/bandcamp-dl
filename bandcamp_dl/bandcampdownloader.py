@@ -102,6 +102,8 @@ class BandcampDownloader:
 
             if self.config.no_slugify:
                 replacement = track.get(key, "")
+            elif self.config.minimal_slugify:
+                replacement = self.minimal_slugify(track.get(key, ""))                
             else:
                 replacement = slugify_preset(track.get(key, ""))
 
@@ -115,7 +117,14 @@ class BandcampDownloader:
         self.logger.debug(" filepath/trackname generated..")
         self.logger.debug(f"\n\tPath: {path}")
         return path
-
+    
+    def minimal_slugify(self, content: str) -> str:
+        self.logger.debug(" Performing minimal slugify")
+        content = str(content)
+        forbidden_chars = ['\\', '|', '/', ':', '?', '*', '"', '<', '>']
+        for char in forbidden_chars:
+            content = content.replace(char, '')
+        return content    
 
     def create_directory(self, filename: str) -> str:
         """Create directory based on filename if it doesn't exist

@@ -63,6 +63,8 @@ def main():
                         default=conf.cover_quality, type=int, choices=[0, 10, 16])
     parser.add_argument('--untitled-path-from-slug', help='For albums titled untitled, use the URL slug to generate the folder path.',
                         action='store_true', default=conf.untitled_path_from_slug)
+    parser.add_argument('--minimal-slugify', action='store_true', default=conf.minimal_slugify,
+                        help='A minimal slugify that only removes \\ | / : ? * " < >')    
     parser.add_argument('-y', '--no-slugify', action='store_true', default=conf.no_slugify,
                         help='Disable slugification of track, album, and artist names')
     parser.add_argument('-c', '--ok-chars', default=conf.ok_chars,
