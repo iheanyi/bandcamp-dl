@@ -1,23 +1,3 @@
-"""
-Coded by:
-
-Iheanyi Ekechukwu
-    http://twitter.com/kwuchu
-    http://github.com/iheanyi
-
-Simon W. Jackson
-    http://miniarray.com
-    http://twitter.com/miniarray
-    http://github.com/miniarray
-
-Anthony Forsberg:
-    http://evolution0.github.io
-    http://github.com/evolution0
-
-Iheanyi:
-    Feel free to use this in any way you wish. I made this just for fun.
-    Shout out to darkf for writing the previous helper function for parsing the JavaScript!
-"""
 import argparse
 import logging
 import pathlib

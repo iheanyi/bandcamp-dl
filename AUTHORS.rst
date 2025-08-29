@@ -4,7 +4,7 @@ Credits
 Primary:
 --------
 - `Iheanyi Ekechukwu <https://github.com/iheanyi>`_ (Creator)
-- `Anthony Forsberg <https://github.com/Evolution0>`_ (Maintainer)
+- `Anthony Forsberg <https://github.com/Evolution0>`_ (Lead Maintainer/"Owner")
 - `Contributors Graph <https://github.com/iheanyi/bandcamp-dl/graphs/contributors>`_
 
 

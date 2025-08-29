@@ -35,6 +35,6 @@ license = {text = "Unlicense"}
 bandcamp-dl = "bandcamp_dl.__main__:main"
 
 [project.urls]
-Documentation = "https://github.com/iheanyi/bandcamp-dl/blob/master/README.rst"
-Source = "https://github.com/iheanyi/bandcamp-dl"
-Tracker = "https://github.com/iheanyi/bandcamp-dl/issues"
+Documentation = "https://github.com/evolution0/bandcamp-dl/blob/master/README.rst"
+Source = "https://github.com/evolution0/bandcamp-dl"
+Tracker = "https://github.com/evolution0/bandcamp-dl/issues"

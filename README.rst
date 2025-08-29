@@ -204,12 +204,12 @@ This README file was inspired by the `youtube-dl`_ docs and is likewise
 released into the public domain.
 
 
-.. _download and extract the zip: https://github.com/iheanyi/bandcamp-dl/archive/master.zip
-.. _here: https://github.com/iheanyi/bandcamp-dl/issues
+.. _download and extract the zip: https://github.com/evolution0/bandcamp-dl/archive/master.zip
+.. _here: https://github.com/evolution0/bandcamp-dl/issues
 .. _Discord: https://discord.gg/nwdT4MP
 .. _bandcamp.com: https://www.bandcamp.com
-.. _Issues: https://github.com/iheanyi/bandcamp-dl/search?type=Issues
-.. _the list of supported options: https://github.com/iheanyi/bandcamp-dl/blob/master/README.rst#synopsis
+.. _Issues: https://github.com/evolution0/bandcamp-dl/search?type=Issues
+.. _the list of supported options: https://github.com/evolution0/bandcamp-dl/blob/master/README.rst#synopsis
 .. _BeautifulSoup4: https://pypi.python.org/pypi/beautifulsoup4 
 .. _Demjson: https://pypi.python.org/pypi/demjson
 .. _Mutagen: https://pypi.python.org/pypi/mutagen
@@ -228,9 +228,9 @@ released into the public domain.
    :target: https://pypi.python.org/pypi/bandcamp-downloader/
 
 
-.. |GitHub release| image:: https://img.shields.io/github/release/Iheanyi/bandcamp-dl.svg
-   :target: https://GitHub.com/iheanyi/bandcamp-dl/releases/
+.. |GitHub release| image:: https://img.shields.io/github/release/evolution0/bandcamp-dl.svg
+   :target: https://GitHub.com/evolution0/bandcamp-dl/releases/
 
 
-.. |GitHub commits| image:: https://img.shields.io/github/commits-since/Iheanyi/bandcamp-dl/v0.0.16.svg
-   :target: https://GitHub.com/iheanyi/bandcamp-dl/commit/
+.. |GitHub commits| image:: https://img.shields.io/github/commits-since/evolution0/bandcamp-dl/v0.0.17.svg
+   :target: https://GitHub.com/evolution0/bandcamp-dl/commit/

@@ -25,7 +25,7 @@ class BandcampDownloader:
         :param urls: list of urls
         """
         self.headers = {'User-Agent': f'bandcamp-dl/{__version__} '
-                        f'(https://github.com/iheanyi/bandcamp-dl)'}
+                        f'(https://github.com/evolution0/bandcamp-dl)'}
         self.session = requests.Session()
         self.logger = logging.getLogger("bandcamp-dl").getChild("Downloader")
 

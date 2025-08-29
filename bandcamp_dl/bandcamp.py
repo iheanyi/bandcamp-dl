@@ -53,7 +53,7 @@ ctx.set_ciphers(DEFAULT_CIPHERS)
 class Bandcamp:
     def __init__(self):
         self.headers = {'User-Agent': f'bandcamp-dl/{__version__} '
-                        f'(https://github.com/iheanyi/bandcamp-dl)'}
+                        f'(https://github.com/evolution0/bandcamp-dl)'}
         self.soup = None
         self.tracks = None
         self.logger = logging.getLogger("bandcamp-dl").getChild("Main")
